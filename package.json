@@ -1,0 +1,43 @@
+{
+    "name": "webiny-mock-data",
+    "version": "0.0.1",
+    "main": "dist/index.js",
+    "author": "Bruno Zorić",
+    "license": "MIT",
+    "dependencies": {
+        "@webiny/api-headless-cms": "^5.36.2",
+        "dotenv": "^16.3.1",
+        "graphql-tag": "^2.12.6",
+        "node-fetch-commonjs": "^3.3.1",
+        "pino": "^8.14.1",
+        "pino-pretty": "^10.0.1",
+        "yargs": "^17.7.2"
+    },
+    "devDependencies": {
+        "@types/node": "^20.4.2",
+        "@types/yargs": "^17.0.24",
+        "@typescript-eslint/eslint-plugin": "^5.5.0",
+        "@typescript-eslint/parser": "^5.5.0",
+        "eslint": "^8.45.0",
+        "eslint-config-standard": "^16.0.3",
+        "eslint-plugin-import": "^2.25.3",
+        "eslint-plugin-lodash": "^7.4.0",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^5.2.0",
+        "eslint-plugin-standard": "^5.0.0",
+        "prettier": "^3.0.0",
+        "ts-node": "^10.9.1",
+        "ttypescript": "^1.5.15",
+        "typescript": "^5.1.6"
+    },
+    "scripts": {
+        "create-data": "ts-node src/index.ts",
+        "eslint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
+        "eslint:fix": "yarn eslint --fix",
+        "prettier": "prettier \"**/**/*.{js,jsx,ts,tsx,json}\" --config .prettierrc.js",
+        "prettier:check": "yarn prettier --check",
+        "prettier:fix": "yarn prettier --write",
+        "lint:fix": "yarn eslint:fix && yarn prettier:fix"
+    },
+    "packageManager": "yarn@3.6.1"
+}
