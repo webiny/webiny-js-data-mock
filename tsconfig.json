@@ -1,27 +1,23 @@
 {
-    "compilerOptions": {
-        "paths": {
-            "~/*": [
-                "./src/*"
-            ]
-        },
-        "baseUrl": "./",
-        "target": "esnext",
-        "module": "commonjs",
-        "declaration": false,
-        "declarationMap": false,
-        "sourceMap": false,
-        "outDir": "./dist/",
-        "importHelpers": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "strict": true,
-        "skipLibCheck": true
+  "compilerOptions": {
+    "paths": {
+      "~/*": ["./src/*"]
     },
-    "ts-node": {
-        // Do not forget to `npm i -D tsconfig-paths`
-        "require": [
-            "tsconfig-paths/register"
-        ]
-    }
+    "baseUrl": "./",
+    "target": "esnext",
+    "module": "commonjs",
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "outDir": "./dist/",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "ts-node": {
+    // Do not forget to `npm i -D tsconfig-paths`
+    "require": ["tsconfig-paths/register"]
+  }
 }

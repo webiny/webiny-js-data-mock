@@ -3,7 +3,6 @@ import {
     ApiCmsAuthor,
     ApiCmsCategory,
     ApiCmsError,
-    ApiGraphQLResult,
     IBaseApplication,
     IEntryApplication,
     IModelApplication
@@ -42,16 +41,32 @@ const getRandomCategories = (entries: RefEntry[]): RefEntry[] => {
 
 const categories: CmsCategory[] = [
     {
-        id: "category-1",
+        id: "food-production-category",
         title: "Food Production"
     },
     {
-        id: "category-2",
+        id: "space-exploration-category",
         title: "Space Exploration"
     },
     {
-        id: "category-3",
+        id: "health-management-category",
         title: "Health Management"
+    },
+    {
+        id: "energy-production-category",
+        title: "Energy Production"
+    },
+    {
+        id: "transportation-category",
+        title: "Transportation"
+    },
+    {
+        id: "communication-category",
+        title: "Communication"
+    },
+    {
+        id: "entertainment-category",
+        title: "Entertainment"
     }
 ];
 
@@ -61,29 +76,39 @@ const getCategories = (): CmsCategory[] => {
 
 const authors: CmsAuthor[] = [
     {
-        id: "author-1",
+        id: "john-doe-author",
         name: "John Doe",
         dateOfBirth: "1990-01-01"
     },
     {
-        id: "author-2",
+        id: "jane-doe-author",
         name: "Jane Doe",
         dateOfBirth: "1995-12-12"
     },
     {
-        id: "author-3",
+        id: "janie-doe-author",
         name: "Janine Doe",
         dateOfBirth: "2000-01-17"
     },
     {
-        id: "author-4",
+        id: "jasmine-doe-author",
         name: "Jasmine Doe",
         dateOfBirth: "2005-11-25"
     },
     {
-        id: "author-5",
+        id: "jared-doe-author",
         name: "Jared Doe",
         dateOfBirth: "2010-06-07"
+    },
+    {
+        id: "jason-doe-author",
+        name: "Jason Doe",
+        dateOfBirth: "2015-03-15"
+    },
+    {
+        id: "jacob-doe-author",
+        name: "Jacob Doe",
+        dateOfBirth: "2020-02-29"
     }
 ];
 
@@ -91,7 +116,7 @@ const getAuthors = (): CmsAuthor[] => {
     return [...authors];
 };
 
-const getArticles = (entries: RefEntry[], amount = 10): CmsArticle[] => {
+const getArticles = (entries: RefEntry[], amount: number): CmsArticle[] => {
     const articles: CmsArticle[] = [];
     for (let i = 0; i < amount; i++) {
         const author = getRandomAuthor(entries);
@@ -122,24 +147,6 @@ const getArticles = (entries: RefEntry[], amount = 10): CmsArticle[] => {
     return articles;
 };
 
-const mapEntries = <T>(errors: ApiCmsError[], results: ApiGraphQLResult<T>[]) => {
-    const entries: T[] = [];
-    for (const result of results) {
-        if (result.error) {
-            errors.push(result.error);
-            continue;
-        } else if (!result.data) {
-            errors.push({
-                message: `No data returned, but no error either.`,
-                code: "MISSING_DATA"
-            });
-            continue;
-        }
-        entries.push(result.data);
-    }
-    return entries;
-};
-
 interface Result {
     categories: ApiCmsCategory[];
     authors: ApiCmsAuthor[];
@@ -148,9 +155,6 @@ interface Result {
 }
 
 export const executeBlog = async (app: IBaseApplication): Promise<Result> => {
-    /**
-     *
-     */
     const modelApp = app.getApp<IModelApplication>("model");
     const entryApp = app.getApp<IEntryApplication>("entry");
     /**
@@ -165,20 +169,11 @@ export const executeBlog = async (app: IBaseApplication): Promise<Result> => {
     const categoriesVariables = getCategories();
     const authorsVariables = getAuthors();
 
-    const errors: ApiCmsError[] = [];
+    const { entries: categories, errors: categoryErrors } =
+        await entryApp.createViaGraphQL<ApiCmsCategory>(categoryModel, categoriesVariables);
 
-    const categoriesResult = await entryApp.createViaGraphQL<ApiCmsCategory>(
-        categoryModel,
-        categoriesVariables
-    );
-
-    const categories = mapEntries<ApiCmsCategory>(errors, categoriesResult);
-
-    const authorsResult = await entryApp.createViaGraphQL<ApiCmsAuthor>(
-        authorModel,
-        authorsVariables
-    );
-    const authors = mapEntries<ApiCmsAuthor>(errors, authorsResult);
+    const { entries: authors, errors: authorErrors } =
+        await entryApp.createViaGraphQL<ApiCmsAuthor>(authorModel, authorsVariables);
 
     const entries = categories
         .map(c => {
@@ -198,19 +193,16 @@ export const executeBlog = async (app: IBaseApplication): Promise<Result> => {
             })
         );
 
-    const articlesVariables = getArticles(entries);
+    const articleAmount = app.getNumberArg("articles", 10);
+    const articlesVariables = getArticles(entries, articleAmount);
 
-    const articlesResult = await entryApp.createViaGraphQL<ApiCmsArticle>(
-        articleModel,
-        articlesVariables
-    );
-
-    const articles = mapEntries<ApiCmsArticle>(errors, articlesResult);
+    const { entries: articles, errors: articleErrors } =
+        await entryApp.createViaGraphQL<ApiCmsArticle>(articleModel, articlesVariables);
 
     return {
         categories,
         authors,
         articles,
-        errors
+        errors: [...categoryErrors, ...authorErrors, ...articleErrors]
     };
 };

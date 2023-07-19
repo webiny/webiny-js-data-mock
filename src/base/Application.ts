@@ -36,11 +36,11 @@ interface Apps {
 
 export class Application implements IBaseApplication {
     public readonly graphql: GraphQLApplication;
-    private readonly confirm: boolean;
+    private readonly args: ArgV;
     private readonly apps: Apps;
 
     public constructor(argv: ArgV) {
-        this.confirm = !!argv.confirm;
+        this.args = argv;
         const env = getEnv();
 
         this.graphql = new GraphQLApplication({
@@ -54,6 +54,21 @@ export class Application implements IBaseApplication {
             model: new ModelApplication(this),
             entry: new EntryApplication(this)
         };
+    }
+
+    public getNumberArg(name: string, def: number): number {
+        if (this.args[name as keyof ArgV] === undefined) {
+            return def;
+        }
+        const value = Number(this.args[name as keyof ArgV]);
+        return isNaN(value) ? def : value;
+    }
+
+    public getStringArg(name: string, def: string): string {
+        if (this.args[name as keyof ArgV] === undefined) {
+            return def;
+        }
+        return String(this.args[name as keyof ArgV]);
     }
 
     public getApp<T>(name: string): T {

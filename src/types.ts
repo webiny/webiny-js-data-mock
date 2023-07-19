@@ -55,14 +55,18 @@ export interface IModelApplication extends IApplication {
 }
 
 /**
- * Model
+ * Entry
  */
+export interface IEntryApplicationCreateViaGraphQLResponse<T> {
+    entries: T[];
+    errors: ApiCmsError[];
+}
 export interface IEntryApplication extends IApplication {
     getEntries: (name: string) => CmsEntry[];
     createViaGraphQL<T>(
         model: ApiCmsModel,
         variableList: Record<string, any>[]
-    ): Promise<ApiGraphQLResult<T>[]>;
+    ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>>;
 }
 
 /**
@@ -70,6 +74,8 @@ export interface IEntryApplication extends IApplication {
  */
 export interface IBaseApplication {
     run(): Promise<void>;
+    getNumberArg: (name: string, def: number) => number;
+    getStringArg: (name: string, def: string) => string;
     getApp: <T>(name: string) => T;
     graphql: IGraphQLApplication;
 }

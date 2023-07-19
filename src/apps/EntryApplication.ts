@@ -1,10 +1,10 @@
 import {
     ApiCmsError,
     ApiCmsModel,
-    ApiGraphQLResult,
     CmsEntry,
     IBaseApplication,
-    IEntryApplication
+    IEntryApplication,
+    IEntryApplicationCreateViaGraphQLResponse
 } from "~/types";
 
 import { logger } from "~/logger";
@@ -72,15 +72,30 @@ export class EntryApplication implements IEntryApplication {
     public async createViaGraphQL<T>(
         model: ApiCmsModel,
         variableList: Record<string, any>[]
-    ): Promise<ApiGraphQLResult<T>[]> {
+    ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>> {
         const mutation = this.createGraphQLMutation(model);
 
-        return await this.app.graphql.mutations<T>(
+        const result = await this.app.graphql.mutations<T>(
             mutation,
             variableList.map(variables => {
                 return { data: variables };
             })
         );
+        const errors: ApiCmsError[] = [];
+        const entries: T[] = [];
+        for (const item of result) {
+            if (item.error) {
+                errors.push(item.error);
+                continue;
+            } else if (!item.data) {
+                continue;
+            }
+            entries.push(item.data);
+        }
+        return {
+            entries,
+            errors
+        };
     }
 
     private createGraphQLMutation(model: ApiCmsModel): string {
