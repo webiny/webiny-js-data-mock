@@ -1,4 +1,8 @@
-import { CmsGroup as BaseGroup, CmsModel as BaseModel } from "@webiny/api-headless-cms/types";
+import {
+    CmsGroup as BaseGroup,
+    CmsModel as BaseModel,
+    CmsModelField as BaseCmsModelField
+} from "@webiny/api-headless-cms/types";
 
 export interface IApplication {
     run(): Promise<void>;
@@ -18,11 +22,13 @@ export interface ApiGraphQLSuccessResult<T> {
     data: T;
     meta?: ApiCmsMeta | null;
     error?: never;
+    extensions: any[];
 }
 
 export interface ApiGraphQLErrorResult {
     data?: never | null;
     error: ApiCmsError;
+    extensions: any[];
 }
 
 export type ApiGraphQLResult<T> = ApiGraphQLSuccessResult<T> | ApiGraphQLErrorResult;
@@ -69,10 +75,11 @@ export interface IBaseApplication {
 }
 
 export type ApiCmsGroup = Pick<BaseGroup, "id" | "name" | "slug">;
-export type ApiCmsModel = Pick<
-    BaseModel,
-    "name" | "modelId" | "singularApiName" | "pluralApiName" | "fields"
->;
+
+export interface ApiCmsModel
+    extends Pick<BaseModel, "name" | "modelId" | "singularApiName" | "pluralApiName"> {
+    fields: Pick<BaseCmsModelField, "id" | "fieldId" | "type">[];
+}
 
 export interface ApiCmsError {
     message: string;
@@ -86,7 +93,6 @@ export interface ApiCmsError {
 export interface CmsEntry {
     id: string;
     entryId: string;
-    modelId: string;
 }
 
 export interface ApiCmsCategory extends CmsEntry {
@@ -95,7 +101,7 @@ export interface ApiCmsCategory extends CmsEntry {
 
 export interface ApiCmsAuthor extends CmsEntry {
     name: string;
-    dateOfBirth: string | Date;
+    dateOfBirth: string;
 }
 
 export interface ApiCmsRef {

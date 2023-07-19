@@ -1,11 +1,9 @@
-import { nanoid } from "nanoid";
 import {
     ApiCmsArticle,
     ApiCmsAuthor,
     ApiCmsCategory,
     ApiCmsError,
     ApiGraphQLResult,
-    CmsEntry,
     IBaseApplication,
     IEntryApplication,
     IModelApplication
@@ -20,36 +18,41 @@ type CmsArticle = Pick<
     "id" | "title" | "description" | "categories" | "body" | "author"
 >;
 
-const getRandomAuthor = (entries: Pick<CmsEntry, "id" | "modelId">[]): ApiCmsAuthor => {
-    const authors = entries.filter(
-        entry => entry.modelId === "author"
-    ) as unknown as ApiCmsAuthor[];
+interface RefEntry {
+    id: string;
+    modelId: string;
+    name: string;
+}
+
+const getRandomAuthor = (entries: RefEntry[]): RefEntry => {
+    const authors = entries.filter(entry => entry.modelId === "author");
     if (authors.length === 0) {
         throw new Error(`There are no authors in the database.`);
     }
     return authors[Math.floor(Math.random() * authors.length)];
 };
 
-const getRandomCategories = (entries: Pick<CmsEntry, "id" | "modelId">[]): ApiCmsCategory[] => {
-    const categories = entries.filter(
-        entry => entry.modelId === "category"
-    ) as unknown as ApiCmsCategory[];
-
-    return categories
+const getRandomCategories = (entries: RefEntry[]): RefEntry[] => {
+    const take = Math.floor(Math.random() * categories.length);
+    return entries
+        .filter(entry => entry.modelId === "category")
         .sort(() => Math.random() - 0.5)
-        .slice(0, Math.floor(Math.random() * categories.length));
+        .slice(0, take === 0 ? 1 : take);
 };
 
 const categories: CmsCategory[] = [
     {
-        id: nanoid(),
+        id: "category-1",
         title: "Food Production"
     },
     {
-        id: nanoid(),
+        id: "category-2",
         title: "Space Exploration"
     },
-    { id: nanoid(), title: "Health Management" }
+    {
+        id: "category-3",
+        title: "Health Management"
+    }
 ];
 
 const getCategories = (): CmsCategory[] => {
@@ -58,29 +61,29 @@ const getCategories = (): CmsCategory[] => {
 
 const authors: CmsAuthor[] = [
     {
-        id: nanoid(),
+        id: "author-1",
         name: "John Doe",
-        dateOfBirth: new Date("1990-01-01")
+        dateOfBirth: "1990-01-01"
     },
     {
-        id: nanoid(),
+        id: "author-2",
         name: "Jane Doe",
-        dateOfBirth: new Date("1995-12-12")
+        dateOfBirth: "1995-12-12"
     },
     {
-        id: nanoid(),
+        id: "author-3",
         name: "Janine Doe",
-        dateOfBirth: new Date("2000-01-17")
+        dateOfBirth: "2000-01-17"
     },
     {
-        id: nanoid(),
+        id: "author-4",
         name: "Jasmine Doe",
-        dateOfBirth: new Date("2005-11-25")
+        dateOfBirth: "2005-11-25"
     },
     {
-        id: nanoid(),
+        id: "author-5",
         name: "Jared Doe",
-        dateOfBirth: new Date("2010-06-07")
+        dateOfBirth: "2010-06-07"
     }
 ];
 
@@ -88,17 +91,14 @@ const getAuthors = (): CmsAuthor[] => {
     return [...authors];
 };
 
-const getArticles = (
-    entries: Pick<CmsEntry, "id" | "modelId">[],
-    amount: number = 10
-): CmsArticle[] => {
+const getArticles = (entries: RefEntry[], amount = 10): CmsArticle[] => {
     const articles: CmsArticle[] = [];
     for (let i = 0; i < amount; i++) {
         const author = getRandomAuthor(entries);
         const categories = getRandomCategories(entries);
-        const categoryTitles = categories.map(category => category.title);
+        const categoryTitles = categories.map(category => category.name);
         articles.push({
-            id: nanoid(),
+            id: `article-${i + 1}`,
             title: `Article written by ${author.name}`,
             description: `Description of the article written by ${author.name}`,
             body: [
@@ -180,7 +180,25 @@ export const executeBlog = async (app: IBaseApplication): Promise<Result> => {
     );
     const authors = mapEntries<ApiCmsAuthor>(errors, authorsResult);
 
-    const articlesVariables = getArticles([...categories, ...authors]);
+    const entries = categories
+        .map(c => {
+            return {
+                id: c.id,
+                name: c.title,
+                modelId: categoryModel.modelId
+            };
+        })
+        .concat(
+            authors.map(a => {
+                return {
+                    id: a.id,
+                    name: a.name,
+                    modelId: authorModel.modelId
+                };
+            })
+        );
+
+    const articlesVariables = getArticles(entries);
 
     const articlesResult = await entryApp.createViaGraphQL<ApiCmsArticle>(
         articleModel,

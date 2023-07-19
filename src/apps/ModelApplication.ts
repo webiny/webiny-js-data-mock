@@ -63,8 +63,15 @@ export class ModelApplication implements IModelApplication {
             query ListModels {
                 data: listContentModels {
                     data {
-                        modelId
                         name
+                        modelId
+                        singularApiName
+                        pluralApiName
+                        fields {
+                            id
+                            type
+                            fieldId
+                        }
                     }
                     error {
                         message
@@ -82,8 +89,15 @@ export class ModelApplication implements IModelApplication {
             mutation CreateModel($data: CmsContentModelCreateInput!) {
                 data: createContentModel(data: $data) {
                     data {
-                        modelId
                         name
+                        modelId
+                        singularApiName
+                        pluralApiName
+                        fields {
+                            id
+                            type
+                            fieldId
+                        }
                     }
                     error {
                         message

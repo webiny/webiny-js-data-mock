@@ -1,5 +1,6 @@
 import { ApiGraphQLResult, IGraphQLApplication } from "~/types";
-import fetch, { Headers, HeadersInit } from "node-fetch-commonjs";
+import fetch, { Headers, HeadersInit, Response } from "node-fetch-commonjs";
+import { GraphQLError } from "~/errors";
 
 const headers: HeadersInit = {
     "Content-Type": "application/json"
@@ -54,7 +55,7 @@ export class GraphQLApplication implements IGraphQLApplication {
                 variables
             })
         });
-        return this.parse(response);
+        return this.parse<T>(response);
     }
 
     public async mutations<T>(
@@ -63,19 +64,22 @@ export class GraphQLApplication implements IGraphQLApplication {
     ): Promise<ApiGraphQLResult<T>[]> {
         const results: ApiGraphQLResult<T>[] = [];
         for (const variables of variablesList) {
-            const response = await this.mutation(mutation, variables);
-            const result = await this.parse(response);
+            const result = await this.mutation<T>(mutation, variables);
             results.push(result);
         }
         return results;
     }
 
-    private async parse(response: any) {
+    private async parse<T = any>(response: Response): Promise<ApiGraphQLResult<T>> {
         if (response.status !== 200) {
-            throw new Error(`Request failed with status ${response.status}.`);
+            throw new GraphQLError(
+                `Request failed with status ${response.status}.`,
+                response.status,
+                JSON.stringify(response)
+            );
         }
-        const json = await response.json();
-        const { data: result, extensions = [], errors = [] } = json;
+        const json = (await response.json()) as any;
+        const { data: result, extensions = [], errors = [] } = json || {};
         return {
             data: result?.data?.data,
             error: result?.data?.error || errors[0],

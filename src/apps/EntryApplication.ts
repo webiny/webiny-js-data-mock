@@ -26,7 +26,9 @@ export class EntryApplication implements IEntryApplication {
     }
 
     public async run(): Promise<void> {
+        logger.debug("Creating blog entries...");
         await this.runCreateBlog();
+        logger.debug("...blog entries created.");
     }
 
     public getEntries<T extends CmsEntry>(name: string): T[] {
@@ -72,17 +74,21 @@ export class EntryApplication implements IEntryApplication {
     ): Promise<ApiGraphQLResult<T>[]> {
         const mutation = this.createGraphQLMutation(model);
 
-        return await this.app.graphql.mutations<T>(mutation, variableList);
+        return await this.app.graphql.mutations<T>(
+            mutation,
+            variableList.map(variables => {
+                return { data: variables };
+            })
+        );
     }
 
     private createGraphQLMutation(model: ApiCmsModel): string {
         return `
             mutation Create${model.singularApiName}($data: ${model.singularApiName}Input!) {
-                content: create${model.singularApiName}(data: $data) {
+                data: create${model.singularApiName}(data: $data) {
                     data {
                         id
                         entryId
-                        modelId
                         ${this.createModelFields(model.fields)}
                     }
                     error {

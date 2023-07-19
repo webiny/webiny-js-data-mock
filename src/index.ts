@@ -11,4 +11,6 @@ const main = async () => {
 
 main().catch(ex => {
     logger.error(ex.message);
+    logger.info(ex.data);
+    logger.info(ex.stack);
 });
