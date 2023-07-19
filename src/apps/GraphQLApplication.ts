@@ -1,4 +1,4 @@
-import { IGraphQLApplication } from "~/types";
+import { ApiGraphQLResult, IGraphQLApplication } from "~/types";
 import fetch, { Headers, HeadersInit } from "node-fetch-commonjs";
 
 const headers: HeadersInit = {
@@ -27,8 +27,11 @@ export class GraphQLApplication implements IGraphQLApplication {
         };
     }
 
-    public async query(query: string, variables?: Record<string, any>): Promise<any> {
-        const result = await fetch(this.url, {
+    public async query<T>(
+        query: string,
+        variables?: Record<string, any>
+    ): Promise<ApiGraphQLResult<T>> {
+        const response = await fetch(this.url, {
             method: "POST",
             headers: this.createHeaders(),
             body: JSON.stringify({
@@ -36,11 +39,14 @@ export class GraphQLApplication implements IGraphQLApplication {
                 variables: variables || {}
             })
         });
-        return this.parse(result);
+        return this.parse(response);
     }
 
-    public async mutation(mutation: string, variables: Record<string, any>): Promise<any> {
-        const result = await fetch(this.url, {
+    public async mutation<T>(
+        mutation: string,
+        variables: Record<string, any>
+    ): Promise<ApiGraphQLResult<T>> {
+        const response = await fetch(this.url, {
             method: "POST",
             headers: this.createHeaders(),
             body: JSON.stringify({
@@ -48,7 +54,20 @@ export class GraphQLApplication implements IGraphQLApplication {
                 variables
             })
         });
-        return this.parse(result);
+        return this.parse(response);
+    }
+
+    public async mutations<T>(
+        mutation: string,
+        variablesList: Record<string, any>[]
+    ): Promise<ApiGraphQLResult<T>[]> {
+        const results: ApiGraphQLResult<T>[] = [];
+        for (const variables of variablesList) {
+            const response = await this.mutation(mutation, variables);
+            const result = await this.parse(response);
+            results.push(result);
+        }
+        return results;
     }
 
     private async parse(response: any) {

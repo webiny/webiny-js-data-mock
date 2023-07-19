@@ -1,16 +1,28 @@
-import { ApiCmsModel, IApplication, IBaseApplication } from "~/types";
+import { ApiCmsModel, IBaseApplication, IModelApplication } from "~/types";
 import { createBlogModels } from "~/apps/model";
 import { GroupApplication } from "~/apps/GroupApplication";
 import { logger } from "~/logger";
 import { CmsModel } from "~/apps/model/types";
 
-export class ModelApplication implements IApplication {
+export class ModelApplication implements IModelApplication {
     private readonly app: IBaseApplication;
 
-    private models: ApiCmsModel[] = [];
+    private readonly models: ApiCmsModel[] = [];
 
     public constructor(app: IBaseApplication) {
         this.app = app;
+    }
+
+    public getModels(): ApiCmsModel[] {
+        return this.models;
+    }
+
+    public getModel(id: string): ApiCmsModel {
+        const model = this.models.find(m => m.modelId === id);
+        if (model) {
+            return model;
+        }
+        throw new Error(`There is no model "${id}".`);
     }
 
     public async run(): Promise<void> {

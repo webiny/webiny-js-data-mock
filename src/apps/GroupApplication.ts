@@ -1,13 +1,17 @@
-import { ApiCmsGroup, IApplication, IBaseApplication } from "~/types";
+import { ApiCmsGroup, IGroupApplication, IBaseApplication } from "~/types";
 import { createBlog, createCars } from "~/apps/group";
 import { CmsGroup } from "~/apps/group/types";
 import { logger } from "~/logger";
 
-export class GroupApplication implements IApplication {
+export class GroupApplication implements IGroupApplication {
     private readonly app: IBaseApplication;
     public readonly groups: ApiCmsGroup[] = [];
     public constructor(app: IBaseApplication) {
         this.app = app;
+    }
+
+    public getGroups(): ApiCmsGroup[] {
+        return this.groups;
     }
 
     public async run(): Promise<void> {

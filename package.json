@@ -10,6 +10,7 @@
         "graphql-tag": "^2.12.6",
         "node-fetch-commonjs": "^3.3.1",
         "pino": "^8.14.1",
+        "nanoid": "^4.0.2",
         "pino-pretty": "^10.0.1",
         "yargs": "^17.7.2"
     },

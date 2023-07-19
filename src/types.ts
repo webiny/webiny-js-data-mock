@@ -4,6 +4,10 @@ export interface IApplication {
     run(): Promise<void>;
 }
 
+/**
+ * GraphQL
+ */
+
 export interface ApiCmsMeta {
     totalCount: number;
     hasMoreItems: boolean;
@@ -26,8 +30,38 @@ export type ApiGraphQLResult<T> = ApiGraphQLSuccessResult<T> | ApiGraphQLErrorRe
 export interface IGraphQLApplication {
     query<T>(query: string, variables?: Record<string, any>): Promise<ApiGraphQLResult<T>>;
     mutation<T>(query: string, variables: Record<string, any>): Promise<ApiGraphQLResult<T>>;
+    mutations<T>(query: string, variables: Record<string, any>[]): Promise<ApiGraphQLResult<T>[]>;
 }
 
+/**
+ * Group
+ */
+export interface IGroupApplication extends IApplication {
+    getGroups: () => ApiCmsGroup[];
+}
+
+/**
+ * Model
+ */
+export interface IModelApplication extends IApplication {
+    getModels: () => ApiCmsModel[];
+    getModel: (id: string) => ApiCmsModel;
+}
+
+/**
+ * Model
+ */
+export interface IEntryApplication extends IApplication {
+    getEntries: (name: string) => CmsEntry[];
+    createViaGraphQL<T>(
+        model: ApiCmsModel,
+        variableList: Record<string, any>[]
+    ): Promise<ApiGraphQLResult<T>[]>;
+}
+
+/**
+ * Base
+ */
 export interface IBaseApplication {
     run(): Promise<void>;
     getApp: <T>(name: string) => T;
@@ -35,12 +69,15 @@ export interface IBaseApplication {
 }
 
 export type ApiCmsGroup = Pick<BaseGroup, "id" | "name" | "slug">;
-export type ApiCmsModel = Pick<BaseModel, "name" | "modelId">;
+export type ApiCmsModel = Pick<
+    BaseModel,
+    "name" | "modelId" | "singularApiName" | "pluralApiName" | "fields"
+>;
 
 export interface ApiCmsError {
     message: string;
     code: string;
-    data: Record<string, any>;
+    data?: Record<string, any> | null;
 }
 
 /**
