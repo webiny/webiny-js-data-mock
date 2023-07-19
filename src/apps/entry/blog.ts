@@ -91,7 +91,7 @@ const getAuthors = (): CmsAuthor[] => {
     return [...authors];
 };
 
-const getArticles = (entries: RefEntry[], amount = 10): CmsArticle[] => {
+const getArticles = (entries: RefEntry[], amount = 1000): CmsArticle[] => {
     const articles: CmsArticle[] = [];
     for (let i = 0; i < amount; i++) {
         const author = getRandomAuthor(entries);

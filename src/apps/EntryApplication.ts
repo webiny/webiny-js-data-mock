@@ -27,8 +27,8 @@ export class EntryApplication implements IEntryApplication {
 
     public async run(): Promise<void> {
         logger.debug("Creating blog entries...");
-        await this.runCreateBlog();
-        logger.debug("...blog entries created.");
+        const blogResult = await this.runCreateBlog();
+        logger.debug(`...${this.getResultCount(blogResult)} blog entries created.`);
     }
 
     public getEntries<T extends CmsEntry>(name: string): T[] {
@@ -48,6 +48,7 @@ export class EntryApplication implements IEntryApplication {
             authors: result.authors,
             articles: result.articles
         });
+        return result;
     }
 
     private logErrors(errors: ApiCmsError[]) {
@@ -110,5 +111,19 @@ export class EntryApplication implements IEntryApplication {
                 return field.fieldId;
             })
             .join("\n");
+    }
+
+    private getResultCount(results: any): number {
+        if (typeof results !== "object" || Object.keys(results).length === 0) {
+            return 0;
+        }
+        let total = 0;
+        for (const key in results) {
+            if (key === "error" || !Array.isArray(results[key])) {
+                continue;
+            }
+            total = total + results[key].length;
+        }
+        return total;
     }
 }
