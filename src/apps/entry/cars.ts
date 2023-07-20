@@ -2,11 +2,22 @@ import {
     ApiCmsCarMake,
     ApiCmsCarModel,
     IBaseApplication,
+    IEntryApplication,
     IEntryRunnerFactory,
-    IEntryRunnerResponse
+    IEntryRunnerResponse,
+    IModelApplication
 } from "~/types";
 import { carsList } from "./carsList";
-import slugify from "slugify";
+import baseSlugify from "slugify";
+import { logger } from "~/logger";
+
+const slugify = (value: string): string => {
+    return baseSlugify(value, {
+        replacement: "-",
+        lower: true,
+        trim: true
+    });
+};
 
 type CmsCarMake = Pick<ApiCmsCarMake, "id" | "name">;
 type CmsCarModel = Pick<ApiCmsCarModel, "id" | "name" | "make">;
@@ -21,7 +32,7 @@ for (const item of carsList) {
     });
     for (const car of item.models) {
         carModels.push({
-            id: `car-model-${slugify(car)}`,
+            id: `car-model-${slugify(item.brand)}-${slugify(car)}`,
             name: car,
             make: {
                 id: `${carMakeId}#0001`,
@@ -37,11 +48,33 @@ interface Result {
 }
 
 const executeCarsRunner = async (app: IBaseApplication): Promise<IEntryRunnerResponse<Result>> => {
+    const modelApp = app.getApp<IModelApplication>("model");
+    const entryApp = app.getApp<IEntryApplication>("entry");
+    /**
+     * Models.
+     */
+    const carMakeModel = modelApp.getModel("carMake");
+    const carModelModel = modelApp.getModel("carModel");
+    /**
+     * Car makes.
+     */
+    logger.debug(`Creating ${carMakes.length} car makes...`);
+    const { entries: carMakesResults, errors: carMakesErrors } =
+        await entryApp.createViaGraphQL<ApiCmsCarMake>(carMakeModel, carMakes);
+    logger.debug(`...created.`);
+    /**
+     * Car Models.
+     */
+    logger.debug(`Creating ${carModels.length} car models...`);
+    const { entries: carModelsResults, errors: carModelsErrors } =
+        await entryApp.createViaGraphQL<ApiCmsCarModel>(carModelModel, carModels);
+    logger.debug(`...created.`);
+
     return {
-        makes: [],
-        models: [],
-        total: 0,
-        errors: []
+        makes: carMakesResults,
+        models: carModelsResults,
+        total: carMakesResults.length + carModelsResults.length,
+        errors: [...carMakesErrors, ...carModelsErrors]
     };
 };
 

@@ -71,6 +71,9 @@ const createCarsModelModel = (group: CmsModelGroup): CmsModel => {
                             modelId: "carMake"
                         }
                     ]
+                },
+                renderer: {
+                    name: "ref-advanced-single"
                 }
             }
         ],

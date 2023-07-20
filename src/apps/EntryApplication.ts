@@ -39,7 +39,6 @@ export class EntryApplication implements IEntryApplication {
                 logger.info(`Skipping runner "${runner.name}".`);
                 continue;
             }
-            process.exit();
             logger.info(`Creating "${runner.name}" entries...`);
             const result = await runner.exec();
             this.setResult(result);
