@@ -1,5 +1,5 @@
 import { ApiCmsModel, IBaseApplication, IModelApplication } from "~/types";
-import { createBlogModels } from "~/apps/model";
+import { createBlogModels, createCarsModels } from "~/apps/model";
 import { GroupApplication } from "~/apps/GroupApplication";
 import { logger } from "~/logger";
 import { CmsModel } from "~/apps/model/types";
@@ -27,7 +27,7 @@ export class ModelApplication implements IModelApplication {
 
     public async run(): Promise<void> {
         const groupApp = this.app.getApp<GroupApplication>("group");
-        const models = [...createBlogModels(groupApp)];
+        const models = [...createBlogModels(groupApp), ...createCarsModels(groupApp)];
 
         const { data: listedData, error: listedError } = await this.list();
 

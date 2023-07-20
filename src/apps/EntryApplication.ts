@@ -33,11 +33,17 @@ export class EntryApplication implements IEntryApplication {
     }
 
     public async run(): Promise<void> {
+        const skip = this.app.getStringArg(`skip`, "").split(",");
         for (const runner of this.runners) {
-            logger.info(`Creating ${runner.name} entries...`);
+            if (skip.includes(runner.id)) {
+                logger.info(`Skipping runner "${runner.name}".`);
+                continue;
+            }
+            process.exit();
+            logger.info(`Creating "${runner.name}" entries...`);
             const result = await runner.exec();
             this.setResult(result);
-            logger.info(`${result.total} ${runner.name} entries created.`);
+            logger.info(`${result.total} entries created.`);
             if (result.errors.length > 0) {
                 logger.info(`${result.errors.length} errors occurred.`);
             }

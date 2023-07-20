@@ -56,6 +56,13 @@ export class Application implements IBaseApplication {
         };
     }
 
+    public getBooleanArg(name: string, def: boolean): boolean {
+        if (this.args[name as keyof ArgV] === undefined) {
+            return def;
+        }
+        return !!this.args[name as keyof ArgV];
+    }
+
     public getNumberArg(name: string, def: number): number {
         if (this.args[name as keyof ArgV] === undefined) {
             return def;

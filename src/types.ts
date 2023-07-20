@@ -67,6 +67,7 @@ export type IEntryRunnerResponse<T> = T & {
 };
 
 export interface IEntryRunner<T = Record<string, any>> {
+    id: string;
     name: string;
     exec: () => Promise<IEntryRunnerResponse<T>>;
 }
@@ -94,6 +95,7 @@ export interface IEntryApplication extends IApplication {
  */
 export interface IBaseApplication {
     run(): Promise<void>;
+    getBooleanArg: (name: string, def: boolean) => boolean;
     getNumberArg: (name: string, def: number) => number;
     getStringArg: (name: string, def: string) => string;
     getApp: <T>(name: string) => T;

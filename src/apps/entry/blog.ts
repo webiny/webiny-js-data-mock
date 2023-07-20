@@ -236,6 +236,7 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
 
 export const blogRunnerFactory: IEntryRunnerFactory<Result> = app => {
     return {
+        id: "blog",
         name: "Blog",
         exec: () => {
             return executeBlogRunner(app);
