@@ -4,11 +4,14 @@ import {
     CmsEntry,
     IBaseApplication,
     IEntryApplication,
-    IEntryApplicationCreateViaGraphQLResponse
+    IEntryApplicationCreateViaGraphQLResponse,
+    IEntryRunner,
+    IEntryRunnerResponse
 } from "~/types";
 
 import { logger } from "~/logger";
-import { executeBlog } from "~/apps/entry/blog";
+import { blogRunnerFactory } from "~/apps/entry/blog";
+import { carsRunnerFactory } from "~/apps/entry/cars";
 
 const allowedFieldTypes = ["text", "number", "boolean", "long-text", "rich-text", "datetime"];
 
@@ -19,16 +22,26 @@ interface ApiCmsEntries {
 export class EntryApplication implements IEntryApplication {
     private readonly app: IBaseApplication;
 
-    private entries: ApiCmsEntries = {};
+    private readonly entries: ApiCmsEntries = {};
+
+    private readonly runners: IEntryRunner[];
 
     public constructor(app: IBaseApplication) {
         this.app = app;
+
+        this.runners = [blogRunnerFactory(this.app), carsRunnerFactory(this.app)];
     }
 
     public async run(): Promise<void> {
-        logger.debug("Creating blog entries...");
-        const blogResult = await this.runCreateBlog();
-        logger.debug(`...${this.getResultCount(blogResult)} blog entries created.`);
+        for (const runner of this.runners) {
+            logger.info(`Creating ${runner.name} entries...`);
+            const result = await runner.exec();
+            this.setResult(result);
+            logger.info(`${result.total} ${runner.name} entries created.`);
+            if (result.errors.length > 0) {
+                logger.info(`${result.errors.length} errors occurred.`);
+            }
+        }
     }
 
     public getEntries<T extends CmsEntry>(name: string): T[] {
@@ -38,17 +51,19 @@ export class EntryApplication implements IEntryApplication {
         return this.entries[name] as unknown as T[];
     }
 
-    private async runCreateBlog() {
-        const result = await executeBlog(this.app);
-
-        this.logErrors(result.errors);
-
-        this.addEntries({
-            categories: result.categories,
-            authors: result.authors,
-            articles: result.articles
-        });
-        return result;
+    private setResult(result: IEntryRunnerResponse<Record<string, any>>): void {
+        for (const key in result) {
+            if (!result[key] || !Array.isArray(result[key])) {
+                continue;
+            }
+            if (key === "errors") {
+                this.logErrors(result.errors);
+                continue;
+            }
+            this.addEntries({
+                [key]: result[key]
+            });
+        }
     }
 
     private logErrors(errors: ApiCmsError[]) {
@@ -126,19 +141,5 @@ export class EntryApplication implements IEntryApplication {
                 return field.fieldId;
             })
             .join("\n");
-    }
-
-    private getResultCount(results: any): number {
-        if (typeof results !== "object" || Object.keys(results).length === 0) {
-            return 0;
-        }
-        let total = 0;
-        for (const key in results) {
-            if (key === "error" || !Array.isArray(results[key])) {
-                continue;
-            }
-            total = total + results[key].length;
-        }
-        return total;
     }
 }

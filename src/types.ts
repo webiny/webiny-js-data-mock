@@ -57,10 +57,25 @@ export interface IModelApplication extends IApplication {
 /**
  * Entry
  */
+export type IEntryRunnerResponse<T> = T & {
+    total: number;
+    errors: ApiCmsError[];
+};
+
+export interface IEntryRunner<T = Record<string, any>> {
+    name: string;
+    exec: () => Promise<IEntryRunnerResponse<T>>;
+}
+
+export interface IEntryRunnerFactory<T = Record<string, any>> {
+    (app: IBaseApplication): IEntryRunner<T>;
+}
+
 export interface IEntryApplicationCreateViaGraphQLResponse<T> {
     entries: T[];
     errors: ApiCmsError[];
 }
+
 export interface IEntryApplication extends IApplication {
     getEntries: (name: string) => CmsEntry[];
     createViaGraphQL<T>(
@@ -95,6 +110,8 @@ export interface ApiCmsError {
 
 /**
  * CMS entries
+ *
+ * @blog
  */
 export interface CmsEntry {
     id: string;
@@ -121,4 +138,15 @@ export interface ApiCmsArticle extends CmsEntry {
     body: Record<string, any>;
     author: ApiCmsRef;
     categories: ApiCmsRef[];
+}
+
+/**
+ * @cars
+ */
+export interface ApiCmsCarMake extends CmsEntry {
+    name: string;
+}
+export interface ApiCmsCarModel extends CmsEntry {
+    name: string;
+    make: ApiCmsRef;
 }

@@ -2,11 +2,13 @@ import {
     ApiCmsArticle,
     ApiCmsAuthor,
     ApiCmsCategory,
-    ApiCmsError,
     IBaseApplication,
     IEntryApplication,
+    IEntryRunnerFactory,
+    IEntryRunnerResponse,
     IModelApplication
 } from "~/types";
+import { logger } from "~/logger";
 
 type CmsCategory = Pick<ApiCmsCategory, "id" | "title">;
 
@@ -118,13 +120,15 @@ const getAuthors = (): CmsAuthor[] => {
 
 const getArticles = (entries: RefEntry[], amount: number): CmsArticle[] => {
     const articles: CmsArticle[] = [];
+    const authorsArticle: Record<string, number> = {};
     for (let i = 0; i < amount; i++) {
         const author = getRandomAuthor(entries);
         const categories = getRandomCategories(entries);
         const categoryTitles = categories.map(category => category.name);
+        authorsArticle[author.name] = (authorsArticle[author.name] || 0) + 1;
         articles.push({
             id: `article-${i + 1}`,
-            title: `Article written by ${author.name}`,
+            title: `Article ${authorsArticle[author.name]} written by ${author.name}`,
             description: `Description of the article written by ${author.name}`,
             body: [
                 {
@@ -151,10 +155,9 @@ interface Result {
     categories: ApiCmsCategory[];
     authors: ApiCmsAuthor[];
     articles: ApiCmsArticle[];
-    errors: ApiCmsError[];
 }
 
-export const executeBlog = async (app: IBaseApplication): Promise<Result> => {
+const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerResponse<Result>> => {
     const modelApp = app.getApp<IModelApplication>("model");
     const entryApp = app.getApp<IEntryApplication>("entry");
     /**
@@ -169,11 +172,15 @@ export const executeBlog = async (app: IBaseApplication): Promise<Result> => {
     const categoriesVariables = getCategories();
     const authorsVariables = getAuthors();
 
+    logger.debug(`Creating ${categoriesVariables.length} categories...`);
     const { entries: categories, errors: categoryErrors } =
         await entryApp.createViaGraphQL<ApiCmsCategory>(categoryModel, categoriesVariables);
+    logger.debug(`...created.`);
 
+    logger.debug(`Creating ${authorsVariables.length} authors...`);
     const { entries: authors, errors: authorErrors } =
         await entryApp.createViaGraphQL<ApiCmsAuthor>(authorModel, authorsVariables);
+    logger.debug(`...created.`);
 
     const entries = categories
         .map(c => {
@@ -196,13 +203,25 @@ export const executeBlog = async (app: IBaseApplication): Promise<Result> => {
     const articleAmount = app.getNumberArg("articles", 10);
     const articlesVariables = getArticles(entries, articleAmount);
 
+    logger.debug(`Creating ${articleAmount} articles...`);
     const { entries: articles, errors: articleErrors } =
         await entryApp.createViaGraphQL<ApiCmsArticle>(articleModel, articlesVariables);
+    logger.debug(`...created.`);
 
     return {
         categories,
         authors,
         articles,
-        errors: [...categoryErrors, ...authorErrors, ...articleErrors]
+        errors: [...categoryErrors, ...authorErrors, ...articleErrors],
+        total: categories.length + authors.length + articles.length
+    };
+};
+
+export const blogRunnerFactory: IEntryRunnerFactory<Result> = app => {
+    return {
+        name: "Blog",
+        exec: () => {
+            return executeBlogRunner(app);
+        }
     };
 };

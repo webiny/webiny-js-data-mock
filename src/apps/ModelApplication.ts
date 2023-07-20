@@ -37,14 +37,14 @@ export class ModelApplication implements IModelApplication {
         }
 
         for (const model of models) {
-            logger.debug(`Checking for the group "${model.name}".`);
+            logger.info(`Checking for the group "${model.name}".`);
             const exists = listedData.find(m => m.modelId === model.modelId);
             if (exists) {
-                logger.debug("Model already exists, skipping...");
+                logger.info("Model already exists, skipping...");
                 this.models.push(exists);
                 continue;
             }
-            logger.debug(`Creating model "${model.name}"...`);
+            logger.info(`Creating model "${model.name}"...`);
             const { data, error } = await this.create(model);
             if (error) {
                 logger.error(error);
@@ -53,7 +53,7 @@ export class ModelApplication implements IModelApplication {
                 logger.error(`No data received after created the model: ${model.modelId}`);
                 continue;
             }
-            logger.debug("...model created.");
+            logger.info("...model created.");
             this.models.push(data);
         }
     }

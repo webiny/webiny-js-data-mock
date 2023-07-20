@@ -17,7 +17,7 @@ export class GroupApplication implements IGroupApplication {
     public async run(): Promise<void> {
         const groups = [createBlog(), createCars()];
 
-        logger.debug("Listing groups to check if any already exist.");
+        logger.info("Listing groups to check if any already exist.");
         const { data: listedData, error: listedError } = await this.list();
 
         if (listedError) {
@@ -26,14 +26,14 @@ export class GroupApplication implements IGroupApplication {
         }
 
         for (const group of groups) {
-            logger.debug(`Checking for the group "${group.name}".`);
+            logger.info(`Checking for the group "${group.name}".`);
             const exists = listedData.find(g => g.slug.toLowerCase() === group.slug.toLowerCase());
             if (exists) {
-                logger.debug("Group already exists, skipping...");
+                logger.info("Group already exists, skipping...");
                 this.groups.push(exists);
                 continue;
             }
-            logger.debug(`Creating group "${group.name}"...`);
+            logger.info(`Creating group "${group.name}"...`);
             const { data, error } = await this.create(group);
             if (error) {
                 logger.error(error);
@@ -42,7 +42,7 @@ export class GroupApplication implements IGroupApplication {
                 logger.error(`No data received after created the group: ${group.name}`);
                 continue;
             }
-            logger.debug("...group created.");
+            logger.info("...group created.");
             this.groups.push(data);
         }
     }
