@@ -12,11 +12,13 @@ import baseSlugify from "slugify";
 import { logger } from "~/logger";
 
 const slugify = (value: string): string => {
-    return baseSlugify(value, {
+    const result = baseSlugify(value, {
         replacement: "-",
         lower: true,
         trim: true
     });
+
+    return result.replace(/\+/g, "");
 };
 
 type CmsCarMake = Pick<ApiCmsCarMake, "id" | "name">;
@@ -32,8 +34,9 @@ for (const item of carsList) {
         name: brand
     });
     for (const car of models) {
+        const carId = `car-model-${slugify(brand)}-${slugify(car)}`;
         carModels.push({
-            id: `car-model-${slugify(brand)}-${slugify(car)}`,
+            id: carId,
             name: `${brand} ${car}`,
             make: {
                 id: `${carMakeId}#0001`,
