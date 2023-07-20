@@ -2542,6 +2542,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.195":
+  version: 4.14.195
+  resolution: "@types/lodash@npm:4.14.195"
+  checksum: 39b75ca635b3fa943d17d3d3aabc750babe4c8212485a4df166fe0516e39288e14b0c60afc6e21913cc0e5a84734633c71e617e2bd14eaa1cf51b8d7799c432e
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*, @types/node@npm:^20.4.2":
   version: 20.4.2
   resolution: "@types/node@npm:20.4.2"
@@ -12567,6 +12574,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "webiny-mock-data@workspace:."
   dependencies:
+    "@types/lodash": ^4.14.195
     "@types/node": ^20.4.2
     "@types/yargs": ^17.0.24
     "@typescript-eslint/eslint-plugin": ^5.5.0
@@ -12581,6 +12589,7 @@ __metadata:
     eslint-plugin-promise: ^5.2.0
     eslint-plugin-standard: ^5.0.0
     graphql-tag: ^2.12.6
+    lodash: ^4.17.21
     nanoid: ^3.3.6
     node-fetch-commonjs: ^3.3.1
     pino: ^8.14.1

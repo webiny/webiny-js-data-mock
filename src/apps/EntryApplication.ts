@@ -86,7 +86,8 @@ export class EntryApplication implements IEntryApplication {
 
     public async createViaGraphQL<T>(
         model: ApiCmsModel,
-        variableList: Record<string, any>[]
+        variableList: Record<string, any>[],
+        atOnce = 1
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>> {
         const mutation = this.createGraphQLMutation(model);
 
@@ -94,7 +95,8 @@ export class EntryApplication implements IEntryApplication {
             mutation,
             variableList.map(variables => {
                 return { data: variables };
-            })
+            }),
+            atOnce
         );
         const errors: ApiCmsError[] = [];
         const entries: T[] = [];

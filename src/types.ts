@@ -36,7 +36,11 @@ export type ApiGraphQLResult<T> = ApiGraphQLSuccessResult<T> | ApiGraphQLErrorRe
 export interface IGraphQLApplication {
     query<T>(query: string, variables?: Record<string, any>): Promise<ApiGraphQLResult<T>>;
     mutation<T>(query: string, variables: Record<string, any>): Promise<ApiGraphQLResult<T>>;
-    mutations<T>(query: string, variables: Record<string, any>[]): Promise<ApiGraphQLResult<T>[]>;
+    mutations<T>(
+        query: string,
+        variables: Record<string, any>[],
+        atOnce?: number
+    ): Promise<ApiGraphQLResult<T>[]>;
 }
 
 /**
@@ -80,7 +84,8 @@ export interface IEntryApplication extends IApplication {
     getEntries: (name: string) => CmsEntry[];
     createViaGraphQL<T>(
         model: ApiCmsModel,
-        variableList: Record<string, any>[]
+        variableList: Record<string, any>[],
+        atOnce?: number
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>>;
 }
 

@@ -205,7 +205,7 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
 
     logger.debug(`Creating ${articleAmount} articles...`);
     const { entries: articles, errors: articleErrors } =
-        await entryApp.createViaGraphQL<ApiCmsArticle>(articleModel, articlesVariables);
+        await entryApp.createViaGraphQL<ApiCmsArticle>(articleModel, articlesVariables, 10);
     logger.debug(`...created.`);
 
     return {
