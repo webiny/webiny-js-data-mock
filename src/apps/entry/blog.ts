@@ -69,6 +69,18 @@ const categories: CmsCategory[] = [
     {
         id: "entertainment-category",
         title: "Entertainment"
+    },
+    {
+        id: "information-technology-category",
+        title: "Information Technology"
+    },
+    {
+        id: "manufacturing-category",
+        title: "Manufacturing"
+    },
+    {
+        id: "construction-category",
+        title: "Construction"
     }
 ];
 
@@ -200,12 +212,17 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
             })
         );
 
-    const articleAmount = app.getNumberArg("articles", 10);
+    const articleAmount = app.getNumberArg("articles:amount", 100);
+    const articlesAtOnce = app.getNumberArg("articles:atOnce", 10);
     const articlesVariables = getArticles(entries, articleAmount);
 
     logger.debug(`Creating ${articleAmount} articles...`);
     const { entries: articles, errors: articleErrors } =
-        await entryApp.createViaGraphQL<ApiCmsArticle>(articleModel, articlesVariables, 10);
+        await entryApp.createViaGraphQL<ApiCmsArticle>(
+            articleModel,
+            articlesVariables,
+            articlesAtOnce
+        );
     logger.debug(`...created.`);
 
     return {
