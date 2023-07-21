@@ -2,6 +2,7 @@ import { ApiGraphQLResult, IGraphQLApplication } from "~/types";
 import fetch, { Headers, HeadersInit, Response } from "node-fetch-commonjs";
 import { GraphQLError } from "~/errors";
 import lodashChunk from "lodash/chunk";
+import { logger } from "~/logger";
 
 const headers: HeadersInit = {
     "Content-Type": "application/json"
@@ -66,10 +67,15 @@ export class GraphQLApplication implements IGraphQLApplication {
     ): Promise<ApiGraphQLResult<T>[]> {
         const results: ApiGraphQLResult<T>[] = [];
         const chunks = lodashChunk(variablesList, atOnce || 1);
-        for (const chunk of chunks) {
+        logger.debug(`Total batches to execute: ${chunks.length}.`);
+        for (const index in chunks) {
+            const current = Number(index) + 1;
+            logger.trace(`Executing batch ${current} of ${chunks.length}...`);
+            const chunk = chunks[index];
             const chunkResult = await Promise.all(
                 chunk.map(variables => this.mutation<T>(mutation, variables))
             );
+            logger.trace(`...executed.`);
             for (const result of chunkResult) {
                 results.push(result);
             }

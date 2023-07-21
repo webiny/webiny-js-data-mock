@@ -130,16 +130,25 @@ const getAuthors = (): CmsAuthor[] => {
     return [...authors];
 };
 
-const getArticles = (entries: RefEntry[], amount: number): CmsArticle[] => {
+interface GetArticlesParams {
+    entries: RefEntry[];
+    amount: number;
+    startId: number;
+}
+
+const getArticles = (params: GetArticlesParams): CmsArticle[] => {
+    const { entries, amount } = params;
+    const startId = params.startId > 0 ? params.startId : 1;
+    const max = startId + amount;
     const articles: CmsArticle[] = [];
     const authorsArticle: Record<string, number> = {};
-    for (let i = 0; i < amount; i++) {
+    for (let current = startId; current < max; current++) {
         const author = getRandomAuthor(entries);
         const categories = getRandomCategories(entries);
         const categoryTitles = categories.map(category => category.name);
         authorsArticle[author.name] = (authorsArticle[author.name] || 0) + 1;
         articles.push({
-            id: `article-${i + 1}`,
+            id: `article-${current}`,
             title: `Article ${authorsArticle[author.name]} written by ${author.name}`,
             description: `Description of the article written by ${author.name}`,
             body: [
@@ -212,9 +221,14 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
             })
         );
 
+    const articleStartId = app.getNumberArg("articles:startId", 1);
     const articleAmount = app.getNumberArg("articles:amount", 100);
     const articlesAtOnce = app.getNumberArg("articles:atOnce", 10);
-    const articlesVariables = getArticles(entries, articleAmount);
+    const articlesVariables = getArticles({
+        entries,
+        amount: articleAmount,
+        startId: articleStartId
+    });
 
     logger.debug(`Creating ${articleAmount} articles...`);
     const { entries: articles, errors: articleErrors } =
