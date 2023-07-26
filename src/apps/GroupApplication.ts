@@ -1,7 +1,8 @@
-import { ApiCmsGroup, IGroupApplication, IBaseApplication } from "~/types";
-import { createBlog, createCars } from "~/apps/group";
-import { CmsGroup } from "~/apps/group/types";
+import { ApiCmsGroup, IBaseApplication, IGroupApplication } from "~/types";
 import { logger } from "~/logger";
+import { getCmsContentResult } from "./cms/getCmsContentResult";
+import { createBlog, createCars } from "./cms";
+import { CmsGroup } from "./cms/types";
 
 export class GroupApplication implements IGroupApplication {
     private readonly app: IBaseApplication;
@@ -48,7 +49,7 @@ export class GroupApplication implements IGroupApplication {
     }
 
     private async list() {
-        return await this.app.graphql.query<ApiCmsGroup[]>(`
+        const query = `
             query {
                 data: listContentModelGroups {
                     data {
@@ -63,12 +64,16 @@ export class GroupApplication implements IGroupApplication {
                     }
                 }
             }
-        `);
+        `;
+        return await this.app.graphql.query<ApiCmsGroup[]>({
+            query,
+            path: "/cms/manage/en-US",
+            getResult: getCmsContentResult
+        });
     }
 
     private async create(group: CmsGroup) {
-        return await this.app.graphql.mutation<ApiCmsGroup>(
-            `
+        const mutation = `
             mutation CreateGroupMutation($data: CmsContentModelGroupInput!) {
                 data: createContentModelGroup(data: $data) {
                     data {
@@ -83,14 +88,19 @@ export class GroupApplication implements IGroupApplication {
                     }
                 }
             }
-        `,
-            {
-                data: {
-                    name: group.name,
-                    slug: group.slug,
-                    icon: "fa/fas"
-                }
+        `;
+        const variables = {
+            data: {
+                name: group.name,
+                slug: group.slug,
+                icon: "fa/fas"
             }
-        );
+        };
+        return await this.app.graphql.mutation<ApiCmsGroup>({
+            mutation,
+            path: "/cms/manage/en-US",
+            variables,
+            getResult: getCmsContentResult
+        });
     }
 }

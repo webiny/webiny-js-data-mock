@@ -3,6 +3,14 @@ import {
     CmsModel as BaseModel,
     CmsModelField as BaseCmsModelField
 } from "@webiny/api-headless-cms/types";
+import {
+    CreateFolderParams as AcoFolderCreateParams,
+    Folder as AcoFolder
+} from "@webiny/api-aco/types";
+import { Page as PbPage } from "@webiny/api-page-builder/types";
+import { PbUpdatePageInput as BasePbUpdatePageInput } from "@webiny/api-page-builder/graphql/types";
+
+export type { PbPage };
 
 export interface IApplication {
     run(): Promise<void>;
@@ -27,20 +35,48 @@ export interface ApiGraphQLSuccessResult<T> {
 
 export interface ApiGraphQLErrorResult {
     data?: never | null;
-    error: ApiCmsError;
+    error: ApiError;
     extensions: any[];
 }
 
 export type ApiGraphQLResult<T> = ApiGraphQLSuccessResult<T> | ApiGraphQLErrorResult;
 
+export interface IGraphQLApplicationGetResult<T> {
+    (json: ApiGraphQLResultJson): ApiGraphQLResult<T>;
+}
+
+export interface ApiGraphQLResultJson {
+    data: Record<string, any>;
+    errors?: any[];
+    extensions?: any[];
+}
+
+export interface IGraphQLApplicationQueryParams<T> {
+    query: string;
+    path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
+    variables?: Record<string, any>;
+    getResult: IGraphQLApplicationGetResult<T>;
+}
+
+export interface IGraphQLApplicationMutationParams<T> {
+    mutation: string;
+    path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
+    variables: Record<string, any>;
+    getResult: IGraphQLApplicationGetResult<T>;
+}
+
+export interface IGraphQLApplicationMutationsParams<T> {
+    mutation: string;
+    path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
+    variables: Record<string, any>[];
+    getResult: IGraphQLApplicationGetResult<T>;
+    atOnce?: number;
+}
+
 export interface IGraphQLApplication {
-    query<T>(query: string, variables?: Record<string, any>): Promise<ApiGraphQLResult<T>>;
-    mutation<T>(query: string, variables: Record<string, any>): Promise<ApiGraphQLResult<T>>;
-    mutations<T>(
-        query: string,
-        variables: Record<string, any>[],
-        atOnce?: number
-    ): Promise<ApiGraphQLResult<T>[]>;
+    query<T>(params: IGraphQLApplicationQueryParams<T>): Promise<ApiGraphQLResult<T>>;
+    mutation<T>(params: IGraphQLApplicationMutationParams<T>): Promise<ApiGraphQLResult<T>>;
+    mutations<T>(params: IGraphQLApplicationMutationsParams<T>): Promise<ApiGraphQLResult<T>[]>;
 }
 
 /**
@@ -63,7 +99,7 @@ export interface IModelApplication extends IApplication {
  */
 export type IEntryRunnerResponse<T> = T & {
     total: number;
-    errors: ApiCmsError[];
+    errors: ApiError[];
 };
 
 export interface IEntryRunner<T = Record<string, any>> {
@@ -78,7 +114,7 @@ export interface IEntryRunnerFactory<T = Record<string, any>> {
 
 export interface IEntryApplicationCreateViaGraphQLResponse<T> {
     entries: T[];
-    errors: ApiCmsError[];
+    errors: ApiError[];
 }
 
 export interface IEntryApplication extends IApplication {
@@ -88,6 +124,73 @@ export interface IEntryApplication extends IApplication {
         variableList: Record<string, any>[],
         atOnce?: number
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>>;
+}
+
+/**
+ * Page
+ */
+
+export interface IPageRunnerResponse {
+    pages: PbPage[];
+    total: number;
+    errors: ApiError[];
+}
+
+export interface IPageRunner {
+    id: string;
+    name: string;
+    exec: () => Promise<IPageRunnerResponse>;
+}
+
+export interface IPageRunnerFactory {
+    (app: IBaseApplication): IPageRunner;
+}
+
+export interface PbPageInput
+    extends Omit<BasePbUpdatePageInput, "title" | "category">,
+        Required<Pick<BasePbUpdatePageInput, "title" | "category">> {
+    slug: string;
+}
+
+export interface IPageApplication extends IApplication {
+    getPages: () => PbPage[];
+    createViaGraphQL(data: PbPageInput): Promise<PbPage>;
+}
+
+/**
+ * Folders
+ */
+export type { AcoFolderCreateParams };
+
+export type { AcoFolder };
+
+export interface IFolderApplicationCreateViaGraphQLResponse {
+    folders: AcoFolder[];
+    errors: ApiError[];
+}
+
+export type IFolderRunnerResponse = {
+    folders: AcoFolder[];
+    total: number;
+    errors: ApiError[];
+};
+
+export interface IFolderRunner {
+    id: string;
+    name: string;
+    exec: () => Promise<IFolderRunnerResponse>;
+}
+
+export interface IFolderRunnerFactory {
+    (app: IBaseApplication): IFolderRunner;
+}
+
+export interface IFolderApplication extends IApplication {
+    getFolders: (app: string | null) => AcoFolder[];
+    createViaGraphQL(
+        variables: AcoFolderCreateParams[],
+        atOnce?: number
+    ): Promise<IFolderApplicationCreateViaGraphQLResponse>;
 }
 
 /**
@@ -109,7 +212,7 @@ export interface ApiCmsModel
     fields: Pick<BaseCmsModelField, "id" | "fieldId" | "type">[];
 }
 
-export interface ApiCmsError {
+export interface ApiError {
     message: string;
     code: string;
     data?: Record<string, any> | null;

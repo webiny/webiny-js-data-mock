@@ -48,10 +48,10 @@ The `article:startId` defines the starting ID number of the articles - default i
 
 #### Skip creating blog articles
 
-If you want to skip creating blog articles, add `--skip=blog` argument to the create-data command:
+If you want to skip creating blog articles, add `--skip=cms:blog` argument to the create-data command:
 
 ````
-yarn create-data --skip=blog
+yarn create-data --skip=cms:blog
 ````
 
 Note that this will NOT skip group and models creation.
@@ -77,8 +77,8 @@ default is **10**.
 
 #### Skip creating cars
 
-If you want to skip creating cars, add `--skip=cars` argument to the create-data command:
+If you want to skip creating cars, add `--skip=cms:cars` argument to the create-data command:
 
 ````
-yarn create-data --skip=cars
+yarn create-data --skip=cms:cars
 ````

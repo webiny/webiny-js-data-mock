@@ -1,4 +1,4 @@
-import { CmsModel, CmsModelGroup } from "~/apps/model/types";
+import { CmsModel, CmsModelGroup } from "./types";
 import { GroupApplication } from "~/apps/GroupApplication";
 
 const createCategoryModel = (group: CmsModelGroup): CmsModel => {

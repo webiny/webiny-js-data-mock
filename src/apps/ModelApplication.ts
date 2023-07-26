@@ -1,8 +1,9 @@
 import { ApiCmsModel, IBaseApplication, IModelApplication } from "~/types";
-import { createBlogModels, createCarsModels } from "~/apps/model";
-import { GroupApplication } from "~/apps/GroupApplication";
+import { createBlogModels, createCarsModels } from "./cms";
+import { GroupApplication } from "./GroupApplication";
 import { logger } from "~/logger";
-import { CmsModel } from "~/apps/model/types";
+import { CmsModel } from "./cms/types";
+import { getCmsContentResult } from "./cms/getCmsContentResult";
 
 export class ModelApplication implements IModelApplication {
     private readonly app: IBaseApplication;
@@ -59,59 +60,65 @@ export class ModelApplication implements IModelApplication {
     }
 
     private async list() {
-        return this.app.graphql.query<ApiCmsModel[]>(`
-            query ListModels {
-                data: listContentModels {
-                    data {
-                        name
-                        modelId
-                        singularApiName
-                        pluralApiName
-                        fields {
-                            id
-                            type
-                            fieldId
+        return this.app.graphql.query<ApiCmsModel[]>({
+            query: `
+                query ListModels {
+                    data: listContentModels {
+                        data {
+                            name
+                            modelId
+                            singularApiName
+                            pluralApiName
+                            fields {
+                                id
+                                type
+                                fieldId
+                            }
+                        }
+                        error {
+                            message
+                            code
+                            data
                         }
                     }
-                    error {
-                        message
-                        code
-                        data
-                    }
                 }
-            }
-        `);
+            `,
+            path: "/cms/manage/en-US",
+            getResult: getCmsContentResult
+        });
     }
 
     private async create(model: CmsModel) {
-        return this.app.graphql.mutation<ApiCmsModel>(
-            `
-            mutation CreateModel($data: CmsContentModelCreateInput!) {
-                data: createContentModel(data: $data) {
-                    data {
-                        name
-                        modelId
-                        singularApiName
-                        pluralApiName
-                        fields {
-                            id
-                            type
-                            fieldId
+        return this.app.graphql.mutation<ApiCmsModel>({
+            mutation: `
+                mutation CreateModel($data: CmsContentModelCreateInput!) {
+                    data: createContentModel(data: $data) {
+                        data {
+                            name
+                            modelId
+                            singularApiName
+                            pluralApiName
+                            fields {
+                                id
+                                type
+                                fieldId
+                            }
+                        }
+                        error {
+                            message
+                            code
+                            data
                         }
                     }
-                    error {
-                        message
-                        code
-                        data
-                    }
                 }
-            }
-        `,
-            {
+            `,
+            path: "/cms/manage/en-US",
+            variables: {
                 data: {
                     ...model
                 }
-            }
-        );
+            },
+            getResult: getCmsContentResult
+        });
     }
 }

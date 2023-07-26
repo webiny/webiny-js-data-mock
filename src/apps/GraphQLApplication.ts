@@ -1,4 +1,12 @@
-import { ApiGraphQLResult, IGraphQLApplication } from "~/types";
+import {
+    ApiGraphQLResult,
+    ApiGraphQLResultJson,
+    IGraphQLApplication,
+    IGraphQLApplicationGetResult,
+    IGraphQLApplicationMutationParams,
+    IGraphQLApplicationMutationsParams,
+    IGraphQLApplicationQueryParams
+} from "~/types";
 import fetch, { Headers, HeadersInit, Response } from "node-fetch-commonjs";
 import { GraphQLError } from "~/errors";
 import lodashChunk from "lodash/chunk";
@@ -12,7 +20,6 @@ interface Params {
     url: string;
     token: string;
     tenant?: string;
-    locale?: string;
 }
 
 export class GraphQLApplication implements IGraphQLApplication {
@@ -21,20 +28,17 @@ export class GraphQLApplication implements IGraphQLApplication {
 
     public constructor(params: Params) {
         const { url, token } = params;
-        const locale = params.locale || "en-US";
         const tenant = params.tenant || "root";
-        this.url = this.createUrl(url, locale);
+        this.url = url;
         this.headers = {
             authorization: `Bearer ${token}`,
             "x-tenant": tenant
         };
     }
 
-    public async query<T>(
-        query: string,
-        variables?: Record<string, any>
-    ): Promise<ApiGraphQLResult<T>> {
-        const response = await fetch(this.url, {
+    public async query<T>(params: IGraphQLApplicationQueryParams<T>): Promise<ApiGraphQLResult<T>> {
+        const { query, path, variables, getResult } = params;
+        const response = await fetch(this.createUrl(path), {
             method: "POST",
             headers: this.createHeaders(),
             body: JSON.stringify({
@@ -42,14 +46,14 @@ export class GraphQLApplication implements IGraphQLApplication {
                 variables: variables || {}
             })
         });
-        return this.parse(response);
+        return this.parse(response, getResult);
     }
 
     public async mutation<T>(
-        mutation: string,
-        variables: Record<string, any>
+        params: IGraphQLApplicationMutationParams<T>
     ): Promise<ApiGraphQLResult<T>> {
-        const response = await fetch(this.url, {
+        const { mutation, path, variables, getResult } = params;
+        const response = await fetch(this.createUrl(path), {
             method: "POST",
             headers: this.createHeaders(),
             body: JSON.stringify({
@@ -57,23 +61,29 @@ export class GraphQLApplication implements IGraphQLApplication {
                 variables
             })
         });
-        return this.parse<T>(response);
+        return this.parse<T>(response, getResult);
     }
 
     public async mutations<T>(
-        mutation: string,
-        variablesList: Record<string, any>[],
-        atOnce?: number
+        params: IGraphQLApplicationMutationsParams<T>
     ): Promise<ApiGraphQLResult<T>[]> {
+        const { mutation, path, variables, atOnce, getResult } = params;
         const results: ApiGraphQLResult<T>[] = [];
-        const chunks = lodashChunk(variablesList, atOnce || 1);
+        const chunks = lodashChunk(variables, atOnce || 1);
         logger.debug(`Total batches to execute: ${chunks.length}.`);
         for (const index in chunks) {
             const current = Number(index) + 1;
             logger.trace(`Executing batch ${current} of ${chunks.length}...`);
             const chunk = chunks[index];
             const chunkResult = await Promise.all(
-                chunk.map(variables => this.mutation<T>(mutation, variables))
+                chunk.map(vars =>
+                    this.mutation<T>({
+                        mutation,
+                        path,
+                        variables: vars,
+                        getResult
+                    })
+                )
             );
             logger.trace(`...executed.`);
             for (const result of chunkResult) {
@@ -83,7 +93,10 @@ export class GraphQLApplication implements IGraphQLApplication {
         return results;
     }
 
-    private async parse<T = any>(response: Response): Promise<ApiGraphQLResult<T>> {
+    private async parse<T = any>(
+        response: Response,
+        getResult: IGraphQLApplicationGetResult<T>
+    ): Promise<ApiGraphQLResult<T>> {
         if (response.status !== 200) {
             throw new GraphQLError(
                 `Request failed with status ${response.status}.`,
@@ -91,32 +104,17 @@ export class GraphQLApplication implements IGraphQLApplication {
                 JSON.stringify(response)
             );
         }
-        const json = (await response.json()) as any;
-        const { data: result, extensions = [], errors = [] } = json || {};
-        return {
-            data: result?.data?.data,
-            error: result?.data?.error || errors[0],
-            extensions: extensions
-        };
+        const json = (await response.json()) as ApiGraphQLResultJson;
+        return getResult(json);
     }
 
-    private createUrl(url: string, locale: string): string {
-        if (url.match(/\/$/) !== null) {
+    private createUrl(path: string): string {
+        if (path.match(/\/$/) !== null) {
             throw new Error("URL cannot end with /.");
+        } else if (path.match(/^\//) === null) {
+            throw new Error("URL must start with /.");
         }
-        const parts = [url];
-
-        if (url.match("/cms") !== null) {
-            throw new Error("URL cannot contain /cms.");
-        }
-        if (url.match("/manage") !== null) {
-            throw new Error("URL cannot contain /manage.");
-        }
-        parts.push("cms");
-        parts.push("manage");
-        parts.push(locale);
-
-        return parts.join("/");
+        return `${this.url}${path}`;
     }
 
     private createHeaders(): Headers {

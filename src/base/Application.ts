@@ -1,9 +1,11 @@
+import dotenv from "dotenv";
 import { IBaseApplication } from "~/types";
 import { GroupApplication } from "~/apps/GroupApplication";
 import { ModelApplication } from "~/apps/ModelApplication";
 import { EntryApplication } from "~/apps/EntryApplication";
-import dotenv from "dotenv";
 import { GraphQLApplication } from "~/apps/GraphQLApplication";
+// import { PageApplication } from "~/apps/PageApplication";
+import { FolderApplication } from "~/apps/FolderApplication";
 
 const getEnv = () => {
     dotenv.config();
@@ -32,6 +34,8 @@ interface Apps {
     group: GroupApplication;
     model: ModelApplication;
     entry: EntryApplication;
+    // page: PageApplication;
+    folder: FolderApplication;
 }
 
 export class Application implements IBaseApplication {
@@ -46,13 +50,14 @@ export class Application implements IBaseApplication {
         this.graphql = new GraphQLApplication({
             url: env.url,
             token: env.token,
-            tenant: argv.tenant,
-            locale: argv.locale
+            tenant: argv.tenant
         });
         this.apps = {
             group: new GroupApplication(this),
             model: new ModelApplication(this),
-            entry: new EntryApplication(this)
+            entry: new EntryApplication(this),
+            // page: new PageApplication(this),
+            folder: new FolderApplication(this)
         };
     }
 
@@ -68,7 +73,10 @@ export class Application implements IBaseApplication {
             return def;
         }
         const value = Number(this.args[name as keyof ArgV]);
-        return isNaN(value) ? def : value;
+        if (isNaN(value)) {
+            return def;
+        }
+        return value > 0 ? value : def;
     }
 
     public getStringArg(name: string, def: string): string {
@@ -86,8 +94,10 @@ export class Application implements IBaseApplication {
     }
 
     public async run(): Promise<void> {
+        await this.apps.folder.run();
         await this.apps.group.run();
         await this.apps.model.run();
         await this.apps.entry.run();
+        // await this.apps.page.run();
     }
 }

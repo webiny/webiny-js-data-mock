@@ -1,6 +1,6 @@
 import {
-    ApiCmsError,
     ApiCmsModel,
+    ApiError,
     CmsEntry,
     IBaseApplication,
     IEntryApplication,
@@ -10,8 +10,8 @@ import {
 } from "~/types";
 
 import { logger } from "~/logger";
-import { blogRunnerFactory } from "~/apps/entry/blog";
-import { carsRunnerFactory } from "~/apps/entry/cars";
+import { blogRunnerFactory, carsRunnerFactory } from "./cms";
+import { getCmsContentResult } from "./cms/getCmsContentResult";
 
 const allowedFieldTypes = ["text", "number", "boolean", "long-text", "rich-text", "datetime"];
 
@@ -35,7 +35,7 @@ export class EntryApplication implements IEntryApplication {
     public async run(): Promise<void> {
         const skip = this.app.getStringArg(`skip`, "").split(",");
         for (const runner of this.runners) {
-            if (skip.includes(runner.id)) {
+            if (skip.includes(`cms:${runner.id}`)) {
                 logger.info(`Skipping runner "${runner.name}".`);
                 continue;
             }
@@ -71,7 +71,7 @@ export class EntryApplication implements IEntryApplication {
         }
     }
 
-    private logErrors(errors: ApiCmsError[]) {
+    private logErrors(errors: ApiError[]) {
         for (const error of errors) {
             logger.error(error);
         }
@@ -96,14 +96,16 @@ export class EntryApplication implements IEntryApplication {
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>> {
         const mutation = this.createGraphQLMutation(model);
 
-        const result = await this.app.graphql.mutations<T>(
+        const result = await this.app.graphql.mutations<T>({
             mutation,
-            variableList.map(variables => {
+            path: "/cms/manage/en-US",
+            variables: variableList.map(variables => {
                 return { data: variables };
             }),
-            atOnce
-        );
-        const errors: ApiCmsError[] = [];
+            atOnce,
+            getResult: getCmsContentResult
+        });
+        const errors: ApiError[] = [];
         const entries: T[] = [];
         for (const item of result) {
             if (item.error) {
