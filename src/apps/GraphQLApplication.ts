@@ -53,15 +53,30 @@ export class GraphQLApplication implements IGraphQLApplication {
         params: IGraphQLApplicationMutationParams<T>
     ): Promise<ApiGraphQLResult<T>> {
         const { mutation, path, variables, getResult } = params;
-        const response = await fetch(this.createUrl(path), {
-            method: "POST",
-            headers: this.createHeaders(),
-            body: JSON.stringify({
-                query: mutation,
-                variables
-            })
-        });
-        return this.parse<T>(response, getResult);
+        try {
+            const response = await fetch(this.createUrl(path), {
+                method: "POST",
+                headers: this.createHeaders(),
+                body: JSON.stringify({
+                    query: mutation,
+                    variables
+                })
+            });
+            return await this.parse<T>(response, getResult);
+        } catch (ex: any) {
+            logger.error("Failed to execute mutation.");
+            const names = Object.getOwnPropertyNames(ex);
+            for (const name of names) {
+                logger.error(
+                    JSON.stringify({
+                        name,
+                        value: ex[name]
+                    })
+                );
+            }
+
+            throw ex;
+        }
     }
 
     public async mutations<T>(

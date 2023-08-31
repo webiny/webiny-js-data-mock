@@ -5,7 +5,7 @@ import { ModelApplication } from "~/apps/ModelApplication";
 import { EntryApplication } from "~/apps/EntryApplication";
 import { GraphQLApplication } from "~/apps/GraphQLApplication";
 // import { PageApplication } from "~/apps/PageApplication";
-import { FolderApplication } from "~/apps/FolderApplication";
+// import { FolderApplication } from "~/apps/FolderApplication";
 
 const getEnv = () => {
     dotenv.config();
@@ -35,7 +35,7 @@ interface Apps {
     model: ModelApplication;
     entry: EntryApplication;
     // page: PageApplication;
-    folder: FolderApplication;
+    // folder: FolderApplication;
 }
 
 export class Application implements IBaseApplication {
@@ -55,9 +55,9 @@ export class Application implements IBaseApplication {
         this.apps = {
             group: new GroupApplication(this),
             model: new ModelApplication(this),
-            entry: new EntryApplication(this),
+            entry: new EntryApplication(this)
             // page: new PageApplication(this),
-            folder: new FolderApplication(this)
+            // folder: new FolderApplication(this)
         };
     }
 
@@ -94,7 +94,7 @@ export class Application implements IBaseApplication {
     }
 
     public async run(): Promise<void> {
-        await this.apps.folder.run();
+        // await this.apps.folder.run();
         await this.apps.group.run();
         await this.apps.model.run();
         await this.apps.entry.run();
