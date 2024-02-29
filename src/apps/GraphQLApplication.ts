@@ -8,6 +8,7 @@ import {
     IGraphQLApplicationQueryParams
 } from "~/types";
 import fetch, { Headers, HeadersInit, Response } from "node-fetch-commonjs";
+import pRetry from "p-retry";
 import { GraphQLError } from "~/errors";
 import lodashChunk from "lodash/chunk";
 import { logger } from "~/logger";
@@ -38,14 +39,25 @@ export class GraphQLApplication implements IGraphQLApplication {
 
     public async query<T>(params: IGraphQLApplicationQueryParams<T>): Promise<ApiGraphQLResult<T>> {
         const { query, path, variables, getResult } = params;
-        const response = await fetch(this.createUrl(path), {
-            method: "POST",
-            headers: this.createHeaders(),
-            body: JSON.stringify({
-                query,
-                variables: variables || {}
-            })
+
+        const runQuery = () => {
+            return fetch(this.createUrl(path), {
+                method: "POST",
+                headers: this.createHeaders(),
+                body: JSON.stringify({
+                    query,
+                    variables: variables || {}
+                })
+            });
+        };
+
+        const response = await pRetry(runQuery, {
+            retries: 5,
+            onFailedAttempt: error => {
+                logger.warn(`Failed attempt to execute query: ${error.message}.`);
+            }
         });
+
         return this.parse(response, getResult);
     }
 
@@ -54,14 +66,24 @@ export class GraphQLApplication implements IGraphQLApplication {
     ): Promise<ApiGraphQLResult<T>> {
         const { mutation, path, variables, getResult } = params;
         try {
-            const response = await fetch(this.createUrl(path), {
-                method: "POST",
-                headers: this.createHeaders(),
-                body: JSON.stringify({
-                    query: mutation,
-                    variables
-                })
+            const runMutation = () => {
+                return fetch(this.createUrl(path), {
+                    method: "POST",
+                    headers: this.createHeaders(),
+                    body: JSON.stringify({
+                        query: mutation,
+                        variables
+                    })
+                });
+            };
+
+            const response = await pRetry(runMutation, {
+                retries: 5,
+                onFailedAttempt: error => {
+                    logger.warn(`Failed attempt to execute mutation: ${error.message}.`);
+                }
             });
+
             return await this.parse<T>(response, getResult);
         } catch (ex: any) {
             logger.error("Failed to execute mutation.");
