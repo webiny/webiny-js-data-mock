@@ -1,8 +1,0 @@
-**/node_modules/
-**/dist/
-**/lib/
-**/build/
-**/.out/
-**/*.d.ts
-idea.js
-scripts/**/*.js

@@ -10,6 +10,10 @@ import {
 import { Page as PbPage } from "@webiny/api-page-builder/types";
 import { PbUpdatePageInput as BasePbUpdatePageInput } from "@webiny/api-page-builder/graphql/types";
 
+export type GenericRecordKey = string | number | symbol;
+// eslint-disable-next-line
+export type GenericRecord<K extends GenericRecordKey = GenericRecordKey, V = any> = Record<K, V>;
+
 export type { PbPage };
 
 export interface IApplication {
@@ -30,13 +34,13 @@ export interface ApiGraphQLSuccessResult<T> {
     data: T;
     meta?: ApiCmsMeta | null;
     error?: never;
-    extensions: any[];
+    extensions: GenericRecord[];
 }
 
 export interface ApiGraphQLErrorResult {
     data?: never | null;
     error: ApiError;
-    extensions: any[];
+    extensions: GenericRecord[];
 }
 
 export type ApiGraphQLResult<T> = ApiGraphQLSuccessResult<T> | ApiGraphQLErrorResult;
@@ -46,29 +50,29 @@ export interface IGraphQLApplicationGetResult<T> {
 }
 
 export interface ApiGraphQLResultJson {
-    data: Record<string, any>;
-    errors?: any[];
-    extensions?: any[];
+    data: GenericRecord;
+    errors?: GenericRecord[];
+    extensions?: GenericRecord[];
 }
 
 export interface IGraphQLApplicationQueryParams<T> {
     query: string;
     path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
-    variables?: Record<string, any>;
+    variables?: GenericRecord;
     getResult: IGraphQLApplicationGetResult<T>;
 }
 
 export interface IGraphQLApplicationMutationParams<T> {
     mutation: string;
     path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
-    variables: Record<string, any>;
+    variables: GenericRecord;
     getResult: IGraphQLApplicationGetResult<T>;
 }
 
 export interface IGraphQLApplicationMutationsParams<T> {
     mutation: string;
     path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
-    variables: Record<string, any>[];
+    variables: GenericRecord[];
     getResult: IGraphQLApplicationGetResult<T>;
     atOnce?: number;
 }
@@ -102,13 +106,13 @@ export type IEntryRunnerResponse<T> = T & {
     errors: ApiError[];
 };
 
-export interface IEntryRunner<T = Record<string, any>> {
+export interface IEntryRunner<T = GenericRecord> {
     id: string;
     name: string;
     exec: () => Promise<IEntryRunnerResponse<T>>;
 }
 
-export interface IEntryRunnerFactory<T = Record<string, any>> {
+export interface IEntryRunnerFactory<T = GenericRecord> {
     (app: IBaseApplication): IEntryRunner<T>;
 }
 
@@ -121,7 +125,7 @@ export interface IEntryApplication extends IApplication {
     getEntries: (name: string) => CmsEntry[];
     createViaGraphQL<T>(
         model: ApiCmsModel,
-        variableList: Record<string, any>[],
+        variableList: GenericRecord[],
         atOnce?: number
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>>;
 }
@@ -215,7 +219,7 @@ export interface ApiCmsModel
 export interface ApiError {
     message: string;
     code: string;
-    data?: Record<string, any> | null;
+    data?: GenericRecord | null;
 }
 
 /**
@@ -245,7 +249,7 @@ export interface ApiCmsRef {
 export interface ApiCmsArticle extends CmsEntry {
     title: string;
     description: string;
-    body: Record<string, any>;
+    body: GenericRecord;
     author: ApiCmsRef;
     categories: ApiCmsRef[];
 }

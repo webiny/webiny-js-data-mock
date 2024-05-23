@@ -1,8 +1,12 @@
+import { GenericRecord } from "~/types";
+
+export type GraphQLErrorData = GenericRecord | string | undefined | null;
+
 export class GraphQLError extends Error {
     public readonly code: number;
-    public readonly data: any;
+    public readonly data?: GraphQLErrorData;
 
-    public constructor(message: string, code: number, data: any) {
+    public constructor(message: string, code: number, data?: GraphQLErrorData) {
         super();
         this.message = message;
         this.code = code;

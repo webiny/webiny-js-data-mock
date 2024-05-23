@@ -2,6 +2,7 @@ import {
     ApiCmsModel,
     ApiError,
     CmsEntry,
+    GenericRecord,
     IBaseApplication,
     IEntryApplication,
     IEntryApplicationCreateViaGraphQLResponse,
@@ -56,7 +57,7 @@ export class EntryApplication implements IEntryApplication {
         return this.entries[name] as unknown as T[];
     }
 
-    private setResult(result: IEntryRunnerResponse<Record<string, any>>): void {
+    private setResult(result: IEntryRunnerResponse<GenericRecord>): void {
         for (const key in result) {
             if (!result[key] || !Array.isArray(result[key])) {
                 continue;
@@ -91,7 +92,7 @@ export class EntryApplication implements IEntryApplication {
 
     public async createViaGraphQL<T>(
         model: ApiCmsModel,
-        variableList: Record<string, any>[],
+        variableList: GenericRecord[],
         atOnce = 1
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>> {
         const mutation = this.createGraphQLMutation(model);

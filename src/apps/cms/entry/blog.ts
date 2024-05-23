@@ -2,6 +2,7 @@ import {
     ApiCmsArticle,
     ApiCmsAuthor,
     ApiCmsCategory,
+    GenericRecord,
     IBaseApplication,
     IEntryApplication,
     IEntryRunnerFactory,
@@ -141,7 +142,7 @@ const getArticles = (params: GetArticlesParams): CmsArticle[] => {
     const startId = params.startId > 0 ? params.startId : 1;
     const max = startId + amount;
     const articles: CmsArticle[] = [];
-    const authorsArticle: Record<string, number> = {};
+    const authorsArticle: GenericRecord<string, number> = {};
     for (let current = startId; current < max; current++) {
         const author = getRandomAuthor(entries);
         const categories = getRandomCategories(entries);

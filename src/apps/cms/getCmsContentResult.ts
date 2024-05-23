@@ -1,6 +1,8 @@
-import { ApiGraphQLResult, ApiGraphQLResultJson } from "~/types";
+import { ApiGraphQLResult, ApiGraphQLResultJson, GenericRecord } from "~/types";
 
-export const getCmsContentResult = (json: ApiGraphQLResultJson): ApiGraphQLResult<any> => {
+export const getCmsContentResult = (
+    json: ApiGraphQLResultJson
+): ApiGraphQLResult<GenericRecord> => {
     const { data: result, extensions = [], errors = [] } = json;
     return {
         data: result?.data?.data || null,

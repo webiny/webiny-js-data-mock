@@ -13,7 +13,7 @@ interface AcoFolderData {
     title: string;
     slug: string;
     type: AcoFolderType;
-    parentId?: string;
+    parentId?: string | undefined;
 }
 
 const folderList: Pick<AcoFolderData, "title" | "slug" | "parentId">[] = [
@@ -221,6 +221,7 @@ const createFolders: CreateFoldersCallable = async params => {
     errors.push(...childFoldersResult.errors);
 };
 
+// eslint-disable-next-line
 const createCmsFolders = async (
     app: FolderApplication,
     folders: AcoFolder[],
@@ -247,6 +248,7 @@ const createPageFolders = async (
     });
 };
 
+// eslint-disable-next-line
 const createFileFolders = async (
     app: FolderApplication,
     folders: AcoFolder[],

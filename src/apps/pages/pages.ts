@@ -3,7 +3,9 @@ import { IBaseApplication, IPageRunnerFactory, IPageRunnerResponse } from "~/typ
 const executePageRunner = async (app: IBaseApplication): Promise<IPageRunnerResponse> => {
     const pageAmount = app.getNumberArg("page:amount", 10);
 
-    for (let i = 0; i < pageAmount; i++) {}
+    for (let i = 0; i < pageAmount; i++) {
+        /* empty */
+    }
 
     return {
         total: 0,

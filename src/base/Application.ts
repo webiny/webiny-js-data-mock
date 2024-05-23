@@ -27,7 +27,6 @@ interface ArgV {
     confirm?: boolean;
     tenant?: string;
     locale?: string;
-    [key: string]: any;
 }
 
 interface Apps {
@@ -46,6 +45,8 @@ export class Application implements IBaseApplication {
     public constructor(argv: ArgV) {
         this.args = argv;
         const env = getEnv();
+        console.log(argv);
+        process.exit();
 
         this.graphql = new GraphQLApplication({
             url: env.url,

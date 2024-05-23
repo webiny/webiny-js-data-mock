@@ -1,13 +1,13 @@
 import {
     ApiGraphQLResult,
     ApiGraphQLResultJson,
+    GenericRecord,
     IGraphQLApplication,
     IGraphQLApplicationGetResult,
     IGraphQLApplicationMutationParams,
     IGraphQLApplicationMutationsParams,
     IGraphQLApplicationQueryParams
 } from "~/types";
-import fetch, { Headers, HeadersInit, Response } from "node-fetch-commonjs";
 import { GraphQLError } from "~/errors";
 import lodashChunk from "lodash/chunk";
 import { logger } from "~/logger";
@@ -19,7 +19,7 @@ const headers: HeadersInit = {
 interface Params {
     url: string;
     token: string;
-    tenant?: string;
+    tenant?: string | undefined;
 }
 
 export class GraphQLApplication implements IGraphQLApplication {
@@ -63,7 +63,8 @@ export class GraphQLApplication implements IGraphQLApplication {
                 })
             });
             return await this.parse<T>(response, getResult);
-        } catch (ex: any) {
+        } catch (err) {
+            const ex = err as GenericRecord;
             logger.error("Failed to execute mutation.");
             const names = Object.getOwnPropertyNames(ex);
             for (const name of names) {
@@ -108,7 +109,7 @@ export class GraphQLApplication implements IGraphQLApplication {
         return results;
     }
 
-    private async parse<T = any>(
+    private async parse<T>(
         response: Response,
         getResult: IGraphQLApplicationGetResult<T>
     ): Promise<ApiGraphQLResult<T>> {
