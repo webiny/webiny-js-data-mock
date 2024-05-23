@@ -11,8 +11,8 @@ import {
 } from "~/types";
 
 import { logger } from "~/logger";
-import { blogRunnerFactory, carsRunnerFactory } from "./cms";
-import { getCmsContentResult } from "./cms/getCmsContentResult";
+import { blogRunnerFactory, simpleCarsRunnerFactory } from "./cms";
+import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
 
 const allowedFieldTypes = ["text", "number", "boolean", "long-text", "rich-text", "datetime"];
 
@@ -30,7 +30,7 @@ export class EntryApplication implements IEntryApplication {
     public constructor(app: IBaseApplication) {
         this.app = app;
 
-        this.runners = [blogRunnerFactory(this.app), carsRunnerFactory(this.app)];
+        this.runners = [blogRunnerFactory(this.app), simpleCarsRunnerFactory(this.app)];
     }
 
     public async run(): Promise<void> {
@@ -104,7 +104,7 @@ export class EntryApplication implements IEntryApplication {
                 return { data: variables };
             }),
             atOnce,
-            getResult: getCmsContentResult
+            getResult: createGetCmsContentResult()
         });
         const errors: ApiError[] = [];
         const entries: T[] = [];

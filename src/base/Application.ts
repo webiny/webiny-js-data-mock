@@ -23,7 +23,7 @@ const getEnv = () => {
     };
 };
 
-interface ArgV {
+export interface ApplicationParams {
     confirm?: boolean;
     tenant?: string;
     locale?: string;
@@ -39,10 +39,10 @@ interface Apps {
 
 export class Application implements IBaseApplication {
     public readonly graphql: GraphQLApplication;
-    private readonly args: ArgV;
+    private readonly args: ApplicationParams;
     private readonly apps: Apps;
 
-    public constructor(argv: ArgV) {
+    public constructor(argv: ApplicationParams) {
         this.args = argv;
         const env = getEnv();
         console.log(argv);
@@ -63,17 +63,17 @@ export class Application implements IBaseApplication {
     }
 
     public getBooleanArg(name: string, def: boolean): boolean {
-        if (this.args[name as keyof ArgV] === undefined) {
+        if (this.args[name as keyof ApplicationParams] === undefined) {
             return def;
         }
-        return !!this.args[name as keyof ArgV];
+        return !!this.args[name as keyof ApplicationParams];
     }
 
     public getNumberArg(name: string, def: number): number {
-        if (this.args[name as keyof ArgV] === undefined) {
+        if (this.args[name as keyof ApplicationParams] === undefined) {
             return def;
         }
-        const value = Number(this.args[name as keyof ArgV]);
+        const value = Number(this.args[name as keyof ApplicationParams]);
         if (isNaN(value)) {
             return def;
         }
@@ -81,10 +81,10 @@ export class Application implements IBaseApplication {
     }
 
     public getStringArg(name: string, def: string): string {
-        if (this.args[name as keyof ArgV] === undefined) {
+        if (this.args[name as keyof ApplicationParams] === undefined) {
             return def;
         }
-        return String(this.args[name as keyof ArgV]);
+        return String(this.args[name as keyof ApplicationParams]);
     }
 
     public getApp<T>(name: string): T {

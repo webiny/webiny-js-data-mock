@@ -1,6 +1,6 @@
 import { ApiCmsGroup, IBaseApplication, IGroupApplication } from "~/types";
 import { logger } from "~/logger";
-import { getCmsContentResult } from "./cms/getCmsContentResult";
+import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
 import { createBlog, createCars } from "./cms";
 import { CmsGroup } from "./cms/types";
 
@@ -68,7 +68,7 @@ export class GroupApplication implements IGroupApplication {
         return await this.app.graphql.query<ApiCmsGroup[]>({
             query,
             path: "/cms/manage/en-US",
-            getResult: getCmsContentResult
+            getResult: createGetCmsContentResult()
         });
     }
 
@@ -100,7 +100,7 @@ export class GroupApplication implements IGroupApplication {
             mutation,
             path: "/cms/manage/en-US",
             variables,
-            getResult: getCmsContentResult
+            getResult: createGetCmsContentResult()
         });
     }
 }

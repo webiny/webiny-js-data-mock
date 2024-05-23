@@ -4,7 +4,18 @@ const eslint = require("@eslint/js");
 const tseslint = require("typescript-eslint");
 
 // eslint-disable-next-line
-module.exports = tseslint.config(eslint.configs.recommended, ...tseslint.configs.recommended);
+module.exports = tseslint.config(eslint.configs.recommended, ...tseslint.configs.recommended, {
+    ignores: [
+        "**/node_modules/",
+        "**/dist/",
+        "**/lib/",
+        "**/build/",
+        "**/.out/",
+        "**/*.d.ts",
+        "idea.js",
+        "scripts/**/*.js"
+    ]
+});
 //
 //module.exports = {
 //    extends: "@typescript-eslint/recommended",

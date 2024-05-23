@@ -1,5 +1,5 @@
 import { IBaseApplication, IPageApplication, IPageRunner, PbPage, PbPageInput } from "~/types";
-import { getPageBuilderPageResult } from "./pageBuilder/getPageBuilderPageResult";
+import { createGetPageBuilderPageResult } from "./pageBuilder/createGetPageBuilderPageResult";
 import { pageRunnerFactory } from "./pages/pages";
 import { logger } from "~/logger";
 
@@ -40,7 +40,7 @@ export class PageApplication implements IPageApplication {
             variables: {
                 category: variables.category
             },
-            getResult: getPageBuilderPageResult
+            getResult: createGetPageBuilderPageResult()
         });
         if (createResponse.error) {
             throw createResponse.error;
@@ -59,7 +59,7 @@ export class PageApplication implements IPageApplication {
                     ...variables
                 }
             },
-            getResult: getPageBuilderPageResult
+            getResult: createGetPageBuilderPageResult()
         });
         if (updateResponse.error) {
             throw updateResponse.error;

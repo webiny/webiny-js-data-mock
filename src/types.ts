@@ -257,10 +257,10 @@ export interface ApiCmsArticle extends CmsEntry {
 /**
  * @cars
  */
-export interface ApiCmsCarMake extends CmsEntry {
+export interface ApiCmsSimpleCarMake extends CmsEntry {
     name: string;
 }
-export interface ApiCmsCarModel extends CmsEntry {
+export interface ApiCmsSimpleCarModel extends CmsEntry {
     name: string;
     make: ApiCmsRef;
 }

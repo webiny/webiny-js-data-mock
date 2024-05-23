@@ -1,9 +1,9 @@
 import { ApiCmsModel, IBaseApplication, IModelApplication } from "~/types";
-import { createBlogModels, createCarsModels } from "./cms";
+import { createBlogModels, createSimpleCarsModels } from "./cms";
 import { GroupApplication } from "./GroupApplication";
 import { logger } from "~/logger";
 import { CmsModel } from "./cms/types";
-import { getCmsContentResult } from "./cms/getCmsContentResult";
+import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
 
 export class ModelApplication implements IModelApplication {
     private readonly app: IBaseApplication;
@@ -28,7 +28,7 @@ export class ModelApplication implements IModelApplication {
 
     public async run(): Promise<void> {
         const groupApp = this.app.getApp<GroupApplication>("group");
-        const models = [...createBlogModels(groupApp), ...createCarsModels(groupApp)];
+        const models = [...createBlogModels(groupApp), ...createSimpleCarsModels(groupApp)];
 
         const { data: listedData, error: listedError } = await this.list();
 
@@ -84,7 +84,7 @@ export class ModelApplication implements IModelApplication {
                 }
             `,
             path: "/cms/manage/en-US",
-            getResult: getCmsContentResult
+            getResult: createGetCmsContentResult()
         });
     }
 
@@ -118,7 +118,7 @@ export class ModelApplication implements IModelApplication {
                     ...model
                 }
             },
-            getResult: getCmsContentResult
+            getResult: createGetCmsContentResult()
         });
     }
 }

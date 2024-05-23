@@ -1,11 +1,11 @@
 import yargs from "yargs";
 import { logger } from "./logger";
 import { hideBin } from "yargs/helpers";
-import { Application } from "~/base/Application";
+import { Application, ApplicationParams } from "~/base/Application";
 
 const main = async () => {
     const argv = await yargs(hideBin(process.argv)).argv;
-    const app = new Application(argv);
+    const app = new Application(argv as unknown as ApplicationParams);
     await app.run();
 };
 

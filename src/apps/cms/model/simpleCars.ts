@@ -1,13 +1,13 @@
 import { GroupApplication } from "~/apps/GroupApplication";
 import { CmsModel, CmsModelGroup } from "./types";
 
-const createCarsMakeModel = (group: CmsModelGroup): CmsModel => {
+const createSimpleCarsMakeModel = (group: CmsModelGroup): CmsModel => {
     return {
-        name: "Car Make",
-        modelId: "carMake",
-        singularApiName: "CarMake",
-        pluralApiName: "CarMakes",
-        description: "Car Make model.",
+        name: "Simple Car Make",
+        modelId: "simpleCarMake",
+        singularApiName: "SimpleCarMake",
+        pluralApiName: "SimpleCarMakes",
+        description: "Simple Car Make model.",
         group: {
             id: group.id,
             name: group.name
@@ -33,13 +33,13 @@ const createCarsMakeModel = (group: CmsModelGroup): CmsModel => {
     };
 };
 
-const createCarsModelModel = (group: CmsModelGroup): CmsModel => {
+const createSimpleCarsModelModel = (group: CmsModelGroup): CmsModel => {
     return {
-        name: "Car Model",
-        modelId: "carModel",
-        singularApiName: "CarModel",
-        pluralApiName: "CarModels",
-        description: "Car Model model.",
+        name: "Simple Car Model",
+        modelId: "simpleCarModel",
+        singularApiName: "SimpleCarModel",
+        pluralApiName: "SimpleCarModels",
+        description: "Simple Car Model model.",
         group: {
             id: group.id,
             name: group.name
@@ -81,10 +81,10 @@ const createCarsModelModel = (group: CmsModelGroup): CmsModel => {
     };
 };
 
-export const createCarsModels = (app: GroupApplication): CmsModel[] => {
+export const createSimpleCarsModels = (app: GroupApplication): CmsModel[] => {
     const group = app.groups.find(g => g.slug === "cars");
     if (!group) {
         throw new Error(`Missing "cars" group.`);
     }
-    return [createCarsMakeModel(group), createCarsModelModel(group)];
+    return [createSimpleCarsMakeModel(group), createSimpleCarsModelModel(group)];
 };

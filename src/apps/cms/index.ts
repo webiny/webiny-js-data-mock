@@ -7,9 +7,9 @@ export * from "./group/cars";
  * Models
  */
 export * from "./model/blog";
-export * from "./model/cars";
+export * from "./model/simpleCars";
 /**
  * Entries
  */
 export * from "./entry/blog";
-export * from "./entry/cars";
+export * from "./entry/simpleCars";
