@@ -56,7 +56,7 @@ yarn create-data --skip=cms:blog
 
 Note that this will NOT skip group and models creation.
 
-## Car mock data (id: cars)
+## Car mock data (id: simpleCars)
 
 ### Car Makes
 
@@ -69,16 +69,16 @@ Car models list is hardcoded, there is 892 of them.
 There are modifier arguments for the create-data command:
 
 ````
-yarn create-data --carModels:atOnce=10
+yarn create-data --simpleCarModels:atOnce=10
 ````
 
-The `carModels:atOnce` defines how much car models will be created at once (how many mutations will be sent at once) -
+The `simpleCarModels:atOnce` defines how much car models will be created at once (how many mutations will be sent at once) -
 default is **10**.
 
-#### Skip creating cars
+#### Skip creating simple cars
 
-If you want to skip creating cars, add `--skip=cms:cars` argument to the create-data command:
+If you want to skip creating cars, add `--skip=cms:simpleCars` argument to the create-data command:
 
 ````
-yarn create-data --skip=cms:cars
+yarn create-data --skip=cms:simpleCars
 ````
