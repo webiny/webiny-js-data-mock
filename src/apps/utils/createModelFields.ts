@@ -1,6 +1,16 @@
 import { ApiCmsModelField } from "~/types";
 
-const allowedFieldTypes = ["text", "number", "boolean", "long-text", "rich-text", "datetime"];
+const allowedFieldTypes = [
+    "text",
+    "number",
+    "boolean",
+    "long-text",
+    "rich-text",
+    "datetime",
+    "ref",
+    "file",
+    "json"
+];
 
 export const createModelFields = (fields: ApiCmsModelField[]): string => {
     return fields
