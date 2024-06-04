@@ -38,7 +38,8 @@
     "typescript-eslint": "^7.10.0"
   },
   "scripts": {
-    "create-data": "ts-node src/index.ts",
+    "create-data": "ts-node src/index.ts --create-data",
+    "fetch-data": "ts-node src/index.ts --fetch-data",
     "eslint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
     "eslint:fix": "yarn eslint --fix",
     "prettier": "prettier \"**/**/*.{js,jsx,ts,tsx,json}\" --config .prettierrc.js",

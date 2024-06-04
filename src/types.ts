@@ -34,13 +34,13 @@ export interface ApiGraphQLSuccessResult<T> {
     data: T;
     meta?: ApiCmsMeta | null;
     error?: never;
-    extensions: GenericRecord[];
+    extensions?: GenericRecord[];
 }
 
 export interface ApiGraphQLErrorResult {
     data?: never | null;
     error: ApiError;
-    extensions: GenericRecord[];
+    extensions?: GenericRecord[];
 }
 
 export type ApiGraphQLResult<T> = ApiGraphQLSuccessResult<T> | ApiGraphQLErrorResult;
@@ -51,6 +51,7 @@ export interface IGraphQLApplicationGetResult<T> {
 
 export interface ApiGraphQLResultJson {
     data: GenericRecord;
+    meta?: ApiCmsMeta;
     errors?: GenericRecord[];
     extensions?: GenericRecord[];
 }
@@ -87,15 +88,16 @@ export interface IGraphQLApplication {
  * Group
  */
 export interface IGroupApplication extends IApplication {
-    getGroups: () => ApiCmsGroup[];
+    getGroups(): ApiCmsGroup[];
 }
 
 /**
  * Model
  */
 export interface IModelApplication extends IApplication {
-    getModels: () => ApiCmsModel[];
-    getModel: (id: string) => ApiCmsModel;
+    getModels(): ApiCmsModel[];
+    getModel(id: string): ApiCmsModel;
+    fetch(modelId: string): Promise<ApiCmsModel>;
 }
 
 /**
@@ -109,7 +111,7 @@ export type IEntryRunnerResponse<T> = T & {
 export interface IEntryRunner<T = GenericRecord> {
     id: string;
     name: string;
-    exec: () => Promise<IEntryRunnerResponse<T>>;
+    exec(): Promise<IEntryRunnerResponse<T>>;
 }
 
 export interface IEntryRunnerFactory<T = GenericRecord> {
@@ -143,7 +145,7 @@ export interface IPageRunnerResponse {
 export interface IPageRunner {
     id: string;
     name: string;
-    exec: () => Promise<IPageRunnerResponse>;
+    exec(): Promise<IPageRunnerResponse>;
 }
 
 export interface IPageRunnerFactory {
@@ -157,7 +159,7 @@ export interface PbPageInput
 }
 
 export interface IPageApplication extends IApplication {
-    getPages: () => PbPage[];
+    getPages(): PbPage[];
     createViaGraphQL(data: PbPageInput): Promise<PbPage>;
 }
 
@@ -182,7 +184,7 @@ export type IFolderRunnerResponse = {
 export interface IFolderRunner {
     id: string;
     name: string;
-    exec: () => Promise<IFolderRunnerResponse>;
+    exec(): Promise<IFolderRunnerResponse>;
 }
 
 export interface IFolderRunnerFactory {
@@ -196,6 +198,11 @@ export interface IFolderApplication extends IApplication {
         atOnce?: number
     ): Promise<IFolderApplicationCreateViaGraphQLResponse>;
 }
+
+/**
+ * Fetcher
+ */
+export interface IFetchEntriesApplication extends IApplication {}
 
 /**
  * Base

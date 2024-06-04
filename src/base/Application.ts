@@ -4,6 +4,7 @@ import { GroupApplication } from "~/apps/GroupApplication";
 import { ModelApplication } from "~/apps/ModelApplication";
 import { EntryApplication } from "~/apps/EntryApplication";
 import { GraphQLApplication } from "~/apps/GraphQLApplication";
+import { FetchEntriesApplication } from "~/apps/FetchEntriesApplication";
 // import { PageApplication } from "~/apps/PageApplication";
 // import { FolderApplication } from "~/apps/FolderApplication";
 
@@ -35,6 +36,7 @@ interface Apps {
     entry: EntryApplication;
     // page: PageApplication;
     // folder: FolderApplication;
+    fetcher: FetchEntriesApplication;
 }
 
 export class Application implements IBaseApplication {
@@ -45,8 +47,6 @@ export class Application implements IBaseApplication {
     public constructor(argv: ApplicationParams) {
         this.args = argv;
         const env = getEnv();
-        console.log(argv);
-        process.exit();
 
         this.graphql = new GraphQLApplication({
             url: env.url,
@@ -56,13 +56,14 @@ export class Application implements IBaseApplication {
         this.apps = {
             group: new GroupApplication(this),
             model: new ModelApplication(this),
-            entry: new EntryApplication(this)
+            entry: new EntryApplication(this),
+            fetcher: new FetchEntriesApplication(this)
             // page: new PageApplication(this),
             // folder: new FolderApplication(this)
         };
     }
 
-    public getBooleanArg(name: string, def: boolean): boolean {
+    public getBooleanArg(name: string, def: boolean = false): boolean {
         if (this.args[name as keyof ApplicationParams] === undefined) {
             return def;
         }
@@ -95,10 +96,16 @@ export class Application implements IBaseApplication {
     }
 
     public async run(): Promise<void> {
-        // await this.apps.folder.run();
-        await this.apps.group.run();
-        await this.apps.model.run();
-        await this.apps.entry.run();
-        // await this.apps.page.run();
+        const createData = this.getBooleanArg("create-data");
+        const fetchData = this.getBooleanArg("fetch-data");
+        if (createData) {
+            // await this.apps.folder.run();
+            await this.apps.group.run();
+            await this.apps.model.run();
+            await this.apps.entry.run();
+            // await this.apps.page.run();
+        } else if (fetchData) {
+            await this.apps.fetcher.run();
+        }
     }
 }

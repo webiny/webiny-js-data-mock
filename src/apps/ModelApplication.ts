@@ -59,6 +59,40 @@ export class ModelApplication implements IModelApplication {
         }
     }
 
+    public async fetch(modelId: string) {
+        const result = await this.app.graphql.query<ApiCmsModel>({
+            query: `
+                query FetchSingleModel {
+                    data: getContentModel(modelId: "${modelId}") {
+                        data {
+                            name
+                            modelId
+                            singularApiName
+                            pluralApiName
+                            fields {
+                                id
+                                type
+                                fieldId
+                            }
+                        }
+                        error {
+                            message
+                            code
+                            data
+                        }
+                    }
+                }
+            `,
+            path: "/cms/manage/en-US",
+            getResult: createGetCmsContentResult()
+        });
+        if (result.data) {
+            return result.data;
+        }
+        logger.error(result.error);
+        throw new Error(result.error.message);
+    }
+
     private async list() {
         return this.app.graphql.query<ApiCmsModel[]>({
             query: `
