@@ -95,3 +95,5 @@ Where:
 * `per-request` - is the number of entries you want to fetch per request - default is **1000**
 * `max-requests` - is the maximum number of requests you want to allow to execute - default is **100**
 * `filename` - is the name of the file where the fetched entries will be saved - if no filename is given, you will only get info about the amount of entries fetched
+
+Note that, if you pass the `filename`, the fetched entries will contain only the allowed types of fields, defined [here](https://github.com/webiny/webiny-js-data-mock/blob/c6cc7633afa86e92b4135de66ab305edfe3204e8/src/apps/utils/createModelFields.ts#L3).
