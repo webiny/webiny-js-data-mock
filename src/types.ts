@@ -218,9 +218,11 @@ export interface IBaseApplication {
 
 export type ApiCmsGroup = Pick<BaseGroup, "id" | "name" | "slug">;
 
+export type ApiCmsModelField = Pick<BaseCmsModelField, "id" | "fieldId" | "type">;
+
 export interface ApiCmsModel
     extends Pick<BaseModel, "name" | "modelId" | "singularApiName" | "pluralApiName"> {
-    fields: Pick<BaseCmsModelField, "id" | "fieldId" | "type">[];
+    fields: ApiCmsModelField[];
 }
 
 export interface ApiError {

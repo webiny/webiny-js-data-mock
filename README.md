@@ -82,3 +82,16 @@ If you want to skip creating cars, add `--skip=cms:simpleCars` argument to the c
 ````
 yarn create-data --skip=cms:simpleCars
 ````
+
+
+## Fetch All Entries From A Certain Model
+
+You can also fetch a list of entries from a certain model. For example, to fetch a list of articles, run:
+```
+yarn fetch-data --model=article --per-request=2000 --filename=articles.json
+```
+Where:
+* model - is the modelId you want to fetch entries from
+* per-request - is the number of entries you want to fetch per request - default is 1000
+* max-requests - is the maximum number of requests you want to allow to execute - default is 100
+* filename - is the name of the file where the fetched entries will be saved - if no filename is given, you will only get info about the amount of entries fetched

@@ -16908,6 +16908,7 @@ __metadata:
     ttypescript: ^1.5.15
     typescript: ^5.4.5
     typescript-eslint: ^7.10.0
+    write-json-file: ^4.3.0
     yargs: ^17.7.2
   languageName: unknown
   linkType: soft
@@ -17239,7 +17240,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"write-json-file@npm:4.3.0":
+"write-json-file@npm:4.3.0, write-json-file@npm:^4.3.0":
   version: 4.3.0
   resolution: "write-json-file@npm:4.3.0"
   dependencies:

@@ -5,8 +5,9 @@ import {
     IFetchEntriesApplication,
     IModelApplication
 } from "~/types";
-
 import { logger } from "~/logger";
+import writeJsonFile from "write-json-file";
+import { createModelFields } from "~/apps/utils/createModelFields";
 
 interface ApiResultEntry {
     id: string;
@@ -16,6 +17,12 @@ interface ApiResultEntry {
 interface IFetchEntriesOptions {
     cursor?: string | undefined;
     limit: number;
+    fields?: string;
+}
+
+interface IStoreToFileOptions {
+    filename?: string;
+    entries: ApiResultEntry[];
 }
 
 export class FetchEntriesApplication implements IFetchEntriesApplication {
@@ -35,54 +42,78 @@ export class FetchEntriesApplication implements IFetchEntriesApplication {
         logger.debug("...done.");
 
         let cursor: string | null | undefined = null;
-        let current = 1;
-        const entries = new Set<string>();
+        let currentRequest = 1;
+        const entries: ApiResultEntry[] = [];
 
-        const maxRuns = this.app.getNumberArg("max-runs", 100);
-        const limitPerRun = this.app.getNumberArg("limit", 1000);
+        const maxRequests = this.app.getNumberArg("max-requests", 100);
+        const limitPerRun = this.app.getNumberArg("per-request", 1000);
+        const filename = this.app.getStringArg("filename", "");
 
-        while (current < maxRuns) {
-            logger.debug(`Current page: ${current}. Cursor: ${cursor || "none"}`);
+        const fields = filename ? createModelFields(model.fields) : "";
+
+        while (currentRequest < maxRequests) {
+            logger.debug(`Current page: ${currentRequest}. Cursor: ${cursor || "none"}`);
             const result = await this.fetchEntries(model, {
                 cursor: cursor || undefined,
-                limit: limitPerRun
+                limit: limitPerRun,
+                fields
             });
             if (!result?.data) {
-                logger.info(`No more to fetch. Fetched: ${entries.size} entries.`);
-                return;
+                logger.info(`No more to fetch. Fetched: ${entries.length} entries.`);
+                return this.storeToFile({
+                    filename,
+                    entries
+                });
             }
 
             cursor = result.meta?.cursor;
 
             for (const entry of result.data) {
-                entries.add(entry.entryId);
+                entries.push(entry);
             }
-            current++;
+            currentRequest++;
             if (!result.meta?.hasMoreItems) {
-                logger.info(`No more to fetch. Fetched: ${entries.size} entries.`);
-                return;
+                logger.info(`No more to fetch. Fetched: ${entries.length} entries.`);
+                return this.storeToFile({
+                    filename,
+                    entries
+                });
             }
         }
+        logger.error(`You reached the maximum number of requests: ${maxRequests}.`);
     }
 
     private async fetchEntries(
         model: ApiCmsModel,
         options: IFetchEntriesOptions
     ): Promise<ApiGraphQLResult<ApiResultEntry[]> | null> {
-        const { cursor, limit } = options;
+        const { fields, cursor, limit } = options;
         const query = /* GraphQL */ `
             query List${model.pluralApiName}($after: String, $limit: Int) {
                 ${model.pluralApiName}: list${model.pluralApiName}(after: $after, limit: $limit) {
-                data {
-                    id
-                    entryId
+                    data {
+                        id
+                        entryId
+                        createdOn
+                        savedOn
+                        createdBy {
+                            id
+                            displayName
+                            type
+                        }
+                        savedBy {
+                            id
+                            displayName
+                            type
+                        }
+                        ${fields}
+                    }
+                    meta {
+                        cursor
+                        hasMoreItems
+                        totalCount
+                    }
                 }
-                meta {
-                    cursor
-                    hasMoreItems
-                    totalCount
-                }
-            }
             }
         `;
 
@@ -103,5 +134,17 @@ export class FetchEntriesApplication implements IFetchEntriesApplication {
                 } as ApiGraphQLResult<ApiResultEntry[]>;
             }
         });
+    }
+
+    private async storeToFile(options: IStoreToFileOptions): Promise<void> {
+        if (!options.filename) {
+            return;
+        } else if (options.entries.length === 0) {
+            logger.warn(`No entries to store.`);
+            return;
+        }
+
+        logger.info(`Storing entries to file: ${options.filename}`);
+        return writeJsonFile(options.filename, options.entries);
     }
 }

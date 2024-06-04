@@ -9,12 +9,10 @@ import {
     IEntryRunner,
     IEntryRunnerResponse
 } from "~/types";
-
 import { logger } from "~/logger";
 import { blogRunnerFactory, simpleCarsRunnerFactory } from "./cms";
 import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
-
-const allowedFieldTypes = ["text", "number", "boolean", "long-text", "rich-text", "datetime"];
+import { createModelFields } from "./utils/createModelFields";
 
 interface ApiCmsEntries {
     [key: string]: CmsEntry[];
@@ -130,7 +128,7 @@ export class EntryApplication implements IEntryApplication {
                     data {
                         id
                         entryId
-                        ${this.createModelFields(model.fields)}
+                        ${createModelFields(model.fields)}
                     }
                     error {
                         message
@@ -140,16 +138,5 @@ export class EntryApplication implements IEntryApplication {
                 }
             }
         `;
-    }
-
-    private createModelFields(fields: ApiCmsModel["fields"]): string {
-        return fields
-            .filter(field => {
-                return allowedFieldTypes.includes(field.type);
-            })
-            .map(field => {
-                return field.fieldId;
-            })
-            .join("\n");
     }
 }
