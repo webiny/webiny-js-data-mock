@@ -68,7 +68,7 @@ const createSimpleCarsModelModel = (group: CmsModelGroup): CmsModel => {
                 settings: {
                     models: [
                         {
-                            modelId: "carMake"
+                            modelId: "simpleCarMake"
                         }
                     ]
                 },
