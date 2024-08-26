@@ -12926,7 +12926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-retry@npm:4.6.2, p-retry@npm:^4.5.0":
+"p-retry@npm:4.6.2, p-retry@npm:^4.0.0, p-retry@npm:^4.5.0":
   version: 4.6.2
   resolution: "p-retry@npm:4.6.2"
   dependencies:
@@ -16900,6 +16900,7 @@ __metadata:
     graphql-tag: ^2.12.6
     lodash: ^4.17.21
     nanoid: ^5.0.7
+    p-retry: ^4.0.0
     pino: ^9.1.0
     pino-pretty: ^11.0.0
     prettier: ^3.2.5
