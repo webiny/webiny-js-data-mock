@@ -134,6 +134,7 @@ export class EntryApplication implements IEntryApplication {
                         message
                         code
                         data
+                        stack
                     }
                 }
             }

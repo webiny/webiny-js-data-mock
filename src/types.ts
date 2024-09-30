@@ -79,6 +79,7 @@ export interface IGraphQLApplicationMutationsParams<T> {
 }
 
 export interface IGraphQLApplication {
+    setTenant(tenant: string): void;
     query<T>(params: IGraphQLApplicationQueryParams<T>): Promise<ApiGraphQLResult<T>>;
     mutation<T>(params: IGraphQLApplicationMutationParams<T>): Promise<ApiGraphQLResult<T>>;
     mutations<T>(params: IGraphQLApplicationMutationsParams<T>): Promise<ApiGraphQLResult<T>[]>;
@@ -218,7 +219,10 @@ export interface IBaseApplication {
 
 export type ApiCmsGroup = Pick<BaseGroup, "id" | "name" | "slug">;
 
-export type ApiCmsModelField = Pick<BaseCmsModelField, "id" | "fieldId" | "type">;
+export type ApiCmsModelField = Pick<
+    BaseCmsModelField,
+    "id" | "fieldId" | "type" | "multipleValues" | "settings" | "predefinedValues"
+>;
 
 export interface ApiCmsModel
     extends Pick<BaseModel, "name" | "modelId" | "singularApiName" | "pluralApiName"> {

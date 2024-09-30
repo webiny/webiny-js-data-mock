@@ -5,6 +5,7 @@
   "author": "Bruno Zorić",
   "license": "MIT",
   "dependencies": {
+    "@faker-js/faker": "^9.0.3",
     "@webiny/api-aco": "^5.39.6",
     "@webiny/api-headless-cms": "^5.39.6",
     "@webiny/api-page-builder": "^5.39.6",
@@ -41,6 +42,8 @@
   },
   "scripts": {
     "create-data": "ts-node src/index.ts --create-data",
+    "create-tenants": "ts-node src/index.ts --create-tenants",
+    "create-data-per-tenant": "ts-node src/index.ts --create-data-per-tenant",
     "fetch-data": "ts-node src/index.ts --fetch-data",
     "eslint": "eslint \"**/*.{js,jsx,ts,tsx}\" --max-warnings=0",
     "eslint:fix": "yarn eslint --fix",

@@ -73,12 +73,23 @@ export class ModelApplication implements IModelApplication {
                                 id
                                 type
                                 fieldId
+                                multipleValues
+                                settings
+                                predefinedValues {
+                                    enabled
+                                    values {
+                                        label
+                                        value
+                                        selected
+                                    }
+                                }
                             }
                         }
                         error {
                             message
                             code
                             data
+                            stack
                         }
                     }
                 }
@@ -113,6 +124,7 @@ export class ModelApplication implements IModelApplication {
                             message
                             code
                             data
+                            stack
                         }
                     }
                 }
@@ -142,6 +154,7 @@ export class ModelApplication implements IModelApplication {
                             message
                             code
                             data
+                            stack
                         }
                     }
                 }

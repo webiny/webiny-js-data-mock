@@ -5,6 +5,8 @@ import { ModelApplication } from "~/apps/ModelApplication";
 import { EntryApplication } from "~/apps/EntryApplication";
 import { GraphQLApplication } from "~/apps/GraphQLApplication";
 import { FetchEntriesApplication } from "~/apps/FetchEntriesApplication";
+import { TenantsApplication } from "~/apps/tenants/TenantsApplication";
+import { EntryPerTenantApplication } from "~/apps/tenants/EntryPerTenantApplication";
 // import { PageApplication } from "~/apps/PageApplication";
 // import { FolderApplication } from "~/apps/FolderApplication";
 
@@ -37,6 +39,8 @@ interface Apps {
     // page: PageApplication;
     // folder: FolderApplication;
     fetcher: FetchEntriesApplication;
+    tenants: TenantsApplication;
+    entryPerTenant: EntryPerTenantApplication;
 }
 
 export class Application implements IBaseApplication {
@@ -57,9 +61,11 @@ export class Application implements IBaseApplication {
             group: new GroupApplication(this),
             model: new ModelApplication(this),
             entry: new EntryApplication(this),
-            fetcher: new FetchEntriesApplication(this)
+            fetcher: new FetchEntriesApplication(this),
             // page: new PageApplication(this),
             // folder: new FolderApplication(this)
+            tenants: new TenantsApplication(this),
+            entryPerTenant: new EntryPerTenantApplication(this)
         };
     }
 
@@ -97,6 +103,8 @@ export class Application implements IBaseApplication {
 
     public async run(): Promise<void> {
         const createData = this.getBooleanArg("create-data");
+        const createTenants = this.getBooleanArg("create-tenants");
+        const createDataPerTenant = this.getBooleanArg("create-data-per-tenant");
         const fetchData = this.getBooleanArg("fetch-data");
         if (createData) {
             // await this.apps.folder.run();
@@ -106,6 +114,10 @@ export class Application implements IBaseApplication {
             // await this.apps.page.run();
         } else if (fetchData) {
             await this.apps.fetcher.run();
+        } else if (createTenants) {
+            await this.apps.tenants.run();
+        } else if (createDataPerTenant) {
+            await this.apps.entryPerTenant.run();
         }
     }
 }

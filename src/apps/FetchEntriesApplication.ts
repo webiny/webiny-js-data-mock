@@ -113,6 +113,12 @@ export class FetchEntriesApplication implements IFetchEntriesApplication {
                         hasMoreItems
                         totalCount
                     }
+                    error {
+                        message
+                        code
+                        data
+                        stack
+                    }
                 }
             }
         `;

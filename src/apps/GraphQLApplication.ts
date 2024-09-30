@@ -13,10 +13,6 @@ import { GraphQLError } from "~/errors";
 import lodashChunk from "lodash/chunk";
 import { logger } from "~/logger";
 
-const headers: HeadersInit = {
-    "Content-Type": "application/json"
-};
-
 interface Params {
     url: string;
     token: string;
@@ -25,30 +21,38 @@ interface Params {
 
 export class GraphQLApplication implements IGraphQLApplication {
     private readonly url: string;
-    private readonly headers: HeadersInit;
+    private readonly headers: Headers;
 
     public constructor(params: Params) {
         const { url, token } = params;
         const tenant = params.tenant || "root";
         this.url = url;
-        this.headers = {
+        this.headers = new Headers({
+            "Content-Type": "application/json",
             authorization: `Bearer ${token}`,
             "x-tenant": tenant
-        };
+        });
+    }
+
+    public setTenant(tenant: string): void {
+        this.headers.set("x-tenant", tenant);
     }
 
     public async query<T>(params: IGraphQLApplicationQueryParams<T>): Promise<ApiGraphQLResult<T>> {
         const { query, path, variables, getResult } = params;
 
         const runQuery = () => {
-            return fetch(this.createUrl(path), {
+            const target = this.createUrl(path);
+            const options = {
                 method: "POST",
-                headers: this.createHeaders(),
+                headers: this.headers,
                 body: JSON.stringify({
                     query,
                     variables: variables || {}
                 })
-            });
+            };
+
+            return fetch(target, options);
         };
 
         const response = await pRetry(runQuery, {
@@ -65,15 +69,18 @@ export class GraphQLApplication implements IGraphQLApplication {
     ): Promise<ApiGraphQLResult<T>> {
         const { mutation, path, variables, getResult } = params;
         try {
+            const target = this.createUrl(path);
+            const options = {
+                method: "POST",
+                headers: this.headers,
+                body: JSON.stringify({
+                    query: mutation,
+                    variables
+                })
+            };
+
             const runMutation = () => {
-                return fetch(this.createUrl(path), {
-                    method: "POST",
-                    headers: this.createHeaders(),
-                    body: JSON.stringify({
-                        query: mutation,
-                        variables
-                    })
-                });
+                return fetch(target, options);
             };
 
             const response = await pRetry(runMutation, {
@@ -137,7 +144,10 @@ export class GraphQLApplication implements IGraphQLApplication {
             throw new GraphQLError(
                 `Request failed with status ${response.status}.`,
                 response.status,
-                JSON.stringify(response)
+                {
+                    response,
+                    json: JSON.stringify(await response.json())
+                }
             );
         }
         const json = (await response.json()) as ApiGraphQLResultJson;
@@ -151,12 +161,5 @@ export class GraphQLApplication implements IGraphQLApplication {
             throw new Error("URL must start with /.");
         }
         return `${this.url}${path}`;
-    }
-
-    private createHeaders(): Headers {
-        return new Headers({
-            ...headers,
-            ...this.headers
-        });
     }
 }

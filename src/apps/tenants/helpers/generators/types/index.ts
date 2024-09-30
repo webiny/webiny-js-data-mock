@@ -1,0 +1,11 @@
+import "./NumberGenerator";
+import "./LongTextGenerator";
+import "./JsonGenerator";
+import "./DateGenerator";
+import "./FileGenerator";
+import "./RichTextGenerator";
+import "./BooleanGenerator";
+import "./TextGenerator";
+import "./RefGenerator";
+import "./ObjectGenerator";
+import "./DynamicZoneGenerator";
