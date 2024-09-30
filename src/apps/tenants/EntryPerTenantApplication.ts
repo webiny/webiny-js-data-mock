@@ -15,30 +15,36 @@ export class EntryPerTenantApplication implements IApplication {
     public async run(): Promise<void> {
         this.app.graphql.setTenant("root");
 
-        const input = this.app.getStringArg("tenants", "").split(",").filter(Boolean);
         const perTenant = this.app.getNumberArg("amount", 5);
+        const tenantsInput = this.app.getStringArg("tenants", "").split(",").filter(Boolean);
+        const modelsInput = this.app.getStringArg("models", "").split(",").filter(Boolean);
 
-        const modelId = this.app.getStringArg("model", "");
-        if (!modelId) {
-            throw new Error("No model specified.");
+        if (perTenant <= 0) {
+            throw new Error("Amount must be greater than 0.");
         }
-        const entryApp = this.app.getApp<EntryApplication>("entry");
 
-        if (!input?.length) {
+        if (!modelsInput?.length) {
+            throw new Error("No models specified.");
+        }
+
+        if (!tenantsInput?.length) {
             throw new Error("No tenants specified.");
         }
 
+        const entryApp = this.app.getApp<EntryApplication>("entry");
+
         let tenants: ITenant[] = await this.app.getApp<TenantsApplication>("tenants").listTenants();
-        if (input[0] !== "*") {
-            tenants = tenants.filter(t => {
-                const name = t.name.toLowerCase();
-                return input.some(i => {
-                    return i.toLowerCase() === name;
+        if (tenantsInput[0] !== "*") {
+            tenants = tenants.filter(tenant => {
+                const id = tenant.id.toLowerCase();
+                const name = tenant.name.toLowerCase();
+                return tenantsInput.some(tenantInput => {
+                    const tenantInputName = tenantInput.toLowerCase();
+                    return tenantInputName === name || tenantInputName === id;
                 });
             });
         }
-
-        logger.info(`Running through ${tenants.length} tenant(s).`);
+        logger.info(`Running through ${tenants.length} tenants.`);
 
         for (const tenant of tenants) {
             const id = tenant.id;
@@ -46,20 +52,39 @@ export class EntryPerTenantApplication implements IApplication {
 
             const modelApp = this.app.getApp<ModelApplication>("model");
 
-            const model = await modelApp.fetch(modelId);
-            if (!model) {
-                throw new Error(`Model "${modelId}" not found.`);
+            let { data: models } = await modelApp.list();
+            if (!models?.length) {
+                logger.error(`Tenant "${tenant.name}" has no models.`);
+                continue;
+            }
+            if (modelsInput[0] !== "*") {
+                models = models.filter(m => {
+                    const name = m.modelId.toLowerCase();
+                    return modelsInput.some(i => {
+                        return i.toLowerCase() === name;
+                    });
+                });
             }
 
-            const variables = createEntryVariables(model, perTenant);
+            if (models.length === 0) {
+                logger.debug("Skipping tenant as no models were found from the selected ones.");
+                continue;
+            }
 
-            const result = await entryApp.createViaGraphQL(model, variables, variables.length);
-            if (result.errors.length) {
-                logger.error("Errors occurred while creating entries.");
-                for (const error of result.errors) {
-                    logger.error(error);
+            for (const model of models) {
+                logger.debug(
+                    `Creating tenant "${tenant.name}" entries for model "${model.modelId}"...`
+                );
+                const variables = createEntryVariables(model, perTenant);
+
+                const result = await entryApp.createViaGraphQL(model, variables, variables.length);
+                if (result.errors.length) {
+                    logger.error("Errors occurred while creating entries.");
+                    for (const error of result.errors) {
+                        logger.error(error);
+                    }
+                    throw new Error("Errors occurred while creating entries.");
                 }
-                throw new Error("Errors occurred while creating entries.");
             }
         }
     }

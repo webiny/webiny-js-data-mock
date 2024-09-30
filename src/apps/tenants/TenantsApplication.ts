@@ -6,6 +6,19 @@ export interface ITenant {
     name: string;
 }
 
+const defaultTenant: ITenant = {
+    id: "root",
+    name: "Root"
+};
+
+const addDefaultTenant = (input: ITenant[]): ITenant[] => {
+    const tenants = [...input];
+    if (!tenants.some(tenant => tenant.id === defaultTenant.id)) {
+        tenants.push(defaultTenant);
+    }
+    return tenants;
+};
+
 export class TenantsApplication implements IApplication {
     private readonly app: IBaseApplication;
 
@@ -102,6 +115,6 @@ export class TenantsApplication implements IApplication {
         } else if (!result.data?.length) {
             throw new Error("No tenants found.");
         }
-        return result.data as ITenant[];
+        return addDefaultTenant(result.data);
     }
 }

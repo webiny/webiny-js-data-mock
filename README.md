@@ -97,3 +97,30 @@ Where:
 * `filename` - is the name of the file where the fetched entries will be saved - if no filename is given, you will only get info about the amount of entries fetched
 
 Note that, if you pass the `filename`, the fetched entries will contain only the allowed types of fields, defined [here](https://github.com/webiny/webiny-js-data-mock/blob/main/src/apps/utils/createModelFields.ts#L3).
+
+## Create Tenants
+
+You can create tenants by running:
+
+```
+yarn create-tenants --tenants=aChildTenant,anotherChildTenant,....
+```
+
+But for that to work, you need a code from `./code/tenants/` folder in your project.
+
+Just copy the files and import the plugins via the `createTenantsMockDataPlugins()` from the `index.ts` file.
+
+## Create Completely Random Mock Data For Any Model
+
+You can create completely random mock data for any model by running:
+
+```
+yarn create-data-per-tenant --tenants="yourTenantName" --amount=1 --models=YOUR_MODEL_ID
+```
+
+In the `tenants` argument, you can pass multiple tenants separated by a comma or a `*` to target all existing tenants.
+
+In the `amount` argument, you must send the amount of the records you want to create.
+
+In the `models` argument, you must send the `modelId` of the model you want to create the records for. Same as for the
+tenants, you can send multiple `modelId` separated by a comma or a `*` to target all existing models.

@@ -5,6 +5,24 @@ import { logger } from "~/logger";
 import { CmsModel } from "./cms/types";
 import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
 
+const cmsModelFieldsGraphQlSubselection = `
+    {
+        id
+        type
+        fieldId
+        multipleValues
+        settings
+        predefinedValues {
+            enabled
+            values {
+                label
+                value
+                selected
+            }
+        }
+    }
+`;
+
 export class ModelApplication implements IModelApplication {
     private readonly app: IBaseApplication;
 
@@ -69,21 +87,7 @@ export class ModelApplication implements IModelApplication {
                             modelId
                             singularApiName
                             pluralApiName
-                            fields {
-                                id
-                                type
-                                fieldId
-                                multipleValues
-                                settings
-                                predefinedValues {
-                                    enabled
-                                    values {
-                                        label
-                                        value
-                                        selected
-                                    }
-                                }
-                            }
+                            fields ${cmsModelFieldsGraphQlSubselection}
                         }
                         error {
                             message
@@ -104,7 +108,7 @@ export class ModelApplication implements IModelApplication {
         throw new Error(result.error.message);
     }
 
-    private async list() {
+    public async list() {
         return this.app.graphql.query<ApiCmsModel[]>({
             query: `
                 query ListModels {
@@ -114,11 +118,7 @@ export class ModelApplication implements IModelApplication {
                             modelId
                             singularApiName
                             pluralApiName
-                            fields {
-                                id
-                                type
-                                fieldId
-                            }
+                            fields ${cmsModelFieldsGraphQlSubselection}
                         }
                         error {
                             message
