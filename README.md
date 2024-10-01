@@ -106,11 +106,20 @@ You can create tenants by running:
 yarn create-tenants --tenants=aChildTenant,anotherChildTenant,....
 ```
 
-But for that to work, you need a code from `./code/tenants/` folder in your project.
+But for that to work, you need a code from `./code/tenants/` diretory in your project.
 
 Just copy the files and import the plugins via the `createTenantsMockDataPlugins()` from the `index.ts` file.
 
 ## Create Completely Random Mock Data For Any Model
+
+### Add a custom authorizer which allows the `create-data-per-tenant` script to run
+
+To be able to run the `create-data-per-tenant` script, you need to add a custom authorizer to your project. You can do
+that by using the code in `./code/authorization` directory.
+
+Just copy the files and import the plugins via the `createAuthenticator()` from the `index.ts` file.
+
+### Creating the data
 
 You can create completely random mock data for any model by running:
 
