@@ -7744,13 +7744,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/retry@npm:0.12.2":
-  version: 0.12.2
-  resolution: "@types/retry@npm:0.12.2"
-  checksum: e5675035717b39ce4f42f339657cae9637cf0c0051cf54314a6a2c44d38d91f6544be9ddc0280587789b6afd056be5d99dbe3e9f4df68c286c36321579b1bf4a
-  languageName: node
-  linkType: hard
-
 "@types/send@npm:*":
   version: 0.17.4
   resolution: "@types/send@npm:0.17.4"
@@ -11045,13 +11038,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detect-indent@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "detect-indent@npm:7.0.1"
-  checksum: cbf3f0b1c3c881934ca94428e1179b26ab2a587e0d719031d37a67fb506d49d067de54ff057cb1e772e75975fed5155c01cd4518306fee60988b1486e3fc7768
-  languageName: node
-  linkType: hard
-
 "detect-node@npm:^2.0.4":
   version: 2.1.0
   resolution: "detect-node@npm:2.1.0"
@@ -14019,13 +14005,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-network-error@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "is-network-error@npm:1.1.0"
-  checksum: b2fe6aac07f814a9de275efd05934c832c129e7ba292d27614e9e8eec9e043b7a0bbeaeca5d0916b0f462edbec2aa2eaee974ee0a12ac095040e9515c222c251
-  languageName: node
-  linkType: hard
-
 "is-number-object@npm:^1.0.4":
   version: 1.0.7
   resolution: "is-number-object@npm:1.0.7"
@@ -14067,13 +14046,6 @@ __metadata:
   version: 3.0.0
   resolution: "is-plain-obj@npm:3.0.0"
   checksum: a6ebdf8e12ab73f33530641972a72a4b8aed6df04f762070d823808303e4f76d87d5ea5bd76f96a7bbe83d93f04ac7764429c29413bd9049853a69cb630fb21c
-  languageName: node
-  linkType: hard
-
-"is-plain-obj@npm:^4.0.0, is-plain-obj@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "is-plain-obj@npm:4.1.0"
-  checksum: 6dc45da70d04a81f35c9310971e78a6a3c7a63547ef782e3a07ee3674695081b6ca4e977fbb8efc48dae3375e0b34558d2bcd722aec9bddfa2d7db5b041be8ce
   languageName: node
   linkType: hard
 
@@ -15773,24 +15745,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-retry@npm:4.6.2, p-retry@npm:^4.5.0":
+"p-retry@npm:4.6.2, p-retry@npm:^4.5.0, p-retry@npm:^4.6.2":
   version: 4.6.2
   resolution: "p-retry@npm:4.6.2"
   dependencies:
     "@types/retry": 0.12.0
     retry: ^0.13.1
   checksum: 45c270bfddaffb4a895cea16cb760dcc72bdecb6cb45fef1971fa6ea2e91ddeafddefe01e444ac73e33b1b3d5d29fb0dd18a7effb294262437221ddc03ce0f2e
-  languageName: node
-  linkType: hard
-
-"p-retry@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "p-retry@npm:6.2.0"
-  dependencies:
-    "@types/retry": 0.12.2
-    is-network-error: ^1.0.0
-    retry: ^0.13.1
-  checksum: 6003573c559ee812329c9c3ede7ba12a783fdc8dd70602116646e850c920b4597dc502fe001c3f9526fca4e93275045db7a27341c458e51db179c1374a01ac44
   languageName: node
   linkType: hard
 
@@ -18443,15 +18404,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sort-keys@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "sort-keys@npm:5.1.0"
-  dependencies:
-    is-plain-obj: ^4.0.0
-  checksum: d14936082b2fd1efbddb42c1f7ece39acf8c2e54e4bc65b92ee634ffc7a4a955bdfb334f28ce1273c947611c11f8a73711d147dc43922172a782eb4d71b8c3a2
-  languageName: node
-  linkType: hard
-
 "source-list-map@npm:^2.0.1":
   version: 2.0.1
   resolution: "source-list-map@npm:2.0.1"
@@ -19780,7 +19732,7 @@ __metadata:
     graphql-tag: ^2.12.6
     lodash: ^4.17.21
     nanoid: ^5.0.7
-    p-retry: ^6.2.0
+    p-retry: ^4.6.2
     pino: ^9.4.0
     pino-pretty: ^11.2.2
     prettier: ^3.3.3
@@ -19789,7 +19741,7 @@ __metadata:
     ttypescript: ^1.5.15
     typescript: ^5.5.4
     typescript-eslint: ^8.8.0
-    write-json-file: ^6.0.0
+    write-json-file: ^4.3.0
     yargs: ^17.7.2
   languageName: unknown
   linkType: soft
@@ -20125,17 +20077,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"write-file-atomic@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "write-file-atomic@npm:5.0.1"
-  dependencies:
-    imurmurhash: ^0.1.4
-    signal-exit: ^4.0.1
-  checksum: 8dbb0e2512c2f72ccc20ccedab9986c7d02d04039ed6e8780c987dc4940b793339c50172a1008eed7747001bfacc0ca47562668a069a7506c46c77d7ba3926a9
-  languageName: node
-  linkType: hard
-
-"write-json-file@npm:4.3.0":
+"write-json-file@npm:4.3.0, write-json-file@npm:^4.3.0":
   version: 4.3.0
   resolution: "write-json-file@npm:4.3.0"
   dependencies:
@@ -20146,18 +20088,6 @@ __metadata:
     sort-keys: ^4.0.0
     write-file-atomic: ^3.0.0
   checksum: 33908c591923dc273e6574e7c0e2df157acfcf498e3a87c5615ced006a465c4058877df6abce6fc1acd2844fa3cf4518ace4a34d5d82ab28bcf896317ba1db6f
-  languageName: node
-  linkType: hard
-
-"write-json-file@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "write-json-file@npm:6.0.0"
-  dependencies:
-    detect-indent: ^7.0.1
-    is-plain-obj: ^4.1.0
-    sort-keys: ^5.0.0
-    write-file-atomic: ^5.0.1
-  checksum: a53a5c9a20bf91fdf953074ecce633f8d0b2aaa5df1570ee1d31ddb88f48a0b1893563dc3ca9c8446298e640bf5591ed8530bab85a969e416e56cba03997ec06
   languageName: node
   linkType: hard
 

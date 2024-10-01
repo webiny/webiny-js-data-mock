@@ -66,6 +66,11 @@ export class EntryPerTenantApplication implements IApplication {
                 });
             });
         }
+        if (tenants.length === 0) {
+            logger.info(`No tenants matched to the input.`);
+            this.app.cache.clear();
+            return;
+        }
         logger.info(`Running through ${tenants.length} tenants.`);
 
         for (const tenant of tenants) {
@@ -82,6 +87,7 @@ export class EntryPerTenantApplication implements IApplication {
             );
             if (!models?.length) {
                 logger.error(`Tenant "${tenant.name}" has no models.`);
+                this.app.cache.clear();
                 continue;
             }
             if (modelsInput[0] !== "*") {
@@ -95,6 +101,7 @@ export class EntryPerTenantApplication implements IApplication {
 
             if (models.length === 0) {
                 logger.debug("Skipping tenant as no models were found from the selected ones.");
+                this.app.cache.clear();
                 continue;
             }
 
@@ -103,14 +110,11 @@ export class EntryPerTenantApplication implements IApplication {
                     `Creating tenant "${tenant.name}" entries for model "${model.modelId}"...`
                 );
                 const variables = createEntryVariables(model, perTenant);
-                if (Object.keys(variables).length > 0) {
-                    console.log(JSON.stringify(variables, null, 2));
-                    return;
-                }
 
                 const result = await entryApp.createViaGraphQL(model, variables, variables.length);
                 if (result.errors.length) {
                     logger.error("Errors occurred while creating entries.");
+                    this.app.cache.clear();
                     for (const error of result.errors) {
                         logger.error(error);
                     }

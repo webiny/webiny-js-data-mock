@@ -22,10 +22,14 @@ class TextGenerator extends BaseGenerator<string> {
             });
             return values[target].value;
         }
-        return faker.lorem.words({
+        const options = {
             min: getValidator(MinimumLengthValidator).getValue(1),
             max: getValidator(MaximumLengthValidator).getValue(3)
-        });
+        };
+
+        const value = faker.lorem.words(options);
+
+        return value.length > options.max ? value.slice(0, options.max) : value;
     }
 }
 
@@ -35,26 +39,15 @@ class MultiTextGenerator extends BaseGenerator<string[]> {
 
     public generate(params: IGeneratorGenerateParams): string[] {
         const { field, getValidator } = params;
-        const values = field.predefinedValues?.values;
-        if (values?.length) {
-            const target = faker.number.int({
-                min: 0,
-                max: values.length - 1
-            });
-            return [values[target].value];
-        }
 
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
-            max: getValidator(MaximumLengthValidator).getListValue(5)
+            max: getValidator(MaximumLengthValidator).getListValue(2)
         });
         return Array(total)
             .fill(0)
             .map(() => {
-                return faker.lorem.words({
-                    min: getValidator(MinimumLengthValidator).getValue(1),
-                    max: getValidator(MaximumLengthValidator).getValue(3)
-                });
+                return this.getGenerator(TextGenerator).generate(field);
             });
     }
 }

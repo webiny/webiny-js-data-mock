@@ -78,6 +78,7 @@ export class TenantsApplication implements IApplication {
     }
 
     public async listTenants(): Promise<ITenant[]> {
+        logger.debug("Listing tenants...");
         const result = await this.app.graphql.query({
             query: `
             query ListTenants {

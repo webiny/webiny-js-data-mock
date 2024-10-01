@@ -119,6 +119,7 @@ export class ModelApplication implements IModelApplication {
     }
 
     public async list() {
+        logger.debug("Listing models...");
         return this.app.graphql.query<ApiCmsModel[]>({
             query: `
                 query ListModels {

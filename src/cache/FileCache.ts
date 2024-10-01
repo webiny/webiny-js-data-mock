@@ -5,17 +5,22 @@ import fsExtra from "fs-extra";
 
 export interface IFileCacheParams {
     cacheDir?: string;
+    ttl?: number;
 }
 
-const defaultCacheDir = "./cache/";
+const defaultCacheDir = "./.cache/";
 
 class FileCache implements ICache {
-    private cacheDir: string = "./cache/";
+    private readonly ttl: number = 0;
+    private cacheDir: string;
     private disabled: boolean = false;
 
+    private keys: ICacheKey[] = [];
+
+    // Prevent direct instantiation.
     protected constructor(params?: IFileCacheParams) {
-        // Prevent direct instantiation.
         this.cacheDir = params?.cacheDir || defaultCacheDir;
+        this.ttl = params?.ttl || 300;
     }
 
     public static create(params?: IFileCacheParams) {
@@ -56,7 +61,10 @@ class FileCache implements ICache {
         return this.set<T>(cacheKey, value);
     }
 
-    public clear(cacheKey: ICacheKey | ICacheKey[]) {
+    public clear(cacheKey?: ICacheKey | ICacheKey[]) {
+        if (!cacheKey) {
+            cacheKey = this.keys;
+        }
         if (Array.isArray(cacheKey)) {
             for (const key of cacheKey) {
                 this.delete(key);
@@ -68,9 +76,16 @@ class FileCache implements ICache {
     }
 
     private read<T>(key: ICacheKey): T | null {
+        this.addKey(key);
         try {
             const target = this.createPath(key);
-
+            if (!fsExtra.existsSync(target)) {
+                return null;
+            }
+            const stats = fsExtra.statSync(target);
+            if (stats.mtime < new Date(Date.now() - this.ttl * 1000)) {
+                return null;
+            }
             const content = fsExtra.readFileSync(target, "utf8");
             if (!content) {
                 return null;
@@ -83,8 +98,12 @@ class FileCache implements ICache {
     }
 
     private write<T>(key: ICacheKey, data: T): void {
+        this.addKey(key);
         try {
             const target = this.createPath(key);
+
+            fsExtra.ensureDirSync(path.dirname(target));
+
             fsExtra.writeFileSync(target, JSON.stringify(data, null, 2));
         } catch (ex) {
             logger.error(ex);
@@ -92,6 +111,7 @@ class FileCache implements ICache {
     }
 
     private delete(key: ICacheKey): void {
+        this.addKey(key);
         try {
             fsExtra.unlinkSync(this.createPath(key));
         } catch (ex) {
@@ -101,6 +121,15 @@ class FileCache implements ICache {
 
     private createPath(key: ICacheKey): string {
         return path.join(this.cacheDir, `${key.get()}.json`);
+    }
+
+    private addKey(input: ICacheKey): void {
+        for (const key of this.keys) {
+            if (key.get() === input.get()) {
+                return;
+            }
+        }
+        this.keys.push(input);
     }
 }
 

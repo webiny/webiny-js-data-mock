@@ -35,6 +35,7 @@ export class GraphQLApplication implements IGraphQLApplication {
     }
 
     public setTenant(tenant: string): void {
+        logger.debug(`Using tenant: ${tenant}.`);
         this.headers.set("x-tenant", tenant);
     }
 

@@ -14,7 +14,7 @@ export const createTime = (params: IValidatorsParams): string => {
         if (!input) {
             return undefined;
         }
-        return `${refTime.substring(0, 11)}${input}${refTime.substring(19)}`;
+        return `${refTime.substring(0, 11)}${input}:00${refTime.substring(19)}`;
     };
 
     const gteValue = attachTime(gteValidator.getValue());

@@ -14,12 +14,12 @@ class LongTextGenerator extends BaseGenerator<string> {
     public generate({ getValidator }: IGeneratorGenerateParams): string {
         const min = getValidator(MinimumLengthValidator).getValue(1);
         const max = getValidator(MaximumLengthValidator).getValue(5);
-        return faker.lorem.word({
-            length: {
-                min,
-                max
-            }
+        const value = faker.lorem.words({
+            min,
+            max
         });
+
+        return value.length > max ? value.slice(0, max) : value;
     }
 }
 

@@ -1,31 +1,15 @@
-import { IValidatorsParams } from "~/apps/tenants/helpers/generators/fields/date/types";
+import { IValidatorsParams } from "./types";
 import { faker } from "@faker-js/faker";
 
 const format = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    const seconds = String(date.getSeconds()).padStart(2, "0");
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return date.toISOString();
 };
 
 export const createDateTimeWithoutTimezone = (params: IValidatorsParams): string => {
     const { gteValidator, lteValidator } = params;
 
-    const refDateTime = faker.date.anytime().toISOString();
-
-    const attachDateTime = (input: string | undefined): string | undefined => {
-        if (!input) {
-            return undefined;
-        }
-        return `${input}${refDateTime.substring(10)}`;
-    };
-
-    const gteValue = attachDateTime(gteValidator.getValue());
-    const lteValue = attachDateTime(lteValidator.getValue());
+    const gteValue = gteValidator.getValue();
+    const lteValue = lteValidator.getValue();
     if (gteValue && lteValue) {
         return format(
             faker.date.between({

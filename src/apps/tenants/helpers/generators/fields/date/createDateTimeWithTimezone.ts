@@ -1,4 +1,4 @@
-import { IValidatorsParams } from "~/apps/tenants/helpers/generators/fields/date/types";
+import { IValidatorsParams } from "./types";
 import { faker } from "@faker-js/faker";
 
 const format = (date: Date): string => {
@@ -20,17 +20,8 @@ const format = (date: Date): string => {
 export const createDateTimeWithTimezone = (params: IValidatorsParams): string => {
     const { gteValidator, lteValidator } = params;
 
-    const refDateTime = faker.date.anytime().toISOString();
-
-    const attachDateTime = (input: string | undefined): string | undefined => {
-        if (!input) {
-            return undefined;
-        }
-        return `${input}${refDateTime.substring(10)}`;
-    };
-
-    const gteValue = attachDateTime(gteValidator.getValue());
-    const lteValue = attachDateTime(lteValidator.getValue());
+    const gteValue = gteValidator.getValue();
+    const lteValue = lteValidator.getValue();
     if (gteValue && lteValue) {
         return format(
             faker.date.between({
