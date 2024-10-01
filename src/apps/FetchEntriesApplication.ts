@@ -151,6 +151,6 @@ export class FetchEntriesApplication implements IFetchEntriesApplication {
         }
 
         logger.info(`Storing entries to file: ${options.filename}`);
-        return writeJsonFile(options.filename, options.entries);
+        return writeJsonFile.writeJsonFileSync(options.filename, options.entries);
     }
 }

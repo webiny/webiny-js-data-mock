@@ -1,6 +1,11 @@
 import { faker } from "@faker-js/faker";
 import { BaseGenerator } from "./BaseGenerator";
 import { registry } from "../registry";
+import {
+    MaximumLengthValidator,
+    MinimumLengthValidator
+} from "~/apps/tenants/helpers/generators/validators";
+import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
 
 class LongTextGenerator extends BaseGenerator<string> {
     public type = "long-text";
@@ -15,10 +20,10 @@ class MultiLongTextGenerator extends BaseGenerator<string[]> {
     public type = "long-text";
     public multipleValues = true;
 
-    public generate(): string[] {
+    public generate({ getValidator }: IGeneratorGenerateParams): string[] {
         const total = faker.number.int({
-            min: 1,
-            max: 5
+            min: getValidator(MinimumLengthValidator).getListValue(1),
+            max: getValidator(MaximumLengthValidator).getListValue(5)
         });
         return Array(total)
             .fill(0)

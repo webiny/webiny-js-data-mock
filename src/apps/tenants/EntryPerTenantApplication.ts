@@ -1,9 +1,10 @@
 import { IApplication, IBaseApplication } from "~/types";
-import { ITenant, TenantsApplication } from "./TenantsApplication";
+import { TenantsApplication } from "./TenantsApplication";
 import { ModelApplication } from "~/apps/ModelApplication";
 import { EntryApplication } from "~/apps/EntryApplication";
 import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariables";
 import { logger } from "~/logger";
+import { createCacheKey } from "~/cache";
 
 export class EntryPerTenantApplication implements IApplication {
     private readonly app: IBaseApplication;
@@ -13,11 +14,24 @@ export class EntryPerTenantApplication implements IApplication {
     }
 
     public async run(): Promise<void> {
+        try {
+            await this.execute();
+        } finally {
+            this.app.cache.enable();
+        }
+    }
+
+    private async execute(): Promise<void> {
         this.app.graphql.setTenant("root");
 
         const perTenant = this.app.getNumberArg("amount", 5);
         const tenantsInput = this.app.getStringArg("tenants", "").split(",").filter(Boolean);
         const modelsInput = this.app.getStringArg("models", "").split(",").filter(Boolean);
+
+        const useCache = this.app.getBooleanArg("cache", true);
+        if (useCache === false) {
+            this.app.cache.disable();
+        }
 
         if (perTenant <= 0) {
             throw new Error("Amount must be greater than 0.");
@@ -33,7 +47,15 @@ export class EntryPerTenantApplication implements IApplication {
 
         const entryApp = this.app.getApp<EntryApplication>("entry");
 
-        let tenants: ITenant[] = await this.app.getApp<TenantsApplication>("tenants").listTenants();
+        let tenants = await this.app.cache.getOrSet(
+            createCacheKey({
+                app: "entryPerTenant",
+                key: "tenants"
+            }),
+            async () => {
+                return await this.app.getApp<TenantsApplication>("tenants").listTenants();
+            }
+        );
         if (tenantsInput[0] !== "*") {
             tenants = tenants.filter(tenant => {
                 const id = tenant.id.toLowerCase();
@@ -52,16 +74,21 @@ export class EntryPerTenantApplication implements IApplication {
 
             const modelApp = this.app.getApp<ModelApplication>("model");
 
-            let { data: models } = await modelApp.list();
+            let { data: models } = await this.app.cache.getOrSet(
+                createCacheKey({ app: "entryPerTenant", key: "models", tenantId: id }),
+                async () => {
+                    return await modelApp.list();
+                }
+            );
             if (!models?.length) {
                 logger.error(`Tenant "${tenant.name}" has no models.`);
                 continue;
             }
             if (modelsInput[0] !== "*") {
                 models = models.filter(m => {
-                    const name = m.modelId.toLowerCase();
+                    const modelId = m.modelId.toLowerCase();
                     return modelsInput.some(i => {
-                        return i.toLowerCase() === name;
+                        return i.toLowerCase() === modelId;
                     });
                 });
             }
@@ -76,6 +103,10 @@ export class EntryPerTenantApplication implements IApplication {
                     `Creating tenant "${tenant.name}" entries for model "${model.modelId}"...`
                 );
                 const variables = createEntryVariables(model, perTenant);
+                if (Object.keys(variables).length > 0) {
+                    console.log(JSON.stringify(variables, null, 2));
+                    return;
+                }
 
                 const result = await entryApp.createViaGraphQL(model, variables, variables.length);
                 if (result.errors.length) {

@@ -2,6 +2,11 @@ import { BaseGenerator } from "./BaseGenerator";
 import { GenericRecord } from "~/types";
 import { faker } from "@faker-js/faker";
 import { registry } from "../registry";
+import {
+    MaximumLengthValidator,
+    MinimumLengthValidator
+} from "~/apps/tenants/helpers/generators/validators";
+import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
 
 const create = (): GenericRecord => {
     return {
@@ -31,10 +36,10 @@ class MultiJsonGenerator extends BaseGenerator<GenericRecord[]> {
     public type = "json";
     public multipleValues = true;
 
-    public generate(): GenericRecord[] {
+    public generate({ getValidator }: IGeneratorGenerateParams): GenericRecord[] {
         const total = faker.number.int({
-            min: 1,
-            max: 5
+            min: getValidator(MinimumLengthValidator).getListValue(1),
+            max: getValidator(MaximumLengthValidator).getListValue(5)
         });
         return Array(total)
             .fill(0)

@@ -1,13 +1,21 @@
 import {
     IGenerator,
     IRegistry,
+    IRegistryGenerator,
     IRegistryGetGeneratorParams,
-    IRegistryRegisterGeneratorCb
+    IRegistryRegisterGeneratorCb,
+    IValidator,
+    IValidatorConstructor
 } from "./types";
 import { ApiCmsModelField } from "~/types";
 
 class Registry implements IRegistry {
     public generators: IGenerator[] = [];
+    public validators: IValidatorConstructor<unknown>[] = [];
+
+    public registerValidator<T>(validator: IValidatorConstructor<T>): void {
+        this.validators.push(validator);
+    }
 
     public registerGenerator(cb: IRegistryRegisterGeneratorCb): void {
         const generator = new cb({
@@ -19,7 +27,7 @@ class Registry implements IRegistry {
                 }
                 throw new Error(`Generator for type "${type}" not found!`);
             },
-            getGeneratorByField: <T>(field: ApiCmsModelField): IGenerator<T> => {
+            getGeneratorByField: <T>(field: ApiCmsModelField): IRegistryGenerator<T> => {
                 return this.getGenerator<T>({
                     type: field.type,
                     multipleValues: !!field.multipleValues
@@ -29,12 +37,12 @@ class Registry implements IRegistry {
         this.generators.push(generator);
     }
 
-    public getGenerator<T>(params: IRegistryGetGeneratorParams): IGenerator<T> {
+    public getGenerator<T>(params: IRegistryGetGeneratorParams): IRegistryGenerator<T> {
         const { type, multipleValues } = params;
 
         const generator = this.generators.find(generator => {
             return generator.type === type && generator.multipleValues === multipleValues;
-        });
+        }) as IGenerator<T> | undefined;
         if (!generator) {
             this.generators.map(generator => {
                 return {
@@ -47,7 +55,20 @@ class Registry implements IRegistry {
                 `Generator for type "${type}", multiple values "${multipleValues ? "true" : "false"}" not found!`
             );
         }
-        return generator as IGenerator<T>;
+        return {
+            generate: (field: ApiCmsModelField): T => {
+                return generator.generate({
+                    field,
+                    getValidator: <V>(type: IValidatorConstructor<V>): IValidator<V> => {
+                        return this.getValidator(field, type);
+                    }
+                });
+            }
+        };
+    }
+
+    public getValidator<V>(field: ApiCmsModelField, type: IValidatorConstructor<V>): IValidator<V> {
+        return new type(field);
     }
 }
 

@@ -115,12 +115,16 @@ Just copy the files and import the plugins via the `createTenantsMockDataPlugins
 You can create completely random mock data for any model by running:
 
 ```
-yarn create-data-per-tenant --tenants="yourTenantName" --amount=1 --models=YOUR_MODEL_ID
+yarn create-data-per-tenant --tenants=yourTenantName --amount=1 --models=aModelId,anotherModelId,....
 ```
 
 In the `tenants` argument, you can pass multiple tenants separated by a comma or a `*` to target all existing tenants.
 
-In the `amount` argument, you must send the amount of the records you want to create.
+In the `amount` argument, you must send the amount of the records you want to create. Default is `5`.
 
 In the `models` argument, you must send the `modelId` of the model you want to create the records for. Same as for the
 tenants, you can send multiple `modelId` separated by a comma or a `*` to target all existing models.
+
+#### IMPORTANT!
+
+When sending a `*`, make sure it is sent with quotes, like this: `"*"`. Otherwise, the script will fail.

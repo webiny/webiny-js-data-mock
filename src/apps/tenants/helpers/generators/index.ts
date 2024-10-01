@@ -1,12 +1,13 @@
 import { ApiCmsModelField } from "~/types";
-import { IGenerator } from "~/apps/tenants/helpers/generators/types";
+import { IRegistryGenerator } from "~/apps/tenants/helpers/generators/types";
 import { registry } from "./registry";
 
-import "./types/index";
+import "./fields";
+import "./validators";
 
 export const getGenerator = <T = unknown>(
     field: Pick<ApiCmsModelField, "type" | "multipleValues">
-): IGenerator<T> => {
+): IRegistryGenerator<T> => {
     return registry.getGenerator<T>({
         type: field.type,
         multipleValues: field.multipleValues || false

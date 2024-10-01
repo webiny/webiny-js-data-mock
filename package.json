@@ -6,39 +6,41 @@
   "license": "MIT",
   "dependencies": {
     "@faker-js/faker": "^9.0.3",
-    "@webiny/api-aco": "^5.39.6",
-    "@webiny/api-headless-cms": "^5.39.6",
-    "@webiny/api-page-builder": "^5.39.6",
+    "@webiny/api-aco": "latest",
+    "@webiny/api-headless-cms": "latest",
+    "@webiny/api-page-builder": "latest",
     "dotenv": "^16.4.5",
+    "fs-extra": "^11.2.0",
     "graphql-tag": "^2.12.6",
     "lodash": "^4.17.21",
     "nanoid": "^5.0.7",
-    "p-retry": "^4.0.0",
-    "pino": "^9.1.0",
-    "pino-pretty": "^11.0.0",
+    "p-retry": "^6.2.0",
+    "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2",
     "slugify": "^1.6.6",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.3.0",
-    "@types/lodash": "^4.14.195",
+    "@eslint/js": "^9.11.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/lodash": "^4.17.9",
     "@types/node": "^20.4.2",
-    "@types/yargs": "^17.0.32",
-    "@typescript-eslint/eslint-plugin": "^7.10.0",
-    "@typescript-eslint/parser": "^7.10.0",
-    "eslint": "^9.3.0",
+    "@types/yargs": "^17.0.33",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "eslint": "^9.11.1",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-lodash": "^8.0.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-promise": "^7.1.0",
     "eslint-plugin-standard": "^5.0.0",
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
     "ttypescript": "^1.5.15",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^7.10.0",
-    "write-json-file": "^4.3.0"
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.8.0",
+    "write-json-file": "^6.0.0"
   },
   "scripts": {
     "create-data": "ts-node src/index.ts --create-data",
@@ -50,10 +52,11 @@
     "prettier": "prettier \"**/**/*.{js,jsx,ts,tsx,json}\" --config .prettierrc.js",
     "prettier:check": "yarn prettier --check",
     "prettier:fix": "yarn prettier --write",
-    "lint:fix": "yarn eslint:fix && yarn prettier:fix"
+    "lint:fix": "yarn eslint:fix && yarn prettier:fix",
+    "compile": "tsc"
   },
   "resolutions": {
-    "typescript": "^5.4.5"
+    "typescript": "5.5.4"
   },
   "packageManager": "yarn@3.6.1"
 }

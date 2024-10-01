@@ -9,6 +9,7 @@ import {
 } from "@webiny/api-aco/types";
 import { Page as PbPage } from "@webiny/api-page-builder/types";
 import { PbUpdatePageInput as BasePbUpdatePageInput } from "@webiny/api-page-builder/graphql/types";
+import { ICache } from "~/cache";
 
 export type GenericRecordKey = string | number | symbol;
 // eslint-disable-next-line
@@ -203,7 +204,7 @@ export interface IFolderApplication extends IApplication {
 /**
  * Fetcher
  */
-export interface IFetchEntriesApplication extends IApplication {}
+export type IFetchEntriesApplication = IApplication;
 
 /**
  * Base
@@ -215,13 +216,21 @@ export interface IBaseApplication {
     getStringArg: (name: string, def: string) => string;
     getApp: <T>(name: string) => T;
     graphql: IGraphQLApplication;
+    cache: ICache;
 }
 
 export type ApiCmsGroup = Pick<BaseGroup, "id" | "name" | "slug">;
 
 export type ApiCmsModelField = Pick<
     BaseCmsModelField,
-    "id" | "fieldId" | "type" | "multipleValues" | "settings" | "predefinedValues"
+    | "id"
+    | "fieldId"
+    | "type"
+    | "multipleValues"
+    | "settings"
+    | "predefinedValues"
+    | "validation"
+    | "listValidation"
 >;
 
 export interface ApiCmsModel

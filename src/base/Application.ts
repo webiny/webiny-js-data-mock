@@ -7,6 +7,7 @@ import { GraphQLApplication } from "~/apps/GraphQLApplication";
 import { FetchEntriesApplication } from "~/apps/FetchEntriesApplication";
 import { TenantsApplication } from "~/apps/tenants/TenantsApplication";
 import { EntryPerTenantApplication } from "~/apps/tenants/EntryPerTenantApplication";
+import { createFileCache, ICache } from "~/cache";
 // import { PageApplication } from "~/apps/PageApplication";
 // import { FolderApplication } from "~/apps/FolderApplication";
 
@@ -47,6 +48,7 @@ export class Application implements IBaseApplication {
     public readonly graphql: GraphQLApplication;
     private readonly args: ApplicationParams;
     private readonly apps: Apps;
+    public readonly cache: ICache;
 
     public constructor(argv: ApplicationParams) {
         this.args = argv;
@@ -67,6 +69,12 @@ export class Application implements IBaseApplication {
             tenants: new TenantsApplication(this),
             entryPerTenant: new EntryPerTenantApplication(this)
         };
+
+        const cacheDir = this.getStringArg("cacheDir", "");
+
+        this.cache = createFileCache({
+            cacheDir
+        });
     }
 
     public getBooleanArg(name: string, def: boolean = false): boolean {

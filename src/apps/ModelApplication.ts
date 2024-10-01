@@ -20,6 +20,16 @@ const cmsModelFieldsGraphQlSubselection = `
                 selected
             }
         }
+        validation {
+            name
+            message
+            settings
+        }
+        listValidation {
+            name
+            message
+            settings
+        }
     }
 `;
 
