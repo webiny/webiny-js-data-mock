@@ -5,19 +5,25 @@ export interface IRegistryGetGeneratorParams {
     multipleValues: boolean;
 }
 
-export interface IRegistryRegisterGeneratorCbParams {
-    getGenerator<T>(type: { new (params: IRegistryRegisterGeneratorCbParams): T }): T;
-    getGeneratorByField<T>(field: ApiCmsModelField): IRegistryGenerator<T>;
+export interface IRegistryRegisterGeneratorConstructorParams {
+    getGenerator<T extends IGenerator<unknown>>(type: {
+        new (params: IRegistryRegisterGeneratorConstructorParams): T;
+    }): IRegistryGenerator<T>;
+    getGeneratorByField<T extends IGenerator<unknown>>(
+        field: ApiCmsModelField
+    ): IRegistryGenerator<T>;
 }
 
-export interface IRegistryRegisterGeneratorCb {
-    new (params: IRegistryRegisterGeneratorCbParams): IGenerator;
+export interface IRegistryRegisterGeneratorConstructor {
+    new (params: IRegistryRegisterGeneratorConstructorParams): IGenerator<unknown>;
 }
 
 export interface IRegistry {
-    registerGenerator(generator: IRegistryRegisterGeneratorCb): void;
-    getGenerator<T>(params: IRegistryGetGeneratorParams): IRegistryGenerator<T>;
-    registerValidator<T>(validator: IValidatorConstructor<T>): void;
+    registerGenerator(generator: IRegistryRegisterGeneratorConstructor): void;
+    getGenerator<T extends IGenerator<unknown>>(
+        params: IRegistryGetGeneratorParams
+    ): IRegistryGenerator<T>;
+    registerValidator<T extends IGenerator<unknown>>(validator: IValidatorConstructor<T>): void;
 }
 
 export interface IGetValidator {
@@ -28,14 +34,14 @@ export interface IGeneratorGenerateParams {
     field: ApiCmsModelField;
     getValidator: IGetValidator;
 }
-export interface IGenerator<T = unknown> {
+export interface IGenerator<T> {
     type: string;
     multipleValues: boolean;
     generate(params: IGeneratorGenerateParams): T;
 }
 
-export interface IRegistryGenerator<T = unknown> {
-    generate(field: ApiCmsModelField): T;
+export interface IRegistryGenerator<T extends IGenerator<unknown>> {
+    generate(field: ApiCmsModelField): ReturnType<T["generate"]>;
 }
 
 export interface IValidatorConstructor<T> {

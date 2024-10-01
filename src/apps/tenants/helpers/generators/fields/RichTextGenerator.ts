@@ -31,7 +31,7 @@ class MultiRichTextGenerator extends BaseGenerator<GenericRecord[]> {
     public type = "rich-text";
     public multipleValues = true;
 
-    public generate({ getValidator }: IGeneratorGenerateParams): GenericRecord[] {
+    public generate({ field, getValidator }: IGeneratorGenerateParams): GenericRecord[] {
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
@@ -39,7 +39,7 @@ class MultiRichTextGenerator extends BaseGenerator<GenericRecord[]> {
         return Array(total)
             .fill(0)
             .map(() => {
-                return this.getGenerator(RichTextGenerator).generate();
+                return this.getGenerator(RichTextGenerator).generate(field);
             });
     }
 }

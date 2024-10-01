@@ -11,8 +11,15 @@ class LongTextGenerator extends BaseGenerator<string> {
     public type = "long-text";
     public multipleValues = false;
 
-    public generate(): string {
-        return faker.lorem.paragraph();
+    public generate({ getValidator }: IGeneratorGenerateParams): string {
+        const min = getValidator(MinimumLengthValidator).getValue(1);
+        const max = getValidator(MaximumLengthValidator).getValue(5);
+        return faker.lorem.word({
+            length: {
+                min,
+                max
+            }
+        });
     }
 }
 
@@ -20,7 +27,8 @@ class MultiLongTextGenerator extends BaseGenerator<string[]> {
     public type = "long-text";
     public multipleValues = true;
 
-    public generate({ getValidator }: IGeneratorGenerateParams): string[] {
+    public generate(params: IGeneratorGenerateParams): string[] {
+        const { getValidator, field } = params;
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
@@ -28,7 +36,7 @@ class MultiLongTextGenerator extends BaseGenerator<string[]> {
         return Array(total)
             .fill(0)
             .map(() => {
-                return faker.lorem.paragraph();
+                return this.getGenerator(LongTextGenerator).generate(field);
             });
     }
 }

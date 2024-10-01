@@ -2,20 +2,20 @@ import {
     IGenerator,
     IGeneratorGenerateParams,
     IRegistryGenerator,
-    IRegistryRegisterGeneratorCbParams
+    IRegistryRegisterGeneratorConstructorParams
 } from "../types";
 import { ApiCmsModelField } from "~/types";
 
-export type IBaseGeneratorParams = IRegistryRegisterGeneratorCbParams;
+export type IBaseGeneratorParams = IRegistryRegisterGeneratorConstructorParams;
 
 export abstract class BaseGenerator<T = unknown> implements IGenerator<T> {
     public abstract readonly type: string;
     public abstract readonly multipleValues: boolean;
 
-    protected readonly getGenerator: <T extends IRegistryGenerator>(type: {
+    protected readonly getGenerator: <T extends IGenerator<unknown>>(type: {
         new (params: IBaseGeneratorParams): T;
-    }) => T;
-    protected readonly getGeneratorByField: <T = unknown>(
+    }) => IRegistryGenerator<T>;
+    protected readonly getGeneratorByField: <T extends IGenerator<unknown>>(
         field: ApiCmsModelField
     ) => IRegistryGenerator<T>;
 
