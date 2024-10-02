@@ -116,6 +116,8 @@ export class TenantsApplication implements IApplication {
         } else if (!result.data?.length) {
             throw new Error("No tenants found.");
         }
-        return addDefaultTenant(result.data);
+        return addDefaultTenant(result.data).sort((a, b) => {
+            return a.id.localeCompare(b.id);
+        });
     }
 }

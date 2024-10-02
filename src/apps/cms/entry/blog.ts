@@ -196,12 +196,18 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
 
     logger.debug(`Creating ${categoriesVariables.length} categories...`);
     const { entries: categories, errors: categoryErrors } =
-        await entryApp.createViaGraphQL<ApiCmsCategory>(categoryModel, categoriesVariables);
+        await entryApp.createViaGraphQL<ApiCmsCategory>({
+            model: categoryModel,
+            variables: categoriesVariables
+        });
     logger.debug(`...created.`);
 
     logger.debug(`Creating ${authorsVariables.length} authors...`);
     const { entries: authors, errors: authorErrors } =
-        await entryApp.createViaGraphQL<ApiCmsAuthor>(authorModel, authorsVariables);
+        await entryApp.createViaGraphQL<ApiCmsAuthor>({
+            model: authorModel,
+            variables: authorsVariables
+        });
     logger.debug(`...created.`);
 
     const entries = categories
@@ -233,11 +239,11 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
 
     logger.debug(`Creating ${articleAmount} articles...`);
     const { entries: articles, errors: articleErrors } =
-        await entryApp.createViaGraphQL<ApiCmsArticle>(
-            articleModel,
-            articlesVariables,
-            articlesAtOnce
-        );
+        await entryApp.createViaGraphQL<ApiCmsArticle>({
+            model: articleModel,
+            variables: articlesVariables,
+            atOnce: articlesAtOnce
+        });
     logger.debug(`...created.`);
 
     return {

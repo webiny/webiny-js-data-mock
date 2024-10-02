@@ -26,6 +26,7 @@ export class EntryPerTenantApplication implements IApplication {
 
         const perTenant = this.app.getNumberArg("amount", 5);
         const tenantsInput = this.app.getStringArg("tenants", "").split(",").filter(Boolean);
+        const startFromTenant = this.app.getStringArg("startFromTenant", "").toLowerCase();
         const modelsInput = this.app.getStringArg("models", "").split(",").filter(Boolean);
 
         const useCache = this.app.getBooleanArg("cache", true);
@@ -56,6 +57,14 @@ export class EntryPerTenantApplication implements IApplication {
                 return await this.app.getApp<TenantsApplication>("tenants").listTenants();
             }
         );
+        if (startFromTenant) {
+            const startingTenant = tenants.findIndex(
+                tenant => tenant.name.toLowerCase() === startFromTenant
+            );
+            if (startingTenant !== -1) {
+                tenants = tenants.slice(startingTenant);
+            }
+        }
         if (tenantsInput[0] !== "*") {
             tenants = tenants.filter(tenant => {
                 const id = tenant.id.toLowerCase();
@@ -109,9 +118,16 @@ export class EntryPerTenantApplication implements IApplication {
                 logger.debug(
                     `Creating tenant "${tenant.name}" entries for model "${model.modelId}"...`
                 );
-                const variables = createEntryVariables(model, perTenant);
+                const variables = await createEntryVariables(model, perTenant);
 
-                const result = await entryApp.createViaGraphQL(model, variables, variables.length);
+                const result = await entryApp.createViaGraphQL({
+                    model,
+                    variables,
+                    atOnce: variables.length,
+                    options: {
+                        skipValidators: ["required"]
+                    }
+                });
                 if (result.errors.length) {
                     logger.error("Errors occurred while creating entries.");
                     this.app.cache.clear();

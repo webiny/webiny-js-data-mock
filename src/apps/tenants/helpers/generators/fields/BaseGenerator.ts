@@ -8,7 +8,7 @@ import { ApiCmsModelField } from "~/types";
 
 export type IBaseGeneratorParams = IRegistryRegisterGeneratorConstructorParams;
 
-export abstract class BaseGenerator<T = unknown> implements IGenerator<T> {
+export abstract class BaseGenerator<T = unknown> implements IGenerator<T | null> {
     public abstract readonly type: string;
     public abstract readonly multipleValues: boolean;
 
@@ -24,5 +24,26 @@ export abstract class BaseGenerator<T = unknown> implements IGenerator<T> {
         this.getGeneratorByField = params.getGeneratorByField;
     }
 
-    public abstract generate(params: IGeneratorGenerateParams): T;
+    public abstract generate(params: IGeneratorGenerateParams): Promise<T | null>;
+}
+
+export abstract class BaseMultiGenerator<T = unknown> extends BaseGenerator<T[]> {
+    public abstract generate(params: IGeneratorGenerateParams): Promise<T[] | null>;
+
+    public async iterate<R>(
+        amount: number,
+        cb: (current: number) => Promise<R | null>
+    ): Promise<R[]> {
+        const results = await Promise.all(
+            Array(amount)
+                .fill(0)
+                .map(async (_, index) => {
+                    return await cb(index);
+                })
+        );
+
+        return results.filter((result): result is Awaited<R> => {
+            return result !== null && result !== undefined;
+        });
+    }
 }

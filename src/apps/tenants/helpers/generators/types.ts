@@ -37,7 +37,7 @@ export interface IGeneratorGenerateParams {
 export interface IGenerator<T> {
     type: string;
     multipleValues: boolean;
-    generate(params: IGeneratorGenerateParams): T;
+    generate(params: IGeneratorGenerateParams): Promise<T>;
 }
 
 export interface IRegistryGenerator<T extends IGenerator<unknown>> {

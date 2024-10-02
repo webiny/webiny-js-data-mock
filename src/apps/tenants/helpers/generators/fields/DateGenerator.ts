@@ -1,4 +1,4 @@
-import { BaseGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { faker } from "@faker-js/faker";
 import { registry } from "../registry";
 import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
@@ -13,62 +13,58 @@ import {
     MinimumLengthValidator
 } from "~/apps/tenants/helpers/generators/validators";
 
-abstract class BaseDateTimeGenerator<T> extends BaseGenerator<T> {
-    public readonly type: string = "datetime";
+const createValue = (params: IGeneratorGenerateParams): string => {
+    const { field, getValidator } = params;
 
-    protected createValue(params: IGeneratorGenerateParams): string {
-        const { field, getValidator } = params;
-
-        const gteValidator = getValidator(GreaterThanOrEqualDateValidator);
-        const lteValidator = getValidator(LesserThanOrEqualDateValidator);
-        const settings = field.settings || {};
-        if (settings.type === "time") {
-            return createTime({
-                gteValidator,
-                lteValidator
-            });
-        } else if (settings.type === "date") {
-            return createDate({
-                gteValidator,
-                lteValidator
-            });
-        } else if (settings.type === "dateTimeWithoutTimezone") {
-            return createDateTimeWithoutTimezone({
-                gteValidator,
-                lteValidator
-            });
-        } else if (settings.type === "dateTimeWithTimezone") {
-            return createDateTimeWithTimezone({
-                gteValidator,
-                lteValidator
-            });
-        }
-        return faker.date.anytime().toISOString();
+    const gteValidator = getValidator(GreaterThanOrEqualDateValidator);
+    const lteValidator = getValidator(LesserThanOrEqualDateValidator);
+    const settings = field.settings || {};
+    if (settings.type === "time") {
+        return createTime({
+            gteValidator,
+            lteValidator
+        });
+    } else if (settings.type === "date") {
+        return createDate({
+            gteValidator,
+            lteValidator
+        });
+    } else if (settings.type === "dateTimeWithoutTimezone") {
+        return createDateTimeWithoutTimezone({
+            gteValidator,
+            lteValidator
+        });
+    } else if (settings.type === "dateTimeWithTimezone") {
+        return createDateTimeWithTimezone({
+            gteValidator,
+            lteValidator
+        });
     }
-}
+    return faker.date.anytime().toISOString();
+};
 
-class DateTimeGenerator extends BaseDateTimeGenerator<string> {
+class DateTimeGenerator extends BaseGenerator<string> {
+    public readonly type: string = "datetime";
     public multipleValues = false;
 
-    public generate(params: IGeneratorGenerateParams): string {
-        return this.createValue(params);
+    public async generate(params: IGeneratorGenerateParams): Promise<string> {
+        return createValue(params);
     }
 }
 
-class MultiDateTimeGenerator extends BaseDateTimeGenerator<string[]> {
+class MultiDateTimeGenerator extends BaseMultiGenerator<string> {
+    public readonly type: string = "datetime";
     public readonly multipleValues = true;
 
-    public generate(params: IGeneratorGenerateParams): string[] {
+    public async generate(params: IGeneratorGenerateParams): Promise<string[]> {
         const { getValidator } = params;
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
         });
-        return Array(total)
-            .fill(0)
-            .map(() => {
-                return this.createValue(params);
-            });
+        return this.iterate(total, async () => {
+            return createValue(params);
+        });
     }
 }
 

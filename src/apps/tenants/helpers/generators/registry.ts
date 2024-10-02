@@ -8,6 +8,7 @@ import {
     IValidatorConstructor
 } from "./types";
 import { ApiCmsModelField } from "~/types";
+import { logger } from "~/logger";
 
 class Registry implements IRegistry {
     public generators: IGenerator<unknown>[] = [];
@@ -50,16 +51,10 @@ class Registry implements IRegistry {
             return generator.type === type && generator.multipleValues === multipleValues;
         }) as T | undefined;
         if (!generator) {
-            this.generators.map(generator => {
-                return {
-                    type: generator.type,
-                    multipleValues: generator.multipleValues
-                };
-            });
-
-            throw new Error(
-                `Generator for type "${type}", multiple values "${multipleValues ? "true" : "false"}" not found!`
+            logger.error(
+                `Generator for type "${type}", multiple values "${multipleValues ? "true" : "false"}" not found! Skipping...`
             );
+            return this.getNullGenerator();
         }
         return this.createRegistryGenerator<T>(generator);
     }
@@ -80,6 +75,12 @@ class Registry implements IRegistry {
                     }
                 });
             }
+        };
+    }
+
+    private getNullGenerator(): IRegistryGenerator<IGenerator<unknown>> {
+        return {
+            generate: async () => null
         };
     }
 }

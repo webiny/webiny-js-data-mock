@@ -5,6 +5,7 @@ import {
     GenericRecord,
     IBaseApplication,
     IEntryApplication,
+    IEntryApplicationCreateViaGraphQLParams,
     IEntryApplicationCreateViaGraphQLResponse,
     IEntryRunner,
     IEntryRunnerResponse
@@ -89,17 +90,19 @@ export class EntryApplication implements IEntryApplication {
     }
 
     public async createViaGraphQL<T>(
-        model: ApiCmsModel,
-        variableList: GenericRecord[],
-        atOnce = 1
+        params: IEntryApplicationCreateViaGraphQLParams
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>> {
+        const { model, variables, atOnce = 1, options } = params;
         const mutation = this.createGraphQLMutation(model);
 
         const result = await this.app.graphql.mutations<T>({
             mutation,
             path: "/cms/manage/en-US",
-            variables: variableList.map(variables => {
-                return { data: variables };
+            variables: variables.map(data => {
+                return {
+                    data,
+                    options
+                };
             }),
             atOnce,
             getResult: createGetCmsContentResult()
@@ -123,8 +126,8 @@ export class EntryApplication implements IEntryApplication {
 
     private createGraphQLMutation(model: ApiCmsModel): string {
         return `
-            mutation Create${model.singularApiName}($data: ${model.singularApiName}Input!) {
-                data: create${model.singularApiName}(data: $data) {
+            mutation Create${model.singularApiName}($data: ${model.singularApiName}Input!, $options: CreateCmsEntryOptionsInput) {
+                data: create${model.singularApiName}(data: $data, options: $options) {
                     data {
                         id
                         entryId

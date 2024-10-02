@@ -125,12 +125,21 @@ export interface IEntryApplicationCreateViaGraphQLResponse<T> {
     errors: ApiError[];
 }
 
+export interface IEntryApplicationCreateViaGraphQLParamsOptions {
+    skipValidators?: string[];
+}
+
+export interface IEntryApplicationCreateViaGraphQLParams {
+    model: ApiCmsModel;
+    variables: GenericRecord[];
+    atOnce?: number;
+    options?: IEntryApplicationCreateViaGraphQLParamsOptions;
+}
+
 export interface IEntryApplication extends IApplication {
     getEntries: (name: string) => CmsEntry[];
     createViaGraphQL<T>(
-        model: ApiCmsModel,
-        variableList: GenericRecord[],
-        atOnce?: number
+        params: IEntryApplicationCreateViaGraphQLParams
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>>;
 }
 

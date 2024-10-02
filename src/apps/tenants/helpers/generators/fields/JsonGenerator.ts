@@ -1,4 +1,4 @@
-import { BaseGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { GenericRecord } from "~/types";
 import { faker } from "@faker-js/faker";
 import { registry } from "../registry";
@@ -27,25 +27,23 @@ class JsonGenerator extends BaseGenerator<GenericRecord> {
     public type = "json";
     public multipleValues = false;
 
-    public generate(): GenericRecord {
+    public async generate(): Promise<GenericRecord> {
         return create();
     }
 }
 
-class MultiJsonGenerator extends BaseGenerator<GenericRecord[]> {
+class MultiJsonGenerator extends BaseMultiGenerator<GenericRecord> {
     public type = "json";
     public multipleValues = true;
 
-    public generate({ getValidator }: IGeneratorGenerateParams): GenericRecord[] {
+    public async generate({ getValidator }: IGeneratorGenerateParams): Promise<GenericRecord[]> {
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
         });
-        return Array(total)
-            .fill(0)
-            .map(() => {
-                return create();
-            });
+        return this.iterate(total, async () => {
+            return create();
+        });
     }
 }
 

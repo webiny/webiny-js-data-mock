@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { BaseGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { registry } from "../registry";
 import { GenericRecord } from "~/types";
 import {
@@ -12,7 +12,7 @@ class RichTextGenerator extends BaseGenerator<GenericRecord> {
     public type = "rich-text";
     public multipleValues = false;
 
-    public generate(): GenericRecord {
+    public async generate(): Promise<GenericRecord> {
         return {
             type: "paragraph",
             children: [
@@ -27,20 +27,21 @@ class RichTextGenerator extends BaseGenerator<GenericRecord> {
     }
 }
 
-class MultiRichTextGenerator extends BaseGenerator<GenericRecord[]> {
+class MultiRichTextGenerator extends BaseMultiGenerator<GenericRecord> {
     public type = "rich-text";
     public multipleValues = true;
 
-    public generate({ field, getValidator }: IGeneratorGenerateParams): GenericRecord[] {
+    public async generate({
+        field,
+        getValidator
+    }: IGeneratorGenerateParams): Promise<GenericRecord[]> {
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
         });
-        return Array(total)
-            .fill(0)
-            .map(() => {
-                return this.getGenerator(RichTextGenerator).generate(field);
-            });
+        return this.iterate(total, async () => {
+            return this.getGenerator(RichTextGenerator).generate(field);
+        });
     }
 }
 

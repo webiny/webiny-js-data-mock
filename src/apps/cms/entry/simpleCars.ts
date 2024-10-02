@@ -66,7 +66,10 @@ const executeCarsRunner = async (
      */
     logger.debug(`Creating ${simpleCarMakes.length} simple car makes...`);
     const { entries: simpleCarMakesResults, errors: simpleCarMakesErrors } =
-        await entryApp.createViaGraphQL<ApiCmsSimpleCarMake>(simpleCarMakeModel, simpleCarMakes);
+        await entryApp.createViaGraphQL<ApiCmsSimpleCarMake>({
+            model: simpleCarMakeModel,
+            variables: simpleCarMakes
+        });
     logger.debug(`...created.`);
     /**
      * Car Models.
@@ -74,11 +77,11 @@ const executeCarsRunner = async (
     const simpleCarModelsAtOnce = app.getNumberArg("simpleCarModels:atOnce", 10);
     logger.debug(`Creating ${simpleCarModels.length} simple car models...`);
     const { entries: simpleCarModelsResults, errors: simpleCarModelsErrors } =
-        await entryApp.createViaGraphQL<ApiCmsSimpleCarModel>(
-            simpleCarModelModel,
-            simpleCarModels,
-            simpleCarModelsAtOnce
-        );
+        await entryApp.createViaGraphQL<ApiCmsSimpleCarModel>({
+            model: simpleCarModelModel,
+            variables: simpleCarModels,
+            atOnce: simpleCarModelsAtOnce
+        });
     logger.debug(`...created.`);
 
     return {

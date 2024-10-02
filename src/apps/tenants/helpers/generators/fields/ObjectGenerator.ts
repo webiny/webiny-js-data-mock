@@ -1,4 +1,4 @@
-import { BaseGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { registry } from "../registry";
 import { GenericRecord } from "~/types";
 import { faker } from "@faker-js/faker";
@@ -8,47 +8,50 @@ import {
     MinimumLengthValidator
 } from "~/apps/tenants/helpers/generators/validators";
 
-class ObjectGenerator extends BaseGenerator<GenericRecord | null> {
+class ObjectGenerator extends BaseGenerator<GenericRecord> {
     public type = "object";
     public multipleValues = false;
 
-    public generate({ field }: IGeneratorGenerateParams): GenericRecord | null {
+    public async generate({ field }: IGeneratorGenerateParams): Promise<GenericRecord | null> {
         const fields = field.settings?.fields;
         if (!fields?.length) {
             return null;
         }
-        return fields.reduce<GenericRecord>((values, field) => {
+        const values: GenericRecord = {};
+        for (const field of fields) {
             const generator = this.getGeneratorByField(field);
 
-            values[field.fieldId] = generator.generate(field);
-            return values;
-        }, {});
+            values[field.fieldId] = await generator.generate(field);
+        }
+        return values;
     }
 }
 
-class MultiObjectGenerator extends BaseGenerator<GenericRecord[]> {
+class MultiObjectGenerator extends BaseMultiGenerator<GenericRecord> {
     public type = "object";
     public multipleValues = true;
 
-    public generate({ field, getValidator }: IGeneratorGenerateParams): GenericRecord[] {
+    public async generate({
+        field,
+        getValidator
+    }: IGeneratorGenerateParams): Promise<GenericRecord[] | null> {
         const fields = field.settings?.fields;
         if (!fields?.length) {
-            return [];
+            return null;
         }
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
         });
-        return Array(total)
-            .fill(0)
-            .map(() => {
-                return fields.reduce<GenericRecord>((values, field) => {
-                    const generator = this.getGeneratorByField(field);
+        return this.iterate(total, async () => {
+            const values: GenericRecord = {};
+            for (const field of fields) {
+                const generator = this.getGeneratorByField(field);
 
-                    values[field.fieldId] = generator.generate(field);
-                    return values;
-                }, {});
-            });
+                values[field.fieldId] = await generator.generate(field);
+            }
+            return values;
+        });
     }
 }
 

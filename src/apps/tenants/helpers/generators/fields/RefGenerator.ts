@@ -1,4 +1,4 @@
-import { BaseGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { registry } from "../registry";
 
 interface Ref {
@@ -7,21 +7,21 @@ interface Ref {
     entryId: string;
 }
 
-class RefGenerator extends BaseGenerator<Ref | null> {
+class RefGenerator extends BaseGenerator<Ref> {
     public type = "ref";
     public multipleValues = false;
 
-    public generate(): Ref | null {
+    public async generate(): Promise<Ref | null> {
         return null;
     }
 }
 
-class MultiRefGenerator extends BaseGenerator<Ref[]> {
+class MultiRefGenerator extends BaseMultiGenerator<Ref> {
     public type = "ref";
     public multipleValues = true;
 
-    public generate(): Ref[] {
-        return [];
+    public async generate(): Promise<Ref[] | null> {
+        return null;
     }
 }
 

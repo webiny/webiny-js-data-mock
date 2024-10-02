@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { BaseGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { registry } from "../registry";
 import {
     MaximumLengthValidator,
@@ -11,7 +11,7 @@ class LongTextGenerator extends BaseGenerator<string> {
     public type = "long-text";
     public multipleValues = false;
 
-    public generate({ getValidator }: IGeneratorGenerateParams): string {
+    public async generate({ getValidator }: IGeneratorGenerateParams): Promise<string> {
         const min = getValidator(MinimumLengthValidator).getValue(1);
         const max = getValidator(MaximumLengthValidator).getValue(5);
         const value = faker.lorem.words({
@@ -23,21 +23,19 @@ class LongTextGenerator extends BaseGenerator<string> {
     }
 }
 
-class MultiLongTextGenerator extends BaseGenerator<string[]> {
+class MultiLongTextGenerator extends BaseMultiGenerator<string> {
     public type = "long-text";
     public multipleValues = true;
 
-    public generate(params: IGeneratorGenerateParams): string[] {
+    public async generate(params: IGeneratorGenerateParams): Promise<string[]> {
         const { getValidator, field } = params;
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
         });
-        return Array(total)
-            .fill(0)
-            .map(() => {
-                return this.getGenerator(LongTextGenerator).generate(field);
-            });
+        return this.iterate(total, async () => {
+            return this.getGenerator(LongTextGenerator).generate(field);
+        });
     }
 }
 

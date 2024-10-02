@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { BaseGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { registry } from "../registry";
 import {
     MaximumLengthValidator,
@@ -11,29 +11,27 @@ class FileGenerator extends BaseGenerator<string> {
     public type = "file";
     public multipleValues = false;
 
-    public generate(): string {
+    public async generate(): Promise<string> {
         return faker.internet.url({
             protocol: "https"
         });
     }
 }
 
-class MultiFileGenerator extends BaseGenerator<string[]> {
+class MultiFileGenerator extends BaseMultiGenerator<string> {
     public type = "file";
     public multipleValues = true;
 
-    public generate({ getValidator }: IGeneratorGenerateParams): string[] {
+    public async generate({ getValidator }: IGeneratorGenerateParams): Promise<string[]> {
         const total = faker.number.int({
             min: getValidator(MinimumLengthValidator).getListValue(1),
             max: getValidator(MaximumLengthValidator).getListValue(5)
         });
-        return Array(total)
-            .fill(0)
-            .map(() => {
-                return faker.internet.url({
-                    protocol: "https"
-                });
+        return this.iterate(total, async () => {
+            return faker.internet.url({
+                protocol: "https"
             });
+        });
     }
 }
 
