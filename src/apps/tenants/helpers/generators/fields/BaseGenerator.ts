@@ -5,6 +5,7 @@ import {
     IRegistryRegisterGeneratorConstructorParams
 } from "../types";
 import { ApiCmsModelField } from "~/types";
+import { faker } from "@faker-js/faker";
 
 export type IBaseGeneratorParams = IRegistryRegisterGeneratorConstructorParams;
 
@@ -27,13 +28,19 @@ export abstract class BaseGenerator<T = unknown> implements IGenerator<T | null>
     public abstract generate(params: IGeneratorGenerateParams): Promise<T | null>;
 }
 
+export interface IIterateOptions {
+    min: number;
+    max: number;
+}
+
 export abstract class BaseMultiGenerator<T = unknown> extends BaseGenerator<T[]> {
     public abstract generate(params: IGeneratorGenerateParams): Promise<T[] | null>;
 
     public async iterate<R>(
-        amount: number,
+        amount: number | IIterateOptions,
         cb: (current: number) => Promise<R | null>
     ): Promise<R[]> {
+        amount = typeof amount === "number" ? amount : faker.number.int(amount);
         const results = await Promise.all(
             Array(amount)
                 .fill(0)
