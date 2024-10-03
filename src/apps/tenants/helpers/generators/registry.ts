@@ -13,6 +13,7 @@ import { logger } from "~/logger";
 class Registry implements IRegistry {
     public generators: IGenerator<unknown>[] = [];
     public validators: IValidatorConstructor<unknown>[] = [];
+    private readonly validatorsCache: Map<string, IValidator<unknown>> = new Map();
 
     public registerValidator<T>(validator: IValidatorConstructor<T>): void {
         this.validators.push(validator);
@@ -28,14 +29,14 @@ class Registry implements IRegistry {
                         return this.createRegistryGenerator<T>(generator);
                     }
                 }
-                throw new Error(`Generator for type "${type}" not found!`);
+                const name = type.constructor?.name || type.name || type || typeof type;
+                throw new Error(`Generator for type "${name}" not found!`);
             },
             getGeneratorByField: <T extends IGenerator<unknown>>(
                 field: ApiCmsModelField
             ): IRegistryGenerator<T> => {
                 return this.getGenerator<T>({
-                    type: field.type,
-                    multipleValues: !!field.multipleValues
+                    field
                 });
             }
         });
@@ -45,7 +46,10 @@ class Registry implements IRegistry {
     public getGenerator<T extends IGenerator<unknown>>(
         params: IRegistryGetGeneratorParams
     ): IRegistryGenerator<T> {
-        const { type, multipleValues } = params;
+        const { field } = params;
+
+        const type = field.type;
+        const multipleValues = !!field.multipleValues;
 
         const generator = this.generators.find(generator => {
             return generator.type === type && generator.multipleValues === multipleValues;
@@ -59,8 +63,24 @@ class Registry implements IRegistry {
         return this.createRegistryGenerator<T>(generator);
     }
 
-    public getValidator<V>(field: ApiCmsModelField, type: IValidatorConstructor<V>): IValidator<V> {
-        return new type(field);
+    private getValidator<V>(
+        field: ApiCmsModelField,
+        validatorConstructor: IValidatorConstructor<V>
+    ): IValidator<V> {
+        const type = [
+            field.id,
+            field.fieldId,
+            field.type,
+            field.storageId,
+            validatorConstructor.name
+        ].join("#");
+
+        if (this.validatorsCache.has(type)) {
+            return this.validatorsCache.get(type) as IValidator<V>;
+        }
+        const validator = new validatorConstructor(field);
+        this.validatorsCache.set(type, validator);
+        return validator;
     }
 
     private createRegistryGenerator<T extends IGenerator<unknown>>(generator: T) {
@@ -70,8 +90,10 @@ class Registry implements IRegistry {
                 // @ts-expect-error
                 return generator.generate({
                     field,
-                    getValidator: <V>(type: IValidatorConstructor<V>): IValidator<V> => {
-                        return this.getValidator(field, type);
+                    getValidator: <V>(
+                        validatorConstructor: IValidatorConstructor<V>
+                    ): IValidator<V> => {
+                        return this.getValidator(field, validatorConstructor);
                     }
                 });
             }

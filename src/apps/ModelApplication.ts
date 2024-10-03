@@ -10,6 +10,7 @@ const cmsModelFieldsGraphQlSubselection = `
         id
         type
         fieldId
+        storageId
         multipleValues
         settings
         predefinedValues {

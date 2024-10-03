@@ -234,6 +234,7 @@ export type ApiCmsModelField = Pick<
     BaseCmsModelField,
     | "id"
     | "fieldId"
+    | "storageId"
     | "type"
     | "multipleValues"
     | "settings"

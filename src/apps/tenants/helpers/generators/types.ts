@@ -1,8 +1,7 @@
-import { ApiCmsModelField, GenericRecord } from "~/types";
+import { ApiCmsModel, ApiCmsModelField, GenericRecord } from "~/types";
 
 export interface IRegistryGetGeneratorParams {
-    type: string;
-    multipleValues: boolean;
+    field: ApiCmsModelField;
 }
 
 export interface IRegistryRegisterGeneratorConstructorParams {
