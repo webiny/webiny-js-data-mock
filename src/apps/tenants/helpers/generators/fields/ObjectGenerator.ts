@@ -21,7 +21,7 @@ class ObjectGenerator extends BaseGenerator<GenericRecord> {
         for (const field of fields) {
             const generator = this.getGeneratorByField(field);
 
-            values[field.fieldId] = await generator.generate(field);
+            values[field.fieldId] = await generator.generate();
         }
         return values;
     }
@@ -48,7 +48,7 @@ class MultiObjectGenerator extends BaseMultiGenerator<GenericRecord> {
             for (const field of fields) {
                 const generator = this.getGeneratorByField(field);
 
-                values[field.fieldId] = await generator.generate(field);
+                values[field.fieldId] = await generator.generate();
             }
             return values;
         });

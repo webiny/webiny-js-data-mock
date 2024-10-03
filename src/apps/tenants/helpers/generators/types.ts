@@ -1,4 +1,4 @@
-import { ApiCmsModel, ApiCmsModelField, GenericRecord } from "~/types";
+import { ApiCmsModelField, GenericRecord } from "~/types";
 
 export interface IRegistryGetGeneratorParams {
     field: ApiCmsModelField;
@@ -10,7 +10,7 @@ export interface IRegistryRegisterGeneratorConstructorParams {
     }): IRegistryGenerator<T>;
     getGeneratorByField<T extends IGenerator<unknown>>(
         field: ApiCmsModelField
-    ): IRegistryGenerator<T>;
+    ): IFieldRegistryGenerator<T>;
 }
 
 export interface IRegistryRegisterGeneratorConstructor {
@@ -41,6 +41,10 @@ export interface IGenerator<T> {
 
 export interface IRegistryGenerator<T extends IGenerator<unknown>> {
     generate(field: ApiCmsModelField): ReturnType<T["generate"]>;
+}
+
+export interface IFieldRegistryGenerator<T extends IGenerator<unknown>> {
+    generate(): ReturnType<T["generate"]>;
 }
 
 export interface IValidatorConstructor<T> {

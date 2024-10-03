@@ -1,4 +1,5 @@
 import {
+    IFieldRegistryGenerator,
     IGenerator,
     IGeneratorGenerateParams,
     IRegistryGenerator,
@@ -18,7 +19,7 @@ export abstract class BaseGenerator<T = unknown> implements IGenerator<T | null>
     }) => IRegistryGenerator<T>;
     protected readonly getGeneratorByField: <T extends IGenerator<unknown>>(
         field: ApiCmsModelField
-    ) => IRegistryGenerator<T>;
+    ) => IFieldRegistryGenerator<T>;
 
     public constructor(params: IBaseGeneratorParams) {
         this.getGenerator = params.getGenerator;

@@ -1,7 +1,8 @@
 import path from "path";
-import { ICache, ICacheKey } from "./types";
+import { ICache, ICacheKey, ICacheKeyInput } from "./types";
 import { logger } from "~/logger";
 import fsExtra from "fs-extra";
+import { createCacheKey } from "~/cache/CacheKey";
 
 export interface IFileCacheParams {
     cacheDir?: string;
@@ -21,6 +22,8 @@ class FileCache implements ICache {
     protected constructor(params?: IFileCacheParams) {
         this.cacheDir = params?.cacheDir || defaultCacheDir;
         this.ttl = params?.ttl || 300;
+
+        this.clearExisting();
     }
 
     public static create(params?: IFileCacheParams) {
@@ -39,20 +42,22 @@ class FileCache implements ICache {
         this.disabled = false;
     }
 
-    public get<T>(cacheKey: ICacheKey): T | null {
+    public get<T>(input: ICacheKeyInput): T | null {
         if (this.disabled) {
             return null;
         }
-        const value = this.read<T>(cacheKey);
-        return value || null;
+        const cacheKey = createCacheKey(input);
+        return this.read<T>(cacheKey);
     }
 
-    public set<T>(cacheKey: ICacheKey, value: T): T {
+    public set<T>(input: ICacheKeyInput, value: T): T {
+        const cacheKey = createCacheKey(input);
         this.write<T>(cacheKey, value);
         return value;
     }
 
-    public async getOrSet<T>(cacheKey: ICacheKey, cb: () => Promise<T>): Promise<T> {
+    public async getOrSet<T>(input: ICacheKeyInput, cb: () => Promise<T>): Promise<T> {
+        const cacheKey = createCacheKey(input);
         const existing = this.get<T>(cacheKey);
         if (existing) {
             return existing;
@@ -61,7 +66,7 @@ class FileCache implements ICache {
         return this.set<T>(cacheKey, value);
     }
 
-    public clear(cacheKey?: ICacheKey | ICacheKey[]) {
+    public clear(cacheKey?: ICacheKeyInput) {
         if (!cacheKey) {
             cacheKey = this.keys;
         }
@@ -75,15 +80,16 @@ class FileCache implements ICache {
         this.delete(cacheKey);
     }
 
-    private read<T>(key: ICacheKey): T | null {
-        this.addKey(key);
+    private read<T>(input: ICacheKeyInput): T | null {
+        const cacheKey = createCacheKey(input);
+        this.addKey(cacheKey);
         try {
-            const target = this.createPath(key);
+            const target = this.createPath(cacheKey);
             if (!fsExtra.existsSync(target)) {
                 return null;
             }
             const stats = fsExtra.statSync(target);
-            if (stats.mtime < new Date(Date.now() - this.ttl * 1000)) {
+            if (this.isExpired(stats)) {
                 return null;
             }
             const content = fsExtra.readFileSync(target, "utf8");
@@ -97,10 +103,11 @@ class FileCache implements ICache {
         }
     }
 
-    private write<T>(key: ICacheKey, data: T): void {
-        this.addKey(key);
+    private write<T>(input: ICacheKeyInput, data: T): void {
+        const cacheKey = createCacheKey(input);
+        this.addKey(cacheKey);
         try {
-            const target = this.createPath(key);
+            const target = this.createPath(cacheKey);
 
             fsExtra.ensureDirSync(path.dirname(target));
 
@@ -110,26 +117,49 @@ class FileCache implements ICache {
         }
     }
 
-    private delete(key: ICacheKey): void {
-        this.addKey(key);
+    private delete(input: ICacheKeyInput): void {
+        const cacheKey = createCacheKey(input);
+        this.addKey(cacheKey);
         try {
-            fsExtra.unlinkSync(this.createPath(key));
+            fsExtra.unlinkSync(this.createPath(cacheKey));
         } catch (ex) {
             logger.error(ex);
         }
     }
 
-    private createPath(key: ICacheKey): string {
-        return path.join(this.cacheDir, `${key.get()}.json`);
+    private createPath(input: ICacheKeyInput): string {
+        const cacheKey = createCacheKey(input);
+        return path.join(this.cacheDir, `${cacheKey.get()}.json`);
     }
 
-    private addKey(input: ICacheKey): void {
+    private addKey(input: ICacheKeyInput): void {
+        const cacheKey = createCacheKey(input);
+
         for (const key of this.keys) {
-            if (key.get() === input.get()) {
+            if (key.get() === cacheKey.get()) {
                 return;
             }
         }
-        this.keys.push(input);
+        this.keys.push(cacheKey);
+    }
+
+    private clearExisting(): void {
+        if (!fsExtra.existsSync(this.cacheDir)) {
+            return;
+        }
+        const files = fsExtra.readdirSync(this.cacheDir);
+        for (const file of files) {
+            const target = path.join(this.cacheDir, file);
+            const stats = fsExtra.statSync(target);
+            if (!this.isExpired(stats)) {
+                continue;
+            }
+            fsExtra.unlinkSync(target);
+        }
+    }
+
+    private isExpired(stats: fsExtra.Stats): boolean {
+        return stats.mtime < new Date(Date.now() - this.ttl * 1000);
     }
 }
 

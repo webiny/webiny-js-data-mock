@@ -1,4 +1,5 @@
 import {
+    IFieldRegistryGenerator,
     IGenerator,
     IRegistry,
     IRegistryGenerator,
@@ -9,11 +10,12 @@ import {
 } from "./types";
 import { ApiCmsModelField } from "~/types";
 import { logger } from "~/logger";
+import { createCacheKey, createMemoryCache } from "~/cache";
 
 class Registry implements IRegistry {
     public generators: IGenerator<unknown>[] = [];
     public validators: IValidatorConstructor<unknown>[] = [];
-    private readonly validatorsCache: Map<string, IValidator<unknown>> = new Map();
+    private readonly validatorsCache = createMemoryCache();
 
     public registerValidator<T>(validator: IValidatorConstructor<T>): void {
         this.validators.push(validator);
@@ -34,10 +36,18 @@ class Registry implements IRegistry {
             },
             getGeneratorByField: <T extends IGenerator<unknown>>(
                 field: ApiCmsModelField
-            ): IRegistryGenerator<T> => {
-                return this.getGenerator<T>({
+            ): IFieldRegistryGenerator<T> => {
+                const generator = this.getGenerator<T>({
                     field
                 });
+
+                return {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    generate: async () => {
+                        return generator.generate(field);
+                    }
+                };
             }
         });
         this.generators.push(generator);
@@ -75,12 +85,10 @@ class Registry implements IRegistry {
             validatorConstructor.name
         ].join("#");
 
-        if (this.validatorsCache.has(type)) {
-            return this.validatorsCache.get(type) as IValidator<V>;
-        }
-        const validator = new validatorConstructor(field);
-        this.validatorsCache.set(type, validator);
-        return validator;
+        const key = createCacheKey(type);
+        return this.validatorsCache.getOrSet<IValidator<V>>(key, () => {
+            return new validatorConstructor(field);
+        });
     }
 
     private createRegistryGenerator<T extends IGenerator<unknown>>(generator: T) {

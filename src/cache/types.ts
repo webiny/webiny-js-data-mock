@@ -1,18 +1,32 @@
-import { ICacheKeyKeys } from "@webiny/utils";
+import { GenericRecord } from "~/types";
+import { BinaryToTextEncoding } from "crypto";
 
-export { ICacheKeyKeys };
+export interface ICacheKeyOptions {
+    algorithm?: CacheKeyAlgorithmType;
+    encoding?: BinaryToTextEncoding;
+}
+
+export type CacheKeyAlgorithmType = "md5" | "sha1" | "sha224" | "sha256" | "sha384" | "sha512";
 
 export interface ICacheKey {
     get(): string;
-    keys: ICacheKeyKeys;
+    keys: ICacheKeyInput;
 }
+
+export type ICacheKeyInput =
+    | ICacheKey
+    | ICacheKey[]
+    | GenericRecord
+    | (string | number | GenericRecord)[]
+    | string
+    | number;
 
 export interface ICache {
     disable(): void;
     enable(): void;
-    setCacheDir(cacheDir: string): void;
     get<T>(cacheKey: ICacheKey): T | null;
     set<T>(cacheKey: ICacheKey, value: T): T;
-    getOrSet<T>(cacheKey: ICacheKey, cb: () => Promise<T>): Promise<T>;
+    getOrSet<T>(cacheKey: ICacheKeyInput, cb: () => Promise<T>): Promise<T>;
+    getOrSet<T>(cacheKey: ICacheKeyInput, cb: () => T): T;
     clear(cacheKey?: ICacheKey | ICacheKey[]): void;
 }
