@@ -29,8 +29,8 @@ export interface IGetValidator {
     <T>(type: { new (field: ApiCmsModelField): IValidator<T> }): IValidator<T>;
 }
 
-export interface IGeneratorGenerateParams {
-    field: ApiCmsModelField;
+export interface IGeneratorGenerateParams<T extends ApiCmsModelField = ApiCmsModelField> {
+    field: T;
     getValidator: IGetValidator;
 }
 export interface IGenerator<T> {

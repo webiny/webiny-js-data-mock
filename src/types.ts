@@ -1,6 +1,7 @@
 import {
     CmsGroup as BaseGroup,
     CmsModel as BaseModel,
+    CmsModelDynamicZoneField,
     CmsModelField as BaseCmsModelField
 } from "@webiny/api-headless-cms/types";
 import {
@@ -232,6 +233,19 @@ export type ApiCmsGroup = Pick<BaseGroup, "id" | "name" | "slug">;
 
 export type ApiCmsModelField = Pick<
     BaseCmsModelField,
+    | "id"
+    | "fieldId"
+    | "storageId"
+    | "type"
+    | "multipleValues"
+    | "settings"
+    | "predefinedValues"
+    | "validation"
+    | "listValidation"
+>;
+
+export type ApiCmsModelDynamicZoneField = Pick<
+    CmsModelDynamicZoneField,
     | "id"
     | "fieldId"
     | "storageId"

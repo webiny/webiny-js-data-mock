@@ -39,7 +39,7 @@ There are modifier arguments for the create-data command:
 yarn create-data --articles:amount=100 --articles:atOnce=10 --articles:startId=555
 ````
 
-The `article:amount` defines how much articles will be generated - default is **100**.
+The `articles:amount` defines how much articles will be generated - default is **100**.
 
 The `articles:atOnce` defines how much articles will be created at once (how many mutations will be sent at once) -
 default is **10**.
