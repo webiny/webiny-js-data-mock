@@ -4,7 +4,6 @@ import { registry } from "../registry";
 
 class BooleanGenerator extends BaseGenerator<boolean> {
     public type = "boolean";
-    public multipleValues = false;
 
     public async generate(): Promise<boolean> {
         const value = faker.number.int({

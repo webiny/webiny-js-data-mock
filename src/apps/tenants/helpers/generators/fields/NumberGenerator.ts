@@ -9,7 +9,6 @@ import {
 
 class NumberGenerator extends BaseGenerator<number> {
     public type = "number";
-    public multipleValues = false;
 
     public async generate({ field }: IGeneratorGenerateParams): Promise<number> {
         const values = field.predefinedValues?.values;
@@ -29,7 +28,6 @@ class NumberGenerator extends BaseGenerator<number> {
 
 class MultiNumberGenerator extends BaseMultiGenerator<number> {
     public type = "number";
-    public multipleValues = true;
 
     public async generate({ field, getValidator }: IGeneratorGenerateParams): Promise<number[]> {
         const values = field.predefinedValues?.values;

@@ -9,7 +9,6 @@ import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/type
 
 class FileGenerator extends BaseGenerator<string> {
     public type = "file";
-    public multipleValues = false;
 
     public async generate(): Promise<string> {
         return faker.internet.url({
@@ -20,7 +19,6 @@ class FileGenerator extends BaseGenerator<string> {
 
 class MultiFileGenerator extends BaseMultiGenerator<string> {
     public type = "file";
-    public multipleValues = true;
 
     public async generate({ getValidator }: IGeneratorGenerateParams): Promise<string[]> {
         const total = faker.number.int({

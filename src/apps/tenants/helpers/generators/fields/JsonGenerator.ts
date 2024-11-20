@@ -25,7 +25,6 @@ const create = (): GenericRecord => {
 
 class JsonGenerator extends BaseGenerator<GenericRecord> {
     public type = "json";
-    public multipleValues = false;
 
     public async generate(): Promise<GenericRecord> {
         return create();
@@ -34,7 +33,6 @@ class JsonGenerator extends BaseGenerator<GenericRecord> {
 
 class MultiJsonGenerator extends BaseMultiGenerator<GenericRecord> {
     public type = "json";
-    public multipleValues = true;
 
     public async generate({ getValidator }: IGeneratorGenerateParams): Promise<GenericRecord[]> {
         const total = faker.number.int({

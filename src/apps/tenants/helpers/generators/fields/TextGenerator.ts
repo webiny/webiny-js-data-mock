@@ -10,7 +10,6 @@ import { logger } from "~/logger";
 
 class TextGenerator extends BaseGenerator<string> {
     public type = "text";
-    public multipleValues = false;
 
     public async generate(params: IGeneratorGenerateParams): Promise<string | null> {
         const { field, getValidator } = params;
@@ -52,7 +51,6 @@ class TextGenerator extends BaseGenerator<string> {
 
 class MultiTextGenerator extends BaseMultiGenerator<string> {
     public type = "text";
-    public multipleValues = true;
 
     public async generate(params: IGeneratorGenerateParams): Promise<string[]> {
         const { field, getValidator } = params;

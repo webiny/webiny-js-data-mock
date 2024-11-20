@@ -10,7 +10,6 @@ import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/type
 
 class RichTextGenerator extends BaseGenerator<GenericRecord> {
     public type = "rich-text";
-    public multipleValues = false;
 
     public async generate(): Promise<GenericRecord> {
         return {
@@ -29,7 +28,6 @@ class RichTextGenerator extends BaseGenerator<GenericRecord> {
 
 class MultiRichTextGenerator extends BaseMultiGenerator<GenericRecord> {
     public type = "rich-text";
-    public multipleValues = true;
 
     public async generate({
         field,

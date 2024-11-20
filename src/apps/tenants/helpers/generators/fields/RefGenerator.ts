@@ -9,7 +9,6 @@ interface Ref {
 
 class RefGenerator extends BaseGenerator<Ref> {
     public type = "ref";
-    public multipleValues = false;
 
     public async generate(): Promise<Ref | null> {
         return null;
@@ -18,7 +17,6 @@ class RefGenerator extends BaseGenerator<Ref> {
 
 class MultiRefGenerator extends BaseMultiGenerator<Ref> {
     public type = "ref";
-    public multipleValues = true;
 
     public async generate(): Promise<Ref[] | null> {
         return null;

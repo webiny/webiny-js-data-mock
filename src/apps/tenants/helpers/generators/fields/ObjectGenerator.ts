@@ -10,7 +10,6 @@ import {
 
 class ObjectGenerator extends BaseGenerator<GenericRecord> {
     public type = "object";
-    public multipleValues = false;
 
     public async generate({ field }: IGeneratorGenerateParams): Promise<GenericRecord | null> {
         const fields = field.settings?.fields;
@@ -29,7 +28,6 @@ class ObjectGenerator extends BaseGenerator<GenericRecord> {
 
 class MultiObjectGenerator extends BaseMultiGenerator<GenericRecord> {
     public type = "object";
-    public multipleValues = true;
 
     public async generate({
         field,

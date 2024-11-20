@@ -11,7 +11,6 @@ import {
 
 class DynamicZoneGenerator extends BaseGenerator<GenericRecord> {
     public type = "dynamicZone";
-    public multipleValues = false;
 
     public async generate(
         params: IGeneratorGenerateParams<ApiCmsModelDynamicZoneField>
@@ -31,7 +30,6 @@ class DynamicZoneGenerator extends BaseGenerator<GenericRecord> {
 
 class MultiDynamicZoneGenerator extends BaseMultiGenerator<GenericRecord> {
     public type = "dynamicZone";
-    public multipleValues = true;
 
     public async generate(
         params: IGeneratorGenerateParams<ApiCmsModelDynamicZoneField>

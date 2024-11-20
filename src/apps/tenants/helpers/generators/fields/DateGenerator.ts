@@ -45,7 +45,6 @@ const createValue = (params: IGeneratorGenerateParams): string => {
 
 class DateTimeGenerator extends BaseGenerator<string> {
     public readonly type: string = "datetime";
-    public multipleValues = false;
 
     public async generate(params: IGeneratorGenerateParams): Promise<string> {
         return createValue(params);
@@ -54,7 +53,6 @@ class DateTimeGenerator extends BaseGenerator<string> {
 
 class MultiDateTimeGenerator extends BaseMultiGenerator<string> {
     public readonly type: string = "datetime";
-    public readonly multipleValues = true;
 
     public async generate(params: IGeneratorGenerateParams): Promise<string[]> {
         const { getValidator } = params;

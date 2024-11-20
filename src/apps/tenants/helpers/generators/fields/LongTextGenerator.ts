@@ -9,7 +9,6 @@ import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/type
 
 class LongTextGenerator extends BaseGenerator<string> {
     public type = "long-text";
-    public multipleValues = false;
 
     public async generate({ getValidator }: IGeneratorGenerateParams): Promise<string> {
         const min = getValidator(MinimumLengthValidator).getValue(1);
@@ -25,7 +24,6 @@ class LongTextGenerator extends BaseGenerator<string> {
 
 class MultiLongTextGenerator extends BaseMultiGenerator<string> {
     public type = "long-text";
-    public multipleValues = true;
 
     public async generate(params: IGeneratorGenerateParams): Promise<string[]> {
         const { getValidator, field } = params;
