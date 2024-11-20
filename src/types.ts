@@ -11,6 +11,7 @@ import {
 import { Page as PbPage } from "@webiny/api-page-builder/types";
 import { PbUpdatePageInput as BasePbUpdatePageInput } from "@webiny/api-page-builder/graphql/types";
 import { ICache } from "~/cache";
+import { CmsDynamicZoneTemplate } from "@webiny/api-headless-cms/types/fields/dynamicZoneField";
 
 export type GenericRecordKey = string | number | symbol;
 // eslint-disable-next-line
@@ -256,6 +257,8 @@ export type ApiCmsModelDynamicZoneField = Pick<
     | "validation"
     | "listValidation"
 >;
+
+export type ApiCmsDynamicZoneTemplate = CmsDynamicZoneTemplate;
 
 export interface ApiCmsModel
     extends Pick<BaseModel, "name" | "modelId" | "singularApiName" | "pluralApiName"> {

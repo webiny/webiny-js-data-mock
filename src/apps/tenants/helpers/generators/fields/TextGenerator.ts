@@ -3,7 +3,8 @@ import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
 import { registry } from "../registry";
 import {
     MaximumLengthValidator,
-    MinimumLengthValidator
+    MinimumLengthValidator,
+    PatternValidator
 } from "~/apps/tenants/helpers/generators/validators";
 import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
 import { logger } from "~/logger";
@@ -23,10 +24,10 @@ class TextGenerator extends BaseGenerator<string> {
             return values[target].value;
         }
 
-        const pattern = field.validation?.find(v => v.name === "pattern");
+        const validation = getValidator(PatternValidator).getValue();
 
-        if (pattern) {
-            const preset = pattern.settings?.preset || "unknown";
+        if (validation) {
+            const preset = validation.preset || "unknown";
             switch (preset) {
                 case "email":
                     return faker.internet.email();

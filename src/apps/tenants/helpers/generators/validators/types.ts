@@ -6,3 +6,9 @@ export interface DateValidationSettings {
 export interface LengthValidationSettings {
     value: string;
 }
+
+export interface PatternValidationSettings {
+    preset?: string;
+    regex: string;
+    flags?: string;
+}

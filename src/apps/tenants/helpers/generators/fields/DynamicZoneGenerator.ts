@@ -1,13 +1,9 @@
 import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
-import pMap from "p-map";
+import pReduce from "p-reduce";
 import { registry } from "../registry";
 import { ApiCmsModelDynamicZoneField, GenericRecord } from "~/types";
 import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
 import { faker } from "@faker-js/faker";
-import {
-    MaximumLengthValidator,
-    MinimumLengthValidator
-} from "~/apps/tenants/helpers/generators/validators";
 
 class DynamicZoneGenerator extends BaseGenerator<GenericRecord> {
     public type = "dynamicZone";
@@ -15,16 +11,36 @@ class DynamicZoneGenerator extends BaseGenerator<GenericRecord> {
     public async generate(
         params: IGeneratorGenerateParams<ApiCmsModelDynamicZoneField>
     ): Promise<GenericRecord | null> {
-        return pMap(params.field.settings.templates, async template => {
-            const values: GenericRecord = {};
-            for (const field of template.fields) {
-                const generator = this.getGeneratorByField(field);
-                values[field.fieldId] = await generator.generate();
-            }
-            return {
-                [template.gqlTypeName]: values
-            };
+        const templates = params.field.settings?.templates;
+        if (!templates.length) {
+            return null;
+        }
+        const random = faker.number.int({
+            /**
+             * There is a possibility that we send a current value.
+             */
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            min: params.field.settings?.current || 0,
+            max: templates.length - 1
         });
+        const template = templates[random];
+        if (!template) {
+            return null;
+        }
+
+        const values = await pReduce(
+            template.fields,
+            async (collection, field) => {
+                const generator = this.getGeneratorByField(field);
+                collection[field.fieldId] = await generator.generate();
+                return collection;
+            },
+            {} as GenericRecord
+        );
+        return {
+            [template.gqlTypeName]: values
+        };
     }
 }
 
@@ -34,13 +50,19 @@ class MultiDynamicZoneGenerator extends BaseMultiGenerator<GenericRecord> {
     public async generate(
         params: IGeneratorGenerateParams<ApiCmsModelDynamicZoneField>
     ): Promise<GenericRecord[]> {
-        const { field, getValidator } = params;
-        const total = faker.number.int({
-            min: getValidator(MinimumLengthValidator).getListValue(1),
-            max: getValidator(MaximumLengthValidator).getListValue(5)
-        });
-        return this.iterate(total, async () => {
-            return await this.getGenerator(DynamicZoneGenerator).generate(field);
+        const { field } = params;
+        const total = field.settings?.templates?.length;
+        if (!total) {
+            return [];
+        }
+        return this.iterate(total, async current => {
+            return await this.getGenerator(DynamicZoneGenerator).generate({
+                ...field,
+                settings: {
+                    ...field.settings,
+                    current
+                }
+            });
         });
     }
 }
