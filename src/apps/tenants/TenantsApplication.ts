@@ -1,12 +1,13 @@
 import { ApiError, IApplication, IBaseApplication } from "~/types";
 import { logger } from "~/logger";
+import { NotFoundError } from "~/errors";
 
 export interface ITenant {
     id: string;
     name: string;
 }
 
-const defaultTenant: ITenant = {
+export const defaultTenant: ITenant = {
     id: "root",
     name: "Root"
 };
@@ -114,7 +115,7 @@ export class TenantsApplication implements IApplication {
             logger.error(result.error);
             throw new Error(result.error.message);
         } else if (!result.data?.length) {
-            throw new Error("No tenants found.");
+            throw new NotFoundError("No tenants found.");
         }
         return addDefaultTenant(result.data).sort((a, b) => {
             return a.id.localeCompare(b.id);

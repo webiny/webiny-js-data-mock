@@ -1,10 +1,11 @@
 import { IApplication, IBaseApplication } from "~/types";
-import { TenantsApplication } from "./TenantsApplication";
+import { defaultTenant, TenantsApplication } from "./TenantsApplication";
 import { ModelApplication } from "~/apps/ModelApplication";
 import { EntryApplication } from "~/apps/EntryApplication";
 import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariables";
 import { logger } from "~/logger";
 import { createCacheKey } from "~/cache";
+import { NotFoundError } from "~/errors";
 
 export class EntryPerTenantApplication implements IApplication {
     private readonly app: IBaseApplication;
@@ -54,7 +55,14 @@ export class EntryPerTenantApplication implements IApplication {
                 key: "tenants"
             }),
             async () => {
-                return await this.app.getApp<TenantsApplication>("tenants").listTenants();
+                try {
+                    return await this.app.getApp<TenantsApplication>("tenants").listTenants();
+                } catch (ex) {
+                    if (ex instanceof NotFoundError) {
+                        return [defaultTenant];
+                    }
+                    throw ex;
+                }
             }
         );
         if (startFromTenant) {
