@@ -134,6 +134,11 @@ In the `amount` argument, you must send the amount of the records you want to cr
 In the `models` argument, you must send the `modelId` of the model you want to create the records for. Same as for the
 tenants, you can send multiple `modelId` separated by a comma or a `*` to target all existing models.
 
+#### Dry Run
+
+If you do not wish to insert data immediately, but you want to see what will get inserted, you can add the `--dry-run` flag.
+It will generate JSON file in `./dryRuns/ ` directory.
+
 #### IMPORTANT!
 
 When sending a `*`, make sure it is sent with quotes, like this: `"*"`. Otherwise, the script will fail.

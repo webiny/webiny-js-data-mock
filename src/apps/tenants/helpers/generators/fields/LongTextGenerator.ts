@@ -12,7 +12,7 @@ class LongTextGenerator extends BaseGenerator<string> {
 
     public async generate({ getValidator }: IGeneratorGenerateParams): Promise<string> {
         const min = getValidator(MinimumLengthValidator).getValue(1);
-        const max = getValidator(MaximumLengthValidator).getValue(5);
+        const max = getValidator(MaximumLengthValidator).getValue(25);
         const value = faker.lorem.words({
             min,
             max

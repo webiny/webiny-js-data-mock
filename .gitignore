@@ -21,3 +21,6 @@ dist/
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
+
+dryRuns
+dryRuns/*

@@ -1,4 +1,4 @@
-import { IApplication, IBaseApplication } from "~/types";
+import { GenericRecord, IApplication, IBaseApplication } from "~/types";
 import { defaultTenant, TenantsApplication } from "./TenantsApplication";
 import { ModelApplication } from "~/apps/ModelApplication";
 import { EntryApplication } from "~/apps/EntryApplication";
@@ -6,6 +6,18 @@ import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariable
 import { logger } from "~/logger";
 import { createCacheKey } from "~/cache";
 import { NotFoundError } from "~/errors";
+import writeJsonFile from "write-json-file";
+import path from "path";
+
+type IStorageCollection = GenericRecord<string, GenericRecord<string, GenericRecord[]>>;
+
+interface IStoreParams {
+    collection: IStorageCollection;
+    path: string;
+    perTenant: number;
+    tenants: string[];
+    models: string[];
+}
 
 export class EntryPerTenantApplication implements IApplication {
     private readonly app: IBaseApplication;
@@ -25,10 +37,19 @@ export class EntryPerTenantApplication implements IApplication {
     private async execute(): Promise<void> {
         this.app.graphql.setTenant("root");
 
+        const collection: IStorageCollection = {};
+
         const perTenant = this.app.getNumberArg("amount", 5);
         const tenantsInput = this.app.getStringArg("tenants", "").split(",").filter(Boolean);
         const startFromTenant = this.app.getStringArg("startFromTenant", "").toLowerCase();
         const modelsInput = this.app.getStringArg("models", "").split(",").filter(Boolean);
+        const dryRun = this.app.getBooleanArg("dryRun", false);
+        const dryRunPath = this.app.getStringArg("dryRunPath", "./dryRuns");
+        if (dryRun && !dryRunPath) {
+            throw new Error(
+                "Missing dryRunPath. It must be set when dryRun is enabled, as it will store the data in that directory."
+            );
+        }
 
         const useCache = this.app.getBooleanArg("cache", true);
         if (useCache === false) {
@@ -122,11 +143,18 @@ export class EntryPerTenantApplication implements IApplication {
                 continue;
             }
 
+            collection[tenant.id] = {};
+
             for (const model of models) {
                 logger.debug(
                     `Creating tenant "${tenant.name}" entries for model "${model.modelId}"...`
                 );
                 const variables = await createEntryVariables(model, perTenant);
+
+                if (dryRun) {
+                    collection[tenant.id][model.modelId] = variables;
+                    continue;
+                }
 
                 const result = await entryApp.createViaGraphQL({
                     model,
@@ -146,5 +174,31 @@ export class EntryPerTenantApplication implements IApplication {
                 }
             }
         }
+        if (!dryRun || Object.keys(collection).length === 0) {
+            return;
+        }
+
+        this.store({
+            path: dryRunPath,
+            collection,
+            perTenant,
+            tenants: tenantsInput,
+            models: modelsInput
+        });
+    }
+
+    private store(params: IStoreParams): void {
+        const { path: input, collection, tenants, perTenant, models } = params;
+        const target = path.resolve(
+            "./",
+            path.join(input, `dry-run-${new Date().toISOString()}.json`)
+        );
+        logger.info(`Storing dry run data into ${target}...`);
+        writeJsonFile.sync(target, {
+            tenants,
+            models,
+            perTenant,
+            values: collection
+        });
     }
 }
