@@ -78,17 +78,21 @@ export class Application implements IBaseApplication {
     }
 
     public getBooleanArg(name: string, def: boolean = false): boolean {
-        if (this.args[name as keyof ApplicationParams] === undefined) {
+        const value = this.args[name as keyof ApplicationParams];
+        if (value === undefined || value === null) {
             return def;
+        } else if (!value || value === "false") {
+            return false;
         }
-        return !!this.args[name as keyof ApplicationParams];
+        return !!value;
     }
 
     public getNumberArg(name: string, def: number): number {
-        if (this.args[name as keyof ApplicationParams] === undefined) {
+        const input = this.args[name as keyof ApplicationParams];
+        if (input === undefined) {
             return def;
         }
-        const value = Number(this.args[name as keyof ApplicationParams]);
+        const value = Number(input);
         if (isNaN(value)) {
             return def;
         }
@@ -96,10 +100,11 @@ export class Application implements IBaseApplication {
     }
 
     public getStringArg(name: string, def: string): string {
-        if (this.args[name as keyof ApplicationParams] === undefined) {
+        const input = this.args[name as keyof ApplicationParams];
+        if (input === undefined) {
             return def;
         }
-        return String(this.args[name as keyof ApplicationParams]);
+        return String(input);
     }
 
     public getApp<T>(name: string): T {

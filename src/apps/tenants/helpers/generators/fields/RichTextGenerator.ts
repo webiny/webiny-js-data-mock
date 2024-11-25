@@ -13,12 +13,34 @@ class RichTextGenerator extends BaseGenerator<GenericRecord> {
 
     public async generate(): Promise<GenericRecord> {
         return {
-            type: "paragraph",
+            tag: "div",
             children: [
                 {
+                    tag: "h1",
                     text: faker.lorem.words({
                         min: 1,
                         max: 3
+                    })
+                },
+                {
+                    tag: "paragraph",
+                    text: faker.lorem.words({
+                        min: 1,
+                        max: 10
+                    })
+                },
+                {
+                    tag: "paragraph",
+                    text: faker.lorem.words({
+                        min: 1,
+                        max: 20
+                    })
+                },
+                {
+                    tag: "paragraph",
+                    text: faker.lorem.words({
+                        min: 1,
+                        max: 30
                     })
                 }
             ]
