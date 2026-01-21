@@ -131,7 +131,9 @@ export class EntryApplication implements IEntryApplication {
                     data {
                         id
                         entryId
-                        ${createModelFields(model.fields)}
+                        values {
+                            ${createModelFields(model.fields)}
+                        }
                     }
                     error {
                         message
