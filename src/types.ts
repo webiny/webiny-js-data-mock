@@ -61,21 +61,21 @@ export interface ApiGraphQLResultJson {
 
 export interface IGraphQLApplicationQueryParams<T> {
     query: string;
-    path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
+    path: `/cms/manage` | "/graphql";
     variables?: GenericRecord;
     getResult: IGraphQLApplicationGetResult<T>;
 }
 
 export interface IGraphQLApplicationMutationParams<T> {
     mutation: string;
-    path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
+    path: `/cms/manage` | "/graphql";
     variables: GenericRecord;
     getResult: IGraphQLApplicationGetResult<T>;
 }
 
 export interface IGraphQLApplicationMutationsParams<T> {
     mutation: string;
-    path: `/cms/manage/${string}-${Uppercase<string>}` | "/graphql";
+    path: `/cms/manage` | "/graphql";
     variables: GenericRecord[];
     getResult: IGraphQLApplicationGetResult<T>;
     atOnce?: number;

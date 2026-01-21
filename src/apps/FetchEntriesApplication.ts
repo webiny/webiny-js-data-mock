@@ -125,7 +125,7 @@ export class FetchEntriesApplication implements IFetchEntriesApplication {
 
         return await this.app.graphql.query<ApiResultEntry[]>({
             query,
-            path: "/cms/manage/en-US",
+            path: "/cms/manage",
             variables: {
                 after: cursor,
                 limit

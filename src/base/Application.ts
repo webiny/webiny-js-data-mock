@@ -30,7 +30,6 @@ const getEnv = () => {
 export interface ApplicationParams {
     confirm?: boolean;
     tenant?: string;
-    locale?: string;
 }
 
 interface Apps {

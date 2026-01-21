@@ -109,7 +109,7 @@ export class ModelApplication implements IModelApplication {
                     }
                 }
             `,
-            path: "/cms/manage/en-US",
+            path: "/cms/manage",
             getResult: createGetCmsContentResult()
         });
         if (result.data) {
@@ -141,7 +141,7 @@ export class ModelApplication implements IModelApplication {
                     }
                 }
             `,
-            path: "/cms/manage/en-US",
+            path: "/cms/manage",
             getResult: createGetCmsContentResult()
         });
     }
@@ -171,7 +171,7 @@ export class ModelApplication implements IModelApplication {
                     }
                 }
             `,
-            path: "/cms/manage/en-US",
+            path: "/cms/manage",
             variables: {
                 data: {
                     ...model

@@ -97,7 +97,7 @@ export class EntryApplication implements IEntryApplication {
 
         const result = await this.app.graphql.mutations<T>({
             mutation,
-            path: "/cms/manage/en-US",
+            path: "/cms/manage",
             variables: variables.map(data => {
                 return {
                     data,

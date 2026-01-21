@@ -67,7 +67,7 @@ export class GroupApplication implements IGroupApplication {
         `;
         return await this.app.graphql.query<ApiCmsGroup[]>({
             query,
-            path: "/cms/manage/en-US",
+            path: "/cms/manage",
             getResult: createGetCmsContentResult()
         });
     }
@@ -98,7 +98,7 @@ export class GroupApplication implements IGroupApplication {
         };
         return await this.app.graphql.mutation<ApiCmsGroup>({
             mutation,
-            path: "/cms/manage/en-US",
+            path: "/cms/manage",
             variables,
             getResult: createGetCmsContentResult()
         });
