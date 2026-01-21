@@ -34,8 +34,10 @@ class TextGenerator extends BaseGenerator<string> {
                 case "url":
                     return faker.internet.url();
                 case "uppercase":
+                case "uppercasespace":
                     return faker.word.words(1).toUpperCase();
                 case "lowercase":
+                case "lowercasespace":
                     return faker.word.words(1).toLowerCase();
                 default:
                     logger.warn(`There is no pattern preset generator for "${preset}"`);
