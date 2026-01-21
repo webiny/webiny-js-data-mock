@@ -263,7 +263,7 @@ export type ApiCmsDynamicZoneTemplate = CmsDynamicZoneTemplate;
 
 export interface ApiCmsModel extends Pick<
     BaseModel,
-    "name" | "modelId" | "singularApiName" | "pluralApiName"
+    "name" | "modelId" | "singularApiName" | "pluralApiName" | "tags"
 > {
     fields: ApiCmsModelField[];
 }

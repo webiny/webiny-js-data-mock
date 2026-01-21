@@ -130,6 +130,7 @@ export class ModelApplication implements IModelApplication {
                             modelId
                             singularApiName
                             pluralApiName
+                            tags
                             fields ${cmsModelFieldsGraphQlSubselection}
                         }
                         error {

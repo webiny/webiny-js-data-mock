@@ -27,12 +27,16 @@ class TextGenerator extends BaseGenerator<string> {
         const validation = getValidator(PatternValidator).getValue();
 
         if (validation) {
-            const preset = validation.preset || "unknown";
+            const preset = (validation?.preset || "unknown").toLowerCase();
             switch (preset) {
                 case "email":
                     return faker.internet.email();
                 case "url":
                     return faker.internet.url();
+                case "uppercase":
+                    return faker.word.words(1).toUpperCase();
+                case "lowercase":
+                    return faker.word.words(1).toLowerCase();
                 default:
                     logger.warn(`There is no pattern preset generator for "${preset}"`);
                     return null;

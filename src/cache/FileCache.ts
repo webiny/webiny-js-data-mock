@@ -16,7 +16,7 @@ class FileCache implements ICache {
     private cacheDir: string;
     private disabled: boolean = false;
 
-    private keys: ICacheKey[] = [];
+    private keys = new Set<ICacheKey>();
 
     // Prevent direct instantiation.
     protected constructor(params?: IFileCacheParams) {
@@ -119,7 +119,9 @@ class FileCache implements ICache {
 
     private delete(input: ICacheKeyInput): void {
         const cacheKey = createCacheKey(input);
-        this.addKey(cacheKey);
+        if (this.keys.has(cacheKey) === false) {
+            this.keys.add(cacheKey);
+        }
         try {
             fsExtra.unlinkSync(this.createPath(cacheKey));
         } catch (ex) {
@@ -140,7 +142,7 @@ class FileCache implements ICache {
                 return;
             }
         }
-        this.keys.push(cacheKey);
+        this.keys.add(cacheKey);
     }
 
     private clearExisting(): void {

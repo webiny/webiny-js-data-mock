@@ -120,7 +120,19 @@ export class EntryPerTenantApplication implements IApplication {
             let { data: models } = await this.app.cache.getOrSet(
                 createCacheKey({ app: "entryPerTenant", key: "models", tenantId: id }),
                 async () => {
-                    return await modelApp.list();
+                    const result = await modelApp.list();
+                    /**
+                     * Filter out singleton models.
+                     */
+                    return {
+                        ...result,
+                        data: (result.data || []).filter(model => {
+                            if (!model.tags?.length) {
+                                return true;
+                            }
+                            return model.tags.includes("singleEntry") === false;
+                        })
+                    };
                 }
             );
             if (!models?.length) {
