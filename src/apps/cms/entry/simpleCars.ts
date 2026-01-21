@@ -21,8 +21,8 @@ const slugify = (value: string): string => {
     return result.replace(/\+/g, "");
 };
 
-type CmsSimpleCarMake = Pick<ApiCmsSimpleCarMake, "id" | "name">;
-type CmsSimpleCarModel = Pick<ApiCmsSimpleCarModel, "id" | "name" | "make">;
+type CmsSimpleCarMake = Pick<ApiCmsSimpleCarMake, "id" | "values">;
+type CmsSimpleCarModel = Pick<ApiCmsSimpleCarModel, "id" | "values">;
 
 const simpleCarMakes: CmsSimpleCarMake[] = [];
 const simpleCarModels: CmsSimpleCarModel[] = [];
@@ -31,16 +31,20 @@ for (const item of carsList) {
     const carMakeId = `simple-car-make-${slugify(brand)}`;
     simpleCarMakes.push({
         id: carMakeId,
-        name: brand
+        values: {
+            name: brand
+        }
     });
     for (const car of models) {
         const carId = `simple-car-model-${slugify(brand)}-${slugify(car)}`;
         simpleCarModels.push({
             id: carId,
-            name: `${brand} ${car}`,
-            make: {
-                id: `${carMakeId}#0001`,
-                modelId: "simpleCarMake"
+            values: {
+                name: `${brand} ${car}`,
+                make: {
+                    id: `${carMakeId}#0001`,
+                    modelId: "simpleCarMake"
+                }
             }
         });
     }

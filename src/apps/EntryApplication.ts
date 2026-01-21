@@ -15,14 +15,14 @@ import { blogRunnerFactory, simpleCarsRunnerFactory } from "./cms";
 import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
 import { createModelFields } from "./utils/createModelFields";
 
-interface ApiCmsEntries {
-    [key: string]: CmsEntry[];
+interface ApiCmsEntries<T> {
+    [key: string]: CmsEntry<T>[];
 }
 
 export class EntryApplication implements IEntryApplication {
     private readonly app: IBaseApplication;
 
-    private readonly entries: ApiCmsEntries = {};
+    private readonly entries: ApiCmsEntries<unknown> = {};
 
     private readonly runners: IEntryRunner[];
 
@@ -49,11 +49,11 @@ export class EntryApplication implements IEntryApplication {
         }
     }
 
-    public getEntries<T extends CmsEntry>(name: string): T[] {
+    public getEntries<T>(name: string): CmsEntry<T>[] {
         if (!this.entries[name]) {
             throw new Error(`There are no entries for "${name}".`);
         }
-        return this.entries[name] as unknown as T[];
+        return this.entries[name] as unknown as CmsEntry<T>[];
     }
 
     private setResult(result: IEntryRunnerResponse<GenericRecord>): void {
@@ -77,7 +77,7 @@ export class EntryApplication implements IEntryApplication {
         }
     }
 
-    private addEntries(entries: ApiCmsEntries): void {
+    private addEntries<T>(entries: ApiCmsEntries<T>): void {
         for (const name in entries) {
             if (entries[name].length === 0) {
                 continue;

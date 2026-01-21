@@ -8,10 +8,7 @@ const createSimpleCarsMakeModel = (group: CmsModelGroup): CmsModel => {
         singularApiName: "SimpleCarMake",
         pluralApiName: "SimpleCarMakes",
         description: "Simple Car Make model.",
-        group: {
-            id: group.id,
-            name: group.name
-        },
+        group: group.slug,
         fields: [
             {
                 id: "t9g4uh3gdfsn",
@@ -40,10 +37,7 @@ const createSimpleCarsModelModel = (group: CmsModelGroup): CmsModel => {
         singularApiName: "SimpleCarModel",
         pluralApiName: "SimpleCarModels",
         description: "Simple Car Model model.",
-        group: {
-            id: group.id,
-            name: group.name
-        },
+        group: group.slug,
         fields: [
             {
                 id: "gojfbdangfsa",

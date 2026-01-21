@@ -58,7 +58,7 @@ class Registry implements IRegistry {
     ): IRegistryGenerator<T> {
         const { field } = params;
 
-        const type = field.type;
+        const type = field.type.split(":")[0];
         const multipleValues = !!field.multipleValues;
 
         const generator = this.generators.find(generator => {

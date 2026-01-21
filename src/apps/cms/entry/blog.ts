@@ -1,4 +1,4 @@
-import {
+import type {
     ApiCmsArticle,
     ApiCmsAuthor,
     ApiCmsCategory,
@@ -11,14 +11,9 @@ import {
 } from "~/types";
 import { logger } from "~/logger";
 
-type CmsCategory = Pick<ApiCmsCategory, "id" | "title">;
-
-type CmsAuthor = Pick<ApiCmsAuthor, "id" | "name" | "dateOfBirth">;
-
-type CmsArticle = Pick<
-    ApiCmsArticle,
-    "id" | "title" | "description" | "categories" | "body" | "author"
->;
+type CmsCategory = Pick<ApiCmsCategory, "id" | "values">;
+type CmsAuthor = Pick<ApiCmsAuthor, "id" | "values">;
+type CmsArticle = Pick<ApiCmsArticle, "id" | "values">;
 
 interface RefEntry {
     id: string;
@@ -45,43 +40,63 @@ const getRandomCategories = (entries: RefEntry[]): RefEntry[] => {
 const categories: CmsCategory[] = [
     {
         id: "food-production-category",
-        title: "Food Production"
+        values: {
+            title: "Food Production"
+        }
     },
     {
         id: "space-exploration-category",
-        title: "Space Exploration"
+        values: {
+            title: "Space Exploration"
+        }
     },
     {
         id: "health-management-category",
-        title: "Health Management"
+        values: {
+            title: "Health Management"
+        }
     },
     {
         id: "energy-production-category",
-        title: "Energy Production"
+        values: {
+            title: "Energy Production"
+        }
     },
     {
         id: "transportation-category",
-        title: "Transportation"
+        values: {
+            title: "Transportation"
+        }
     },
     {
         id: "communication-category",
-        title: "Communication"
+        values: {
+            title: "Communication"
+        }
     },
     {
         id: "entertainment-category",
-        title: "Entertainment"
+        values: {
+            title: "Entertainment"
+        }
     },
     {
         id: "information-technology-category",
-        title: "Information Technology"
+        values: {
+            title: "Information Technology"
+        }
     },
     {
         id: "manufacturing-category",
-        title: "Manufacturing"
+        values: {
+            title: "Manufacturing"
+        }
     },
     {
         id: "construction-category",
-        title: "Construction"
+        values: {
+            title: "Construction"
+        }
     }
 ];
 
@@ -92,38 +107,52 @@ const getCategories = (): CmsCategory[] => {
 const authors: CmsAuthor[] = [
     {
         id: "john-doe-author",
-        name: "John Doe",
-        dateOfBirth: "1990-01-01"
+        values: {
+            name: "John Doe",
+            dateOfBirth: "1990-01-01"
+        }
     },
     {
         id: "jane-doe-author",
-        name: "Jane Doe",
-        dateOfBirth: "1995-12-12"
+        values: {
+            name: "Jane Doe",
+            dateOfBirth: "1995-12-12"
+        }
     },
     {
         id: "janie-doe-author",
-        name: "Janine Doe",
-        dateOfBirth: "2000-01-17"
+        values: {
+            name: "Janine Doe",
+            dateOfBirth: "2000-01-17"
+        }
     },
     {
         id: "jasmine-doe-author",
-        name: "Jasmine Doe",
-        dateOfBirth: "2005-11-25"
+        values: {
+            name: "Jasmine Doe",
+            dateOfBirth: "2005-11-25"
+        }
     },
     {
         id: "jared-doe-author",
-        name: "Jared Doe",
-        dateOfBirth: "2010-06-07"
+        values: {
+            name: "Jared Doe",
+            dateOfBirth: "2010-06-07"
+        }
     },
     {
         id: "jason-doe-author",
-        name: "Jason Doe",
-        dateOfBirth: "2015-03-15"
+        values: {
+            name: "Jason Doe",
+            dateOfBirth: "2015-03-15"
+        }
     },
     {
         id: "jacob-doe-author",
-        name: "Jacob Doe",
-        dateOfBirth: "2020-02-29"
+        values: {
+            name: "Jacob Doe",
+            dateOfBirth: "2020-02-29"
+        }
     }
 ];
 
@@ -150,24 +179,26 @@ const getArticles = (params: GetArticlesParams): CmsArticle[] => {
         authorsArticle[author.name] = (authorsArticle[author.name] || 0) + 1;
         articles.push({
             id: `article-${current}`,
-            title: `Article ${authorsArticle[author.name]} written by ${author.name}`,
-            description: `Description of the article written by ${author.name}`,
-            body: [
-                {
-                    tag: "h1",
-                    content: `Article written by ${author.name} in ${categoryTitles.join(", ")}`
-                }
-            ],
-            author: {
-                id: author.id,
-                modelId: author.modelId
-            },
-            categories: categories.map(category => {
-                return {
-                    id: category.id,
-                    modelId: category.modelId
-                };
-            })
+            values: {
+                title: `Article ${authorsArticle[author.name]} written by ${author.name}`,
+                description: `Description of the article written by ${author.name}`,
+                body: [
+                    {
+                        tag: "h1",
+                        content: `Article written by ${author.name} in ${categoryTitles.join(", ")}`
+                    }
+                ],
+                author: {
+                    id: author.id,
+                    modelId: author.modelId
+                },
+                categories: categories.map(category => {
+                    return {
+                        id: category.id,
+                        modelId: category.modelId
+                    };
+                })
+            }
         });
     }
     return articles;
@@ -208,13 +239,14 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
             model: authorModel,
             variables: authorsVariables
         });
+
     logger.debug(`...created.`);
 
     const entries = categories
         .map(c => {
             return {
                 id: c.id,
-                name: c.title,
+                name: c.values.title,
                 modelId: categoryModel.modelId
             };
         })
@@ -222,7 +254,7 @@ const executeBlogRunner = async (app: IBaseApplication): Promise<IEntryRunnerRes
             authors.map(a => {
                 return {
                     id: a.id,
-                    name: a.name,
+                    name: a.values.name,
                     modelId: authorModel.modelId
                 };
             })

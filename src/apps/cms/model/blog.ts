@@ -8,10 +8,7 @@ const createCategoryModel = (group: CmsModelGroup): CmsModel => {
         singularApiName: "Category",
         pluralApiName: "Categories",
         description: "Category model.",
-        group: {
-            id: group.id,
-            name: group.name
-        },
+        group: group.slug,
         fields: [
             {
                 id: "aBhLozTf",
@@ -40,10 +37,7 @@ const createAuthorModel = (group: CmsModelGroup): CmsModel => {
         pluralApiName: "Authors",
         modelId: "author",
         description: "Author model.",
-        group: {
-            id: group.id,
-            name: group.name
-        },
+        group: group.slug,
         fields: [
             {
                 id: "g36yFndu",
@@ -90,10 +84,7 @@ const createArticleModel = (group: CmsModelGroup): CmsModel => {
         pluralApiName: "Articles",
         modelId: "article",
         description: "Article model.",
-        group: {
-            id: group.id,
-            name: group.name
-        },
+        group: group.slug,
         fields: [
             {
                 id: "nXB3IMab",

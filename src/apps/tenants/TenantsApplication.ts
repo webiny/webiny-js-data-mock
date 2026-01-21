@@ -1,6 +1,6 @@
 import { ApiError, IApplication, IBaseApplication } from "~/types";
 import { logger } from "~/logger";
-import { NotFoundError } from "~/errors";
+// import { NotFoundError } from "~/errors";
 
 export interface ITenant {
     id: string;
@@ -12,13 +12,13 @@ export const defaultTenant: ITenant = {
     name: "Root"
 };
 
-const addDefaultTenant = (input: ITenant[]): ITenant[] => {
-    const tenants = [...input];
-    if (!tenants.some(tenant => tenant.id === defaultTenant.id)) {
-        tenants.push(defaultTenant);
-    }
-    return tenants;
-};
+// const addDefaultTenant = (input: ITenant[]): ITenant[] => {
+//     const tenants = [...input];
+//     if (!tenants.some(tenant => tenant.id === defaultTenant.id)) {
+//         tenants.push(defaultTenant);
+//     }
+//     return tenants;
+// };
 
 export class TenantsApplication implements IApplication {
     private readonly app: IBaseApplication;
@@ -79,46 +79,52 @@ export class TenantsApplication implements IApplication {
     }
 
     public async listTenants(): Promise<ITenant[]> {
-        logger.debug("Listing tenants...");
-        const result = await this.app.graphql.query({
-            query: `
-            query ListTenants {
-                tenancy {
-                    data: listTenants {
-                        data {
-                            id
-                            name
-                        }
-                        error {
-                            message
-                            code
-                            data
-                            stack
-                        }
-                    }
-                }
+        return [
+            {
+                id: "root",
+                name: "Root"
             }
-            `,
-            getResult: json => {
-                const { data: result, extensions = [], errors = [] } = json;
-                const data = result?.tenancy?.data || {};
-                return {
-                    data: data?.data || null,
-                    error: data?.error || (errors[0] as ApiError),
-                    extensions
-                };
-            },
-            path: "/graphql"
-        });
-
-        if (result.error) {
-            logger.error(result.error);
-            throw new Error(result.error.message);
-        } else if (!result.data?.length) {
-            throw new NotFoundError("No tenants found.");
-        }
-        return addDefaultTenant(result.data).sort((a, b) => {
-            return a.id.localeCompare(b.id);
-        });
+        ];
+        // logger.debug("Listing tenants...");
+        // const result = await this.app.graphql.query({
+        //     query: `
+        //     query ListTenants {
+        //         tenancy {
+        //             data: listTenants {
+        //                 data {
+        //                     id
+        //                     name
+        //                 }
+        //                 error {
+        //                     message
+        //                     code
+        //                     data
+        //                     stack
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     `,
+        //     getResult: json => {
+        //         const { data: result, extensions = [], errors = [] } = json;
+        //         const data = result?.tenancy?.data || {};
+        //         return {
+        //             data: data?.data || null,
+        //             error: data?.error || (errors[0] as ApiError),
+        //             extensions
+        //         };
+        //     },
+        //     path: "/graphql"
+        // });
+        //
+        // if (result.error) {
+        //     logger.error(result.error);
+        //     throw new Error(result.error.message);
+        // } else if (!result.data?.length) {
+        //     throw new NotFoundError("No tenants found.");
+        // }
+        // return addDefaultTenant(result.data).sort((a, b) => {
+        //     return a.id.localeCompare(b.id);
+        // });
     }
 }

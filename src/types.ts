@@ -139,7 +139,7 @@ export interface IEntryApplicationCreateViaGraphQLParams {
 }
 
 export interface IEntryApplication extends IApplication {
-    getEntries: (name: string) => CmsEntry[];
+    getEntries: <T>(name: string) => CmsEntry<T>[];
     createViaGraphQL<T>(
         params: IEntryApplicationCreateViaGraphQLParams
     ): Promise<IEntryApplicationCreateViaGraphQLResponse<T>>;
@@ -166,7 +166,8 @@ export interface IPageRunnerFactory {
 }
 
 export interface PbPageInput
-    extends Omit<BasePbUpdatePageInput, "title" | "category">,
+    extends
+        Omit<BasePbUpdatePageInput, "title" | "category">,
         Required<Pick<BasePbUpdatePageInput, "title" | "category">> {
     slug: string;
 }
@@ -260,8 +261,10 @@ export type ApiCmsModelDynamicZoneField = Pick<
 
 export type ApiCmsDynamicZoneTemplate = CmsDynamicZoneTemplate;
 
-export interface ApiCmsModel
-    extends Pick<BaseModel, "name" | "modelId" | "singularApiName" | "pluralApiName"> {
+export interface ApiCmsModel extends Pick<
+    BaseModel,
+    "name" | "modelId" | "singularApiName" | "pluralApiName"
+> {
     fields: ApiCmsModelField[];
 }
 
@@ -276,26 +279,31 @@ export interface ApiError {
  *
  * @blog
  */
-export interface CmsEntry {
+export interface CmsEntry<T> {
     id: string;
     entryId: string;
+    values: T;
 }
 
-export interface ApiCmsCategory extends CmsEntry {
+export interface ApiCmsCategoryValues {
     title: string;
 }
 
-export interface ApiCmsAuthor extends CmsEntry {
+export type ApiCmsCategory = CmsEntry<ApiCmsCategoryValues>;
+
+export interface ApiCmsAuthorValues {
     name: string;
     dateOfBirth: string;
 }
+
+export type ApiCmsAuthor = CmsEntry<ApiCmsAuthorValues>;
 
 export interface ApiCmsRef {
     id: string;
     modelId: string;
 }
 
-export interface ApiCmsArticle extends CmsEntry {
+export interface ApiCmsArticleValues {
     title: string;
     description: string;
     body: GenericRecord;
@@ -303,13 +311,19 @@ export interface ApiCmsArticle extends CmsEntry {
     categories: ApiCmsRef[];
 }
 
+export type ApiCmsArticle = CmsEntry<ApiCmsArticleValues>;
+
 /**
  * @cars
  */
-export interface ApiCmsSimpleCarMake extends CmsEntry {
+export interface ApiCmsSimpleCarMakeValues {
     name: string;
 }
-export interface ApiCmsSimpleCarModel extends CmsEntry {
+export type ApiCmsSimpleCarMake = CmsEntry<ApiCmsSimpleCarMakeValues>;
+
+export interface ApiCmsSimpleCarModelValues {
     name: string;
     make: ApiCmsRef;
 }
+
+export type ApiCmsSimpleCarModel = CmsEntry<ApiCmsSimpleCarModelValues>;
