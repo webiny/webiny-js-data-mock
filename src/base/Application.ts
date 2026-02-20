@@ -8,8 +8,6 @@ import { FetchEntriesApplication } from "~/apps/FetchEntriesApplication";
 import { TenantsApplication } from "~/apps/tenants/TenantsApplication";
 import { EntryPerTenantApplication } from "~/apps/tenants/EntryPerTenantApplication";
 import { createFileCache, ICache } from "~/cache";
-// import { PageApplication } from "~/apps/PageApplication";
-// import { FolderApplication } from "~/apps/FolderApplication";
 
 const getEnv = () => {
     dotenv.config();

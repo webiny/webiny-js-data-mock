@@ -6,7 +6,7 @@ import {
     IModelApplication
 } from "~/types";
 import { logger } from "~/logger";
-import writeJsonFile from "write-json-file";
+import { writeJsonFileSync } from "write-json-file";
 import { createModelFields } from "~/apps/utils/createModelFields";
 
 interface ApiResultEntry {
@@ -151,6 +151,6 @@ export class FetchEntriesApplication implements IFetchEntriesApplication {
         }
 
         logger.info(`Storing entries to file: ${options.filename}`);
-        return writeJsonFile(options.filename, options.entries);
+        writeJsonFileSync(options.filename, options.entries);
     }
 }

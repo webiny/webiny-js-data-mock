@@ -59,14 +59,14 @@ class Registry implements IRegistry {
         const { field } = params;
 
         const type = field.type.split(":")[0];
-        const multipleValues = !!field.multipleValues;
+        const list = !!field.list;
 
         const generator = this.generators.find(generator => {
-            return generator.type === type && generator.multipleValues === multipleValues;
+            return generator.type === type && generator.list === list;
         }) as T | undefined;
         if (!generator) {
             logger.error(
-                `Generator for type "${type}", multiple values "${multipleValues ? "true" : "false"}" not found! Skipping...`
+                `Generator for type "${type}", multiple values "${list ? "true" : "false"}" not found! Skipping...`
             );
             return this.getNullGenerator();
         }

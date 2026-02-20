@@ -12,7 +12,7 @@ export type CmsModelField = Pick<
     | "fieldId"
     | "label"
     | "type"
-    | "multipleValues"
+    | "list"
     | "validation"
     | "listValidation"
     | "settings"

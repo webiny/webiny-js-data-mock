@@ -58,7 +58,7 @@ export class GraphQLApplication implements IGraphQLApplication {
 
         const response = await pRetry(runQuery, {
             retries: 5,
-            onFailedAttempt: error => {
+            onFailedAttempt: ({ error }) => {
                 logger.warn(`Failed attempt to execute query: ${error.message}.`);
             }
         });
@@ -86,7 +86,7 @@ export class GraphQLApplication implements IGraphQLApplication {
 
             const response = await pRetry(runMutation, {
                 retries: 5,
-                onFailedAttempt: error => {
+                onFailedAttempt: ({ error }) => {
                     logger.warn(`Failed attempt to execute mutation: ${error.message}.`);
                 }
             });

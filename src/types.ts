@@ -8,16 +8,12 @@ import {
     CreateFolderParams as AcoFolderCreateParams,
     Folder as AcoFolder
 } from "@webiny/api-aco/types";
-import { Page as PbPage } from "@webiny/api-page-builder/types";
-import { PbUpdatePageInput as BasePbUpdatePageInput } from "@webiny/api-page-builder/graphql/types";
 import { ICache } from "~/cache";
 import { CmsDynamicZoneTemplate } from "@webiny/api-headless-cms/types/fields/dynamicZoneField";
 
 export type GenericRecordKey = string | number | symbol;
 // eslint-disable-next-line
 export type GenericRecord<K extends GenericRecordKey = GenericRecordKey, V = any> = Record<K, V>;
-
-export type { PbPage };
 
 export interface IApplication {
     run(): Promise<void>;
@@ -146,38 +142,6 @@ export interface IEntryApplication extends IApplication {
 }
 
 /**
- * Page
- */
-
-export interface IPageRunnerResponse {
-    pages: PbPage[];
-    total: number;
-    errors: ApiError[];
-}
-
-export interface IPageRunner {
-    id: string;
-    name: string;
-    exec(): Promise<IPageRunnerResponse>;
-}
-
-export interface IPageRunnerFactory {
-    (app: IBaseApplication): IPageRunner;
-}
-
-export interface PbPageInput
-    extends
-        Omit<BasePbUpdatePageInput, "title" | "category">,
-        Required<Pick<BasePbUpdatePageInput, "title" | "category">> {
-    slug: string;
-}
-
-export interface IPageApplication extends IApplication {
-    getPages(): PbPage[];
-    createViaGraphQL(data: PbPageInput): Promise<PbPage>;
-}
-
-/**
  * Folders
  */
 export type { AcoFolderCreateParams };
@@ -239,7 +203,7 @@ export type ApiCmsModelField = Pick<
     | "fieldId"
     | "storageId"
     | "type"
-    | "multipleValues"
+    | "list"
     | "settings"
     | "predefinedValues"
     | "validation"
@@ -252,7 +216,7 @@ export type ApiCmsModelDynamicZoneField = Pick<
     | "fieldId"
     | "storageId"
     | "type"
-    | "multipleValues"
+    | "list"
     | "settings"
     | "predefinedValues"
     | "validation"

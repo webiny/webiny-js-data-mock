@@ -21,6 +21,7 @@ const createCategoryModel = (group: CmsModelGroup): CmsModel => {
                         message: "Title is required."
                     }
                 ],
+                listValidation: [],
                 renderer: {
                     name: "text-input"
                 }
@@ -50,6 +51,7 @@ const createAuthorModel = (group: CmsModelGroup): CmsModel => {
                         message: "Name is required."
                     }
                 ],
+                listValidation: [],
                 renderer: {
                     name: "text-input"
                 }
@@ -65,6 +67,7 @@ const createAuthorModel = (group: CmsModelGroup): CmsModel => {
                         message: "Age is required."
                     }
                 ],
+                listValidation: [],
                 settings: {
                     type: "date"
                 },
@@ -97,6 +100,7 @@ const createArticleModel = (group: CmsModelGroup): CmsModel => {
                         message: "Title is required."
                     }
                 ],
+                listValidation: [],
                 renderer: {
                     name: "text-input"
                 }
@@ -106,6 +110,8 @@ const createArticleModel = (group: CmsModelGroup): CmsModel => {
                 fieldId: "description",
                 label: "Description",
                 type: "long-text",
+                validation: [],
+                listValidation: [],
                 renderer: {
                     name: "long-text-text-area"
                 }
@@ -115,6 +121,8 @@ const createArticleModel = (group: CmsModelGroup): CmsModel => {
                 fieldId: "body",
                 label: "Body",
                 type: "rich-text",
+                validation: [],
+                listValidation: [],
                 renderer: {
                     name: "lexical-text-input"
                 }
@@ -124,6 +132,8 @@ const createArticleModel = (group: CmsModelGroup): CmsModel => {
                 fieldId: "author",
                 label: "Author",
                 type: "ref",
+                validation: [],
+                listValidation: [],
                 settings: {
                     models: [
                         {
@@ -140,7 +150,7 @@ const createArticleModel = (group: CmsModelGroup): CmsModel => {
                 fieldId: "categories",
                 label: "Categories",
                 type: "ref",
-                multipleValues: true,
+                list: true,
                 settings: {
                     models: [
                         {
@@ -148,6 +158,8 @@ const createArticleModel = (group: CmsModelGroup): CmsModel => {
                         }
                     ]
                 },
+                validation: [],
+                listValidation: [],
                 renderer: {
                     name: "ref-advanced-multiple"
                 }

@@ -12,7 +12,7 @@ export type IBaseGeneratorParams = IRegistryRegisterGeneratorConstructorParams;
 
 export abstract class BaseGenerator<T = unknown> implements IGenerator<T | null> {
     public abstract readonly type: string;
-    public multipleValues = false;
+    public list = false;
 
     protected readonly getGenerator: <T extends IGenerator<unknown>>(type: {
         new (params: IBaseGeneratorParams): T;
@@ -35,7 +35,7 @@ export interface IIterateOptions {
 }
 
 export abstract class BaseMultiGenerator<T = unknown> extends BaseGenerator<T[]> {
-    public override readonly multipleValues = true;
+    public override readonly list = true;
 
     public abstract generate(params: IGeneratorGenerateParams): Promise<T[] | null>;
 

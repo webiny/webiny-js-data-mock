@@ -21,6 +21,7 @@ const createSimpleCarsMakeModel = (group: CmsModelGroup): CmsModel => {
                         message: "Name is required."
                     }
                 ],
+                listValidation: [],
                 renderer: {
                     name: "text-input"
                 }
@@ -50,6 +51,7 @@ const createSimpleCarsModelModel = (group: CmsModelGroup): CmsModel => {
                         message: "Name is required."
                     }
                 ],
+                listValidation: [],
                 renderer: {
                     name: "text-input"
                 }
@@ -66,6 +68,8 @@ const createSimpleCarsModelModel = (group: CmsModelGroup): CmsModel => {
                         }
                     ]
                 },
+                validation: [],
+                listValidation: [],
                 renderer: {
                     name: "ref-advanced-single"
                 }

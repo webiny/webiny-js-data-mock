@@ -6,7 +6,7 @@ import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariable
 import { logger } from "~/logger";
 import { createCacheKey } from "~/cache";
 import { NotFoundError } from "~/errors";
-import writeJsonFile from "write-json-file";
+import { writeJsonFileSync } from "write-json-file";
 import path from "path";
 
 type IStorageCollection = GenericRecord<string, GenericRecord<string, GenericRecord[]>>;
@@ -206,7 +206,7 @@ export class EntryPerTenantApplication implements IApplication {
             path.join(input, `dry-run-${new Date().toISOString()}.json`)
         );
         logger.info(`Storing dry run data into ${target}...`);
-        writeJsonFile.sync(target, {
+        writeJsonFileSync(target, {
             tenants,
             models,
             perTenant,

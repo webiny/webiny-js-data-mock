@@ -11,7 +11,7 @@ const cmsModelFieldsGraphQlSubselection = `
         type
         fieldId
         storageId
-        multipleValues
+        list
         settings
         predefinedValues {
             enabled

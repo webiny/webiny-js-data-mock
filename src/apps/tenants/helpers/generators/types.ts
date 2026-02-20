@@ -35,7 +35,7 @@ export interface IGeneratorGenerateParams<T extends ApiCmsModelField = ApiCmsMod
 }
 export interface IGenerator<T> {
     type: string;
-    multipleValues: boolean;
+    list: boolean;
     generate(params: IGeneratorGenerateParams): Promise<T>;
 }
 
