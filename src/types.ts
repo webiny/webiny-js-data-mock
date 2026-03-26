@@ -3,11 +3,11 @@ import {
     CmsModel as BaseModel,
     CmsModelDynamicZoneField,
     CmsModelField as BaseCmsModelField
-} from "@webiny/api-headless-cms/types";
+} from "@webiny/api-headless-cms/types/index.js";
 import {
     CreateFolderParams as AcoFolderCreateParams,
     Folder as AcoFolder
-} from "@webiny/api-aco/types";
+} from "@webiny/api-aco/types.js";
 import { ICache } from "~/cache";
 import { CmsDynamicZoneTemplate } from "@webiny/api-headless-cms/types/fields/dynamicZoneField";
 

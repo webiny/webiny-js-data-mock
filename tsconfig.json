@@ -5,9 +5,10 @@
     "paths": {
       "~/*": ["./src/*"]
     },
-    "baseUrl": "./",
+    "rootDir": "./src/",
     "target": "esnext",
-    "module": "commonjs",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": false,
