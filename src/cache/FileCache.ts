@@ -119,9 +119,6 @@ class FileCache implements ICache {
 
     private delete(input: ICacheKeyInput): void {
         const cacheKey = createCacheKey(input);
-        if (this.keys.has(cacheKey) === false) {
-            this.keys.add(cacheKey);
-        }
         try {
             fsExtra.unlinkSync(this.createPath(cacheKey));
         } catch (ex) {
