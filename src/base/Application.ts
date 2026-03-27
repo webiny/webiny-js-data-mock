@@ -1,13 +1,14 @@
 import dotenv from "dotenv";
-import { IBaseApplication } from "~/types";
-import { GroupApplication } from "~/apps/GroupApplication";
-import { ModelApplication } from "~/apps/ModelApplication";
-import { EntryApplication } from "~/apps/EntryApplication";
-import { GraphQLApplication } from "~/apps/GraphQLApplication";
-import { FetchEntriesApplication } from "~/apps/FetchEntriesApplication";
-import { TenantsApplication } from "~/apps/tenants/TenantsApplication";
-import { EntryPerTenantApplication } from "~/apps/tenants/EntryPerTenantApplication";
-import { createFileCache, ICache } from "~/cache";
+import type { IBaseApplication } from "~/types.js";
+import { GroupApplication } from "~/apps/GroupApplication.js";
+import { ModelApplication } from "~/apps/ModelApplication.js";
+import { EntryApplication } from "~/apps/EntryApplication.js";
+import { GraphQLApplication } from "~/apps/GraphQLApplication.js";
+import { FetchEntriesApplication } from "~/apps/FetchEntriesApplication.js";
+import { TenantsApplication } from "~/apps/tenants/TenantsApplication.js";
+import { EntryPerTenantApplication } from "~/apps/tenants/EntryPerTenantApplication.js";
+import { createFileCache } from "~/cache/index.js";
+import type { ICache } from "~/cache/index.js";
 
 const getEnv = () => {
     dotenv.config();

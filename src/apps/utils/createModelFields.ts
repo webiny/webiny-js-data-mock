@@ -1,5 +1,5 @@
-import { ApiCmsModelField } from "~/types";
-import { createAllowedFields } from "~/apps/utils/fields";
+import type { ApiCmsModelField } from "~/types.js";
+import { createAllowedFields } from "~/apps/utils/fields/index.js";
 
 const allowedFieldTypes = createAllowedFields();
 

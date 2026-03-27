@@ -1,13 +1,13 @@
-import {
+import type {
     ApiCmsModel,
     ApiGraphQLResult,
     IBaseApplication,
     IFetchEntriesApplication,
     IModelApplication
-} from "~/types";
-import { logger } from "~/logger";
+} from "~/types.js";
+import { logger } from "~/logger.js";
 import { writeJsonFileSync } from "write-json-file";
-import { createModelFields } from "~/apps/utils/createModelFields";
+import { createModelFields } from "~/apps/utils/createModelFields.js";
 
 interface ApiResultEntry {
     id: string;

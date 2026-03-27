@@ -1,5 +1,5 @@
-import { CmsModel, CmsModelGroup } from "./types";
-import { GroupApplication } from "~/apps/GroupApplication";
+import type { CmsModel, CmsModelGroup } from "./types.js";
+import type { GroupApplication } from "~/apps/GroupApplication.js";
 
 const createCategoryModel = (group: CmsModelGroup): CmsModel => {
     return {

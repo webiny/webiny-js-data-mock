@@ -1,8 +1,8 @@
-import {
+import type {
     CmsGroup,
     CmsModel as BaseModel,
     CmsModelField as BaseCmsModelField
-} from "@webiny/api-headless-cms/types";
+} from "@webiny/api-headless-cms/types/index.js";
 
 export type CmsModelGroup = Pick<CmsGroup, "slug">;
 

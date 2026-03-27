@@ -1,6 +1,6 @@
-import { BaseValidator } from "./BaseValidator";
-import { registry } from "~/apps/tenants/helpers/generators/registry";
-import { LengthValidationSettings } from "~/apps/tenants/helpers/generators/validators/types";
+import { BaseValidator } from "./BaseValidator.js";
+import { registry } from "../registry.js";
+import type { LengthValidationSettings } from "./types.js";
 
 export class MaximumLengthValidator extends BaseValidator<number> {
     public getValue(def: number): number {

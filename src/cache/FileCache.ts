@@ -1,8 +1,8 @@
-import path from "path";
-import { ICache, ICacheKey, ICacheKeyInput } from "./types";
-import { logger } from "~/logger";
+import path from "node:path";
+import type { ICache, ICacheKey, ICacheKeyInput } from "./types.js";
+import { logger } from "~/logger.js";
 import fsExtra from "fs-extra";
-import { createCacheKey } from "~/cache/CacheKey";
+import { createCacheKey } from "~/cache/CacheKey.js";
 
 export interface IFileCacheParams {
     cacheDir?: string;

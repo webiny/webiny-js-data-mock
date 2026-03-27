@@ -1,11 +1,11 @@
-import { registry } from "../registry";
-import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
+import { registry } from "../registry.js";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
 import { faker } from "@faker-js/faker";
-import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
+import type { IGeneratorGenerateParams } from "../types.js";
 import {
     MaximumLengthValidator,
     MinimumLengthValidator
-} from "~/apps/tenants/helpers/generators/validators";
+} from "../validators/index.js";
 
 class NumberGenerator extends BaseGenerator<number> {
     public type = "number";

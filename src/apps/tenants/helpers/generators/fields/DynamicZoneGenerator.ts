@@ -1,8 +1,8 @@
-import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
 import pReduce from "p-reduce";
-import { registry } from "../registry";
-import { ApiCmsModelDynamicZoneField, GenericRecord } from "~/types";
-import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
+import { registry } from "../registry.js";
+import { ApiCmsModelDynamicZoneField, GenericRecord } from "~/types.js";
+import type { IGeneratorGenerateParams } from "../types.js";
 import { faker } from "@faker-js/faker";
 
 class DynamicZoneGenerator extends BaseGenerator<GenericRecord> {

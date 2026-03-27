@@ -1,4 +1,4 @@
-import {
+import type {
     IFieldRegistryGenerator,
     IGenerator,
     IRegistry,
@@ -7,10 +7,10 @@ import {
     IRegistryRegisterGeneratorConstructor,
     IValidator,
     IValidatorConstructor
-} from "./types";
-import { ApiCmsModelField } from "~/types";
-import { logger } from "~/logger";
-import { createCacheKey, createMemoryCache } from "~/cache";
+} from "./types.js";
+import type { ApiCmsModelField } from "~/types.js";
+import { logger } from "~/logger.js";
+import { createCacheKey, createMemoryCache } from "~/cache/index.js";
 
 class Registry implements IRegistry {
     public generators: IGenerator<unknown>[] = [];

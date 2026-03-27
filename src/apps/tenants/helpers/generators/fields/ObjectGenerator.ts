@@ -1,12 +1,12 @@
-import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
-import { registry } from "../registry";
-import { GenericRecord } from "~/types";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
+import { registry } from "../registry.js";
+import type { GenericRecord } from "~/types.js";
 import { faker } from "@faker-js/faker";
-import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
+import type { IGeneratorGenerateParams } from "../types.js";
 import {
     MaximumLengthValidator,
     MinimumLengthValidator
-} from "~/apps/tenants/helpers/generators/validators";
+} from "../validators/index.js";
 
 class ObjectGenerator extends BaseGenerator<GenericRecord> {
     public type = "object";

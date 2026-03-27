@@ -1,6 +1,6 @@
-import { BaseValidator } from "./BaseValidator";
-import { registry } from "~/apps/tenants/helpers/generators/registry";
-import { DateValidationSettings } from "./types";
+import { BaseValidator } from "./BaseValidator.js";
+import { registry } from "../registry.js";
+import type { DateValidationSettings } from "./types.js";
 
 export class LesserThanOrEqualDateValidator extends BaseValidator<string | undefined> {
     public getValue(def: string): string | undefined {

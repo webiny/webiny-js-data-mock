@@ -1,4 +1,4 @@
-import { ApiGraphQLResult, ApiGraphQLResultJson } from "~/types";
+import type { ApiGraphQLResult, ApiGraphQLResultJson } from "~/types.js";
 
 export const createGetCmsContentResult = <T>() => {
     return (json: ApiGraphQLResultJson): ApiGraphQLResult<T> => {

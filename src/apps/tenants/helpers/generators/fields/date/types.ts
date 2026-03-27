@@ -1,4 +1,4 @@
-import { IValidator } from "~/apps/tenants/helpers/generators/types";
+import type { IValidator } from "../../types.js";
 
 export interface IValidatorsParams {
     gteValidator: IValidator<string | undefined>;

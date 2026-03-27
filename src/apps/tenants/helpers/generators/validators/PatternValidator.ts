@@ -1,6 +1,6 @@
-import { BaseValidator } from "~/apps/tenants/helpers/generators/validators/BaseValidator";
-import { PatternValidationSettings } from "~/apps/tenants/helpers/generators/validators/types";
-import { registry } from "~/apps/tenants/helpers/generators/registry";
+import { BaseValidator } from "./BaseValidator.js";
+import type { PatternValidationSettings } from "./types.js";
+import { registry } from "../registry.js";
 
 export class PatternValidator extends BaseValidator<PatternValidationSettings | undefined> {
     public getValue(def?: PatternValidationSettings): PatternValidationSettings | undefined {

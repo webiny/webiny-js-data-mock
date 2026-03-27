@@ -8,8 +8,8 @@ import type {
     IEntryRunnerFactory,
     IEntryRunnerResponse,
     IModelApplication
-} from "~/types";
-import { logger } from "~/logger";
+} from "~/types.js";
+import { logger } from "~/logger.js";
 
 type CmsCategory = Pick<ApiCmsCategory, "id" | "values">;
 type CmsAuthor = Pick<ApiCmsAuthor, "id" | "values">;

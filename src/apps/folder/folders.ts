@@ -1,11 +1,11 @@
-import {
+import type {
     AcoFolder,
     AcoFolderCreateParams,
     ApiError,
     IBaseApplication,
     IFolderRunnerFactory
-} from "~/types";
-import { FolderApplication } from "~/apps/FolderApplication";
+} from "~/types.js";
+import type { FolderApplication } from "~/apps/FolderApplication.js";
 
 export type AcoFolderType = "cms" | "PbPage" | "FmFile";
 

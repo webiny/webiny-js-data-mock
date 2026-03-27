@@ -1,4 +1,4 @@
-import { IValidatorsParams } from "./types";
+import type { IValidatorsParams } from "./types.js";
 import { faker } from "@faker-js/faker";
 
 const format = (date: Date): string => {

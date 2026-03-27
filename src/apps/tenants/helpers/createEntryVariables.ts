@@ -1,6 +1,6 @@
-import { ApiCmsModel, type CmsEntry, GenericRecord } from "~/types";
-import { getGenerator } from "./generators";
-import { logger } from "~/logger";
+import type { ApiCmsModel, CmsEntry, GenericRecord } from "~/types.js";
+import { getGenerator } from "./generators/index.js";
+import { logger } from "~/logger.js";
 
 export const createEntryVariables = async (model: Pick<ApiCmsModel, "fields">, amount: number) => {
     try {

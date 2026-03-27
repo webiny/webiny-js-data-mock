@@ -1,4 +1,4 @@
-import { GenericRecord } from "~/types";
+import type { GenericRecord } from "~/types.js";
 
 export type GraphQLErrorData = GenericRecord | string | undefined | null;
 

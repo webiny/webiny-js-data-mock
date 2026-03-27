@@ -1,9 +1,9 @@
-import { ApiCmsModel, IBaseApplication, IModelApplication } from "~/types";
-import { createBlogModels, createSimpleCarsModels } from "./cms";
-import { GroupApplication } from "./GroupApplication";
-import { logger } from "~/logger";
-import { CmsModel } from "./cms/types";
-import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
+import type { ApiCmsModel, IBaseApplication, IModelApplication } from "~/types.js";
+import { createBlogModels, createSimpleCarsModels } from "./cms/index.js";
+import type { GroupApplication } from "./GroupApplication.js";
+import { logger } from "~/logger.js";
+import type { CmsModel } from "./cms/types.js";
+import { createGetCmsContentResult } from "./cms/createGetCmsContentResult.js";
 
 const cmsModelFieldsGraphQlSubselection = `
     {

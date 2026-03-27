@@ -1,5 +1,5 @@
-import { ApiCmsModelField } from "~/types";
-import { IValidation, IValidator } from "../types";
+import type { ApiCmsModelField } from "~/types.js";
+import type { IValidation, IValidator } from "../types.js";
 import zod from "zod";
 
 const validationSchema = zod.object({

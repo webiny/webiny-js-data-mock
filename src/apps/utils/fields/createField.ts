@@ -1,4 +1,4 @@
-import { ApiCmsModelField } from "~/types";
+import { ApiCmsModelField } from "~/types.js";
 
 export interface ICreateFieldDefinition {
     (field: ApiCmsModelField): string;

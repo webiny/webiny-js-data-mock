@@ -1,11 +1,12 @@
-import { GenericRecord, IApplication, IBaseApplication } from "~/types";
-import { defaultTenant, TenantsApplication } from "./TenantsApplication";
-import { ModelApplication } from "~/apps/ModelApplication";
-import { EntryApplication } from "~/apps/EntryApplication";
-import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariables";
-import { logger } from "~/logger";
-import { createCacheKey } from "~/cache";
-import { NotFoundError } from "~/errors";
+import type { GenericRecord, IApplication, IBaseApplication } from "~/types.js";
+import { defaultTenant } from "./TenantsApplication.js";
+import type { TenantsApplication } from "./TenantsApplication.js";
+import type { ModelApplication } from "~/apps/ModelApplication.js";
+import type { EntryApplication } from "~/apps/EntryApplication.js";
+import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariables.js";
+import { logger } from "~/logger.js";
+import { createCacheKey } from "~/cache/index.js";
+import { NotFoundError } from "~/errors/index.js";
 import { writeJsonFileSync } from "write-json-file";
 import path from "path";
 
