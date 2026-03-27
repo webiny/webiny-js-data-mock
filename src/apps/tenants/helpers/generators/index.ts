@@ -1,4 +1,4 @@
-import type{ ApiCmsModelField } from "~/types.js";
+import type { ApiCmsModelField } from "~/types.js";
 import type { IGenerator, IRegistryGenerator } from "./types.js";
 import { registry } from "./registry.js";
 

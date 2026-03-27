@@ -2,10 +2,7 @@ import { registry } from "../registry.js";
 import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
 import { faker } from "@faker-js/faker";
 import type { IGeneratorGenerateParams } from "../types.js";
-import {
-    MaximumLengthValidator,
-    MinimumLengthValidator
-} from "../validators/index.js";
+import { MaximumLengthValidator, MinimumLengthValidator } from "../validators/index.js";
 
 class NumberGenerator extends BaseGenerator<number> {
     public type = "number";

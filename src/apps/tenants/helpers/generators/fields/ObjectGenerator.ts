@@ -3,10 +3,7 @@ import { registry } from "../registry.js";
 import type { GenericRecord } from "~/types.js";
 import { faker } from "@faker-js/faker";
 import type { IGeneratorGenerateParams } from "../types.js";
-import {
-    MaximumLengthValidator,
-    MinimumLengthValidator
-} from "../validators/index.js";
+import { MaximumLengthValidator, MinimumLengthValidator } from "../validators/index.js";
 
 class ObjectGenerator extends BaseGenerator<GenericRecord> {
     public type = "object";

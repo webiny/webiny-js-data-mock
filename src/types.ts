@@ -4,9 +4,12 @@ import type {
     CmsModelDynamicZoneField,
     CmsModelField as BaseCmsModelField
 } from "@webiny/api-headless-cms/types/index.js";
-import type {CreateFolderParams as AcoFolderCreateParams, Folder as AcoFolder} from "@webiny/api-aco/types.js";
-import type {ICache} from "~/cache/index.js";
-import type {CmsDynamicZoneTemplate} from "@webiny/api-headless-cms/types/fields/dynamicZoneField.js";
+import type {
+    CreateFolderParams as AcoFolderCreateParams,
+    Folder as AcoFolder
+} from "@webiny/api-aco/types.js";
+import type { ICache } from "~/cache/index.js";
+import type { CmsDynamicZoneTemplate } from "@webiny/api-headless-cms/types/fields/dynamicZoneField.js";
 
 export type GenericRecordKey = string | number | symbol;
 // eslint-disable-next-line

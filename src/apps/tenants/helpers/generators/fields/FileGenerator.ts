@@ -1,10 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
 import { registry } from "../registry.js";
-import {
-    MaximumLengthValidator,
-    MinimumLengthValidator
-} from "../validators/index.js";
+import { MaximumLengthValidator, MinimumLengthValidator } from "../validators/index.js";
 import type { IGeneratorGenerateParams } from "../types.js";
 
 class FileGenerator extends BaseGenerator<string> {
