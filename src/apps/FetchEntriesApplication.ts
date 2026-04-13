@@ -1,13 +1,13 @@
-import {
+import type {
     ApiCmsModel,
     ApiGraphQLResult,
     IBaseApplication,
     IFetchEntriesApplication,
     IModelApplication
-} from "~/types";
-import { logger } from "~/logger";
-import writeJsonFile from "write-json-file";
-import { createModelFields } from "~/apps/utils/createModelFields";
+} from "~/types.js";
+import { logger } from "~/logger.js";
+import { writeJsonFileSync } from "write-json-file";
+import { createModelFields } from "./utils/createModelFields.js";
 
 interface ApiResultEntry {
     id: string;
@@ -151,6 +151,6 @@ export class FetchEntriesApplication implements IFetchEntriesApplication {
         }
 
         logger.info(`Storing entries to file: ${options.filename}`);
-        return writeJsonFile(options.filename, options.entries);
+        return writeJsonFileSync(options.filename, options.entries);
     }
 }

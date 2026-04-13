@@ -1,9 +1,9 @@
-import { ApiCmsModelField } from "~/types";
-import { IGenerator, IRegistryGenerator } from "~/apps/tenants/helpers/generators/types";
-import { registry } from "./registry";
+import type { ApiCmsModelField } from "~/types.js";
+import type { IGenerator, IRegistryGenerator } from "~/apps/tenants/helpers/generators/types.js";
+import { registry } from "./registry.js";
 
-import "./fields";
-import "./validators";
+import "./fields/index.js";
+import "./validators/index.js";
 
 export interface IGetGeneratorParams {
     field: ApiCmsModelField;

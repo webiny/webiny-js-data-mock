@@ -1,11 +1,11 @@
-import {
+import type {
     IFieldRegistryGenerator,
     IGenerator,
     IGeneratorGenerateParams,
     IRegistryGenerator,
     IRegistryRegisterGeneratorConstructorParams
-} from "../types";
-import { ApiCmsModelField } from "~/types";
+} from "../types.js";
+import type { ApiCmsModelField } from "~/types.js";
 import { faker } from "@faker-js/faker";
 
 export type IBaseGeneratorParams = IRegistryRegisterGeneratorConstructorParams;

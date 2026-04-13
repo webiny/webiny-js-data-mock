@@ -1,15 +1,15 @@
 /**
  * Groups
  */
-export * from "./group/blog";
-export * from "./group/cars";
+export * from "./group/blog.js";
+export * from "./group/cars.js";
 /**
  * Models
  */
-export * from "./model/blog";
-export * from "./model/simpleCars";
+export * from "./model/blog.js";
+export * from "./model/simpleCars.js";
 /**
  * Entries
  */
-export * from "./entry/blog";
-export * from "./entry/simpleCars";
+export * from "./entry/blog.js";
+export * from "./entry/simpleCars.js";

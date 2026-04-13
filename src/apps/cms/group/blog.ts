@@ -1,4 +1,4 @@
-import { CmsGroup } from "./types";
+import { CmsGroup } from "./types.js";
 
 export const createBlog = (): CmsGroup => {
     return {

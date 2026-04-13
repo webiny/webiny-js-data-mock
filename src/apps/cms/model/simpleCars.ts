@@ -1,5 +1,5 @@
-import { GroupApplication } from "~/apps/GroupApplication";
-import { CmsModel, CmsModelGroup } from "./types";
+import { GroupApplication } from "~/apps/GroupApplication.js";
+import { CmsModel, CmsModelGroup } from "./types.js";
 
 const createSimpleCarsMakeModel = (group: CmsModelGroup): CmsModel => {
     return {

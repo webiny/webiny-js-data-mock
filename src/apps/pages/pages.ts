@@ -1,4 +1,4 @@
-import { IBaseApplication, IPageRunnerFactory, IPageRunnerResponse } from "~/types";
+import type { IBaseApplication, IPageRunnerFactory, IPageRunnerResponse } from "~/types.js";
 
 const executePageRunner = async (app: IBaseApplication): Promise<IPageRunnerResponse> => {
     const pageAmount = app.getNumberArg("page:amount", 10);

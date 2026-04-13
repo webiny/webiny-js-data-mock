@@ -1,4 +1,4 @@
-import {
+import type {
     ApiCmsSimpleCarMake,
     ApiCmsSimpleCarModel,
     IBaseApplication,
@@ -6,10 +6,10 @@ import {
     IEntryRunnerFactory,
     IEntryRunnerResponse,
     IModelApplication
-} from "~/types";
-import { carsList } from "./carsList";
+} from "~/types.js";
+import { carsList } from "./carsList.js";
 import baseSlugify from "slugify";
-import { logger } from "~/logger";
+import { logger } from "~/logger.js";
 
 const slugify = (value: string): string => {
     const result = baseSlugify(value, {

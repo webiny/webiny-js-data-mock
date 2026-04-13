@@ -3,15 +3,15 @@ import {
     CmsModel as BaseModel,
     CmsModelDynamicZoneField,
     CmsModelField as BaseCmsModelField
-} from "@webiny/api-headless-cms/types";
+} from "@webiny/api-headless-cms/types/index.js";
 import {
     CreateFolderParams as AcoFolderCreateParams,
     Folder as AcoFolder
-} from "@webiny/api-aco/types";
-import { Page as PbPage } from "@webiny/api-page-builder/types";
-import { PbUpdatePageInput as BasePbUpdatePageInput } from "@webiny/api-page-builder/graphql/types";
-import { ICache } from "~/cache";
-import { CmsDynamicZoneTemplate } from "@webiny/api-headless-cms/types/fields/dynamicZoneField";
+} from "@webiny/api-aco/types.js";
+import { Page as PbPage } from "@webiny/api-page-builder/types.js";
+import { PbUpdatePageInput as BasePbUpdatePageInput } from "@webiny/api-page-builder/graphql/types.js";
+import { ICache } from "~/cache/index.js";
+import { CmsDynamicZoneTemplate } from "@webiny/api-headless-cms/types/fields/dynamicZoneField.js";
 
 export type GenericRecordKey = string | number | symbol;
 // eslint-disable-next-line
@@ -166,7 +166,8 @@ export interface IPageRunnerFactory {
 }
 
 export interface PbPageInput
-    extends Omit<BasePbUpdatePageInput, "title" | "category">,
+    extends
+        Omit<BasePbUpdatePageInput, "title" | "category">,
         Required<Pick<BasePbUpdatePageInput, "title" | "category">> {
     slug: string;
 }
@@ -260,8 +261,10 @@ export type ApiCmsModelDynamicZoneField = Pick<
 
 export type ApiCmsDynamicZoneTemplate = CmsDynamicZoneTemplate;
 
-export interface ApiCmsModel
-    extends Pick<BaseModel, "name" | "modelId" | "singularApiName" | "pluralApiName"> {
+export interface ApiCmsModel extends Pick<
+    BaseModel,
+    "name" | "modelId" | "singularApiName" | "pluralApiName"
+> {
     fields: ApiCmsModelField[];
 }
 

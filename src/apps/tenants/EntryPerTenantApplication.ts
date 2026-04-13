@@ -1,12 +1,12 @@
-import { GenericRecord, IApplication, IBaseApplication } from "~/types";
-import { defaultTenant, TenantsApplication } from "./TenantsApplication";
-import { ModelApplication } from "~/apps/ModelApplication";
-import { EntryApplication } from "~/apps/EntryApplication";
-import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariables";
-import { logger } from "~/logger";
-import { createCacheKey } from "~/cache";
-import { NotFoundError } from "~/errors";
-import writeJsonFile from "write-json-file";
+import { GenericRecord, IApplication, IBaseApplication } from "~/types.js";
+import { defaultTenant, TenantsApplication } from "./TenantsApplication.js";
+import { ModelApplication } from "~/apps/ModelApplication.js";
+import { EntryApplication } from "~/apps/EntryApplication.js";
+import { createEntryVariables } from "~/apps/tenants/helpers/createEntryVariables.js";
+import { logger } from "~/logger.js";
+import { createCacheKey } from "~/cache/index.js";
+import { NotFoundError } from "~/errors/index.js";
+import { writeJsonFileSync } from "write-json-file";
 import path from "path";
 
 type IStorageCollection = GenericRecord<string, GenericRecord<string, GenericRecord[]>>;
@@ -76,6 +76,13 @@ export class EntryPerTenantApplication implements IApplication {
                 key: "tenants"
             }),
             async () => {
+                /**
+                 * There are some changes in 5.44.x that do not allow fetching list of tenants.
+                 * This is quick fix. If API key does not have access down the stream, it will fail anyway.
+                 */
+                if (tenantsInput[0] === "root" && tenantsInput.length === 1) {
+                    return [defaultTenant];
+                }
                 try {
                     return await this.app.getApp<TenantsApplication>("tenants").listTenants();
                 } catch (ex) {
@@ -194,7 +201,7 @@ export class EntryPerTenantApplication implements IApplication {
             path.join(input, `dry-run-${new Date().toISOString()}.json`)
         );
         logger.info(`Storing dry run data into ${target}...`);
-        writeJsonFile.sync(target, {
+        writeJsonFileSync(target, {
             tenants,
             models,
             perTenant,

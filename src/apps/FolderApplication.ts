@@ -1,4 +1,4 @@
-import {
+import type {
     AcoFolder,
     AcoFolderCreateParams,
     ApiError,
@@ -7,10 +7,10 @@ import {
     IFolderApplicationCreateViaGraphQLResponse,
     IFolderRunner,
     IFolderRunnerResponse
-} from "~/types";
-import { getAcoFolderResult } from "./folder/getAcoFolderResult";
-import { folderRunnerFactory } from "~/apps/folder/folders";
-import { logger } from "~/logger";
+} from "~/types.js";
+import { getAcoFolderResult } from "./folder/getAcoFolderResult.js";
+import { folderRunnerFactory } from "~/apps/folder/folders.js";
+import { logger } from "~/logger.js";
 
 export class FolderApplication implements IFolderApplication {
     private readonly app: IBaseApplication;

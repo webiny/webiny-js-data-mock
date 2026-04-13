@@ -1,17 +1,14 @@
-import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
 import { faker } from "@faker-js/faker";
-import { registry } from "../registry";
-import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
-import { LesserThanOrEqualDateValidator } from "~/apps/tenants/helpers/generators/validators/LesserThanOrEqualDateValidator";
-import { GreaterThanOrEqualDateValidator } from "~/apps/tenants/helpers/generators/validators/GreaterThanOrEqualDateValidator";
-import { createTime } from "./date/createTime";
-import { createDate } from "./date/createDate";
-import { createDateTimeWithoutTimezone } from "~/apps/tenants/helpers/generators/fields/date/createDateTimeWithoutTimezone";
-import { createDateTimeWithTimezone } from "~/apps/tenants/helpers/generators/fields/date/createDateTimeWithTimezone";
-import {
-    MaximumLengthValidator,
-    MinimumLengthValidator
-} from "~/apps/tenants/helpers/generators/validators";
+import { registry } from "../registry.js";
+import type { IGeneratorGenerateParams } from "../types.js";
+import { LesserThanOrEqualDateValidator } from "../validators/LesserThanOrEqualDateValidator.js";
+import { GreaterThanOrEqualDateValidator } from "../validators/GreaterThanOrEqualDateValidator.js";
+import { createTime } from "./date/createTime.js";
+import { createDate } from "./date/createDate.js";
+import { createDateTimeWithoutTimezone } from "./date/createDateTimeWithoutTimezone.js";
+import { createDateTimeWithTimezone } from "./date/createDateTimeWithTimezone.js";
+import { MaximumLengthValidator, MinimumLengthValidator } from "../validators/index.js";
 
 const createValue = (params: IGeneratorGenerateParams): string => {
     const { field, getValidator } = params;

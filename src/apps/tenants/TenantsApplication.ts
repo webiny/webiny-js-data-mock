@@ -1,6 +1,6 @@
-import { ApiError, IApplication, IBaseApplication } from "~/types";
-import { logger } from "~/logger";
-import { NotFoundError } from "~/errors";
+import { ApiError, IApplication, IBaseApplication } from "~/types.js";
+import { logger } from "~/logger.js";
+import { NotFoundError } from "~/errors/index.js";
 
 export interface ITenant {
     id: string;

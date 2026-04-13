@@ -1,8 +1,8 @@
 import zod from "zod";
 import { ErrorResponse, GraphQLSchemaPlugin, Response } from "@webiny/handler-graphql";
-import { Plugin } from "@webiny/plugins/types";
-import { CmsContext } from "@webiny/api-headless-cms/types";
-import { CreateAndInstallTenant } from "./CreateAndInstallTenant";
+import { Plugin } from "@webiny/plugins/types.js";
+import { CmsContext } from "@webiny/api-headless-cms/types/index.js";
+import { CreateAndInstallTenant } from "./CreateAndInstallTenant.js";
 import { createZodError } from "@webiny/utils";
 
 const validateInstallNamedTenantInput = zod.object({

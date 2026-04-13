@@ -1,2 +1,2 @@
-export * from "./group/types";
-export * from "./model/types";
+export * from "./group/types.js";
+export * from "./model/types.js";

@@ -1,4 +1,4 @@
-import { ApiGraphQLResult, ApiGraphQLResultJson } from "~/types";
+import type { ApiGraphQLResult, ApiGraphQLResultJson } from "~/types.js";
 
 export const createGetPageBuilderPageResult = <T>() => {
     return (json: ApiGraphQLResultJson): ApiGraphQLResult<T> => {

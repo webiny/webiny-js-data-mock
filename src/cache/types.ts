@@ -1,5 +1,5 @@
-import { GenericRecord } from "~/types";
-import { BinaryToTextEncoding } from "crypto";
+import type { GenericRecord } from "~/types.js";
+import type { BinaryToTextEncoding } from "crypto";
 
 export interface ICacheKeyOptions {
     algorithm?: CacheKeyAlgorithmType;

@@ -1,13 +1,13 @@
-import { createBooleanField } from "./boolean";
-import { createDatetimeField } from "~/apps/utils/fields/datetime";
-import { createFileField } from "~/apps/utils/fields/file";
-import { createJsonField } from "~/apps/utils/fields/json";
-import { createLongTextField } from "~/apps/utils/fields/richText";
-import { createNumberField } from "~/apps/utils/fields/number";
-import { createRefField } from "~/apps/utils/fields/ref";
-import { createRichTextField } from "~/apps/utils/fields/longText";
-import { createTextField } from "~/apps/utils/fields/text";
-import { ICreateFieldDefinition } from "~/apps/utils/fields/createField";
+import { createBooleanField } from "./boolean.js";
+import { createDatetimeField } from "./datetime.js";
+import { createFileField } from "./file.js";
+import { createJsonField } from "./json.js";
+import { createLongTextField } from "./richText.js";
+import { createNumberField } from "./number.js";
+import { createRefField } from "./ref.js";
+import { createRichTextField } from "./longText.js";
+import { createTextField } from "./text.js";
+import type { ICreateFieldDefinition } from "./createField.js";
 
 export const createAllowedFields = () => {
     const creators = [

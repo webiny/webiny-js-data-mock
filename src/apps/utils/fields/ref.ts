@@ -1,4 +1,4 @@
-import { createField } from "./createField";
+import { createField } from "./createField.js";
 
 export const createRefField = createField({
     type: "ref",

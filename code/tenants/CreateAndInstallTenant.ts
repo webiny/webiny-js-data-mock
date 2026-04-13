@@ -1,6 +1,6 @@
 import { InstallTenant } from "@webiny/api-serverless-cms";
 import { mdbid } from "@webiny/utils";
-import { CmsContext } from "@webiny/api-headless-cms/types";
+import { CmsContext } from "@webiny/api-headless-cms/types/index.js";
 import { WebinyError } from "@webiny/error";
 
 export class CreateAndInstallTenant {

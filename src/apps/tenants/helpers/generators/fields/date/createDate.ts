@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { IValidatorsParams } from "./types";
+import { IValidatorsParams } from "./types.js";
 
 const format = (date: Date): string => {
     return date.toISOString().substring(0, 10);

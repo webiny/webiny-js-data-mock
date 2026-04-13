@@ -1,4 +1,4 @@
-import { ApiCmsModelField, GenericRecord } from "~/types";
+import { ApiCmsModelField, GenericRecord } from "~/types.js";
 
 export interface IRegistryGetGeneratorParams {
     field: ApiCmsModelField;

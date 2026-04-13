@@ -1,4 +1,4 @@
-import { ICacheKey, ICacheKeyInput, ICacheKeyOptions } from "./types";
+import type { ICacheKey, ICacheKeyInput, ICacheKeyOptions } from "./types.js";
 import crypto from "crypto";
 
 class CacheKey implements ICacheKey {

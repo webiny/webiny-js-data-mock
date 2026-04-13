@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import { BaseGenerator } from "./BaseGenerator";
-import { registry } from "../registry";
+import { BaseGenerator } from "./BaseGenerator.js";
+import { registry } from "../registry.js";
 
 class BooleanGenerator extends BaseGenerator<boolean> {
     public type = "boolean";

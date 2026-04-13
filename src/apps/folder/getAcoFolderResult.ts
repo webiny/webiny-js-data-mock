@@ -1,4 +1,4 @@
-import { AcoFolder, ApiGraphQLResult, ApiGraphQLResultJson } from "~/types";
+import type { AcoFolder, ApiGraphQLResult, ApiGraphQLResultJson } from "~/types.js";
 
 export const getAcoFolderResult = (json: ApiGraphQLResultJson): ApiGraphQLResult<AcoFolder> => {
     const { data, extensions = [], errors = [] } = json;

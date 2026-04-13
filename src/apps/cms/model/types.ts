@@ -2,7 +2,7 @@ import {
     CmsGroup,
     CmsModel as BaseModel,
     CmsModelField as BaseCmsModelField
-} from "@webiny/api-headless-cms/types";
+} from "@webiny/api-headless-cms/types/index.js";
 
 export type CmsModelGroup = Pick<CmsGroup, "id" | "name">;
 
@@ -19,16 +19,9 @@ export type CmsModelField = Pick<
     | "renderer"
 >;
 
-export interface CmsModel
-    extends Pick<
-        BaseModel,
-        | "modelId"
-        | "name"
-        | "description"
-        | "group"
-        | "layout"
-        | "singularApiName"
-        | "pluralApiName"
-    > {
+export interface CmsModel extends Pick<
+    BaseModel,
+    "modelId" | "name" | "description" | "group" | "layout" | "singularApiName" | "pluralApiName"
+> {
     fields: CmsModelField[];
 }

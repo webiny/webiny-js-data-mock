@@ -1,4 +1,4 @@
-import { createField } from "./createField";
+import { createField } from "./createField.js";
 
 export const createLongTextField = createField({
     type: "long-text",

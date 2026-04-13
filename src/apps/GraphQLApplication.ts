@@ -1,4 +1,4 @@
-import {
+import type {
     ApiGraphQLResult,
     ApiGraphQLResultJson,
     GenericRecord,
@@ -7,11 +7,11 @@ import {
     IGraphQLApplicationMutationParams,
     IGraphQLApplicationMutationsParams,
     IGraphQLApplicationQueryParams
-} from "~/types";
+} from "~/types.js";
 import pRetry from "p-retry";
-import { GraphQLError } from "~/errors";
-import lodashChunk from "lodash/chunk";
-import { logger } from "~/logger";
+import { GraphQLError } from "~/errors/index.js";
+import lodashChunk from "lodash/chunk.js";
+import { logger } from "~/logger.js";
 
 interface Params {
     url: string;
@@ -58,7 +58,7 @@ export class GraphQLApplication implements IGraphQLApplication {
 
         const response = await pRetry(runQuery, {
             retries: 5,
-            onFailedAttempt: error => {
+            onFailedAttempt: ({ error }) => {
                 logger.warn(`Failed attempt to execute query: ${error.message}.`);
             }
         });
@@ -86,7 +86,7 @@ export class GraphQLApplication implements IGraphQLApplication {
 
             const response = await pRetry(runMutation, {
                 retries: 5,
-                onFailedAttempt: error => {
+                onFailedAttempt: ({ error }) => {
                     logger.warn(`Failed attempt to execute mutation: ${error.message}.`);
                 }
             });

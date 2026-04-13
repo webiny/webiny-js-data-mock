@@ -1,7 +1,13 @@
-import { IBaseApplication, IPageApplication, IPageRunner, PbPage, PbPageInput } from "~/types";
-import { createGetPageBuilderPageResult } from "./pageBuilder/createGetPageBuilderPageResult";
-import { pageRunnerFactory } from "./pages/pages";
-import { logger } from "~/logger";
+import type {
+    IBaseApplication,
+    IPageApplication,
+    IPageRunner,
+    PbPage,
+    PbPageInput
+} from "~/types.js";
+import { createGetPageBuilderPageResult } from "./pageBuilder/createGetPageBuilderPageResult.js";
+import { pageRunnerFactory } from "./pages/pages.js";
+import { logger } from "~/logger.js";
 
 export class PageApplication implements IPageApplication {
     private readonly app: IBaseApplication;

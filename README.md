@@ -124,7 +124,7 @@ Just copy the files and import the plugins via the `createAuthenticator()` from 
 You can create completely random mock data for any model by running:
 
 ```
-yarn create-data-per-tenant --tenants=yourTenantName --amount=1 --models=aModelId,anotherModelId,....
+yarn create-data-per-tenant --tenants=root --amount=1 --models=aModelId,anotherModelId,....
 ```
 
 In the `tenants` argument, you can pass multiple tenants separated by a comma or a `*` to target all existing tenants.

@@ -1,5 +1,5 @@
-import { ICache, ICacheKeyInput } from "./types";
-import { createCacheKey } from "~/cache/CacheKey";
+import type { ICache, ICacheKeyInput } from "./types.js";
+import { createCacheKey } from "./CacheKey.js";
 
 class MemoryCache implements ICache {
     private _cache: Map<string, unknown> = new Map();

@@ -1,5 +1,5 @@
 import { ContextPlugin } from "@webiny/handler-aws";
-import { CmsContext } from "@webiny/api-headless-cms/types";
+import { CmsContext } from "@webiny/api-headless-cms/types/index.js";
 
 export const createAllTenantsApiKeyAuthenticator = () => {
     return new ContextPlugin<CmsContext>(context => {

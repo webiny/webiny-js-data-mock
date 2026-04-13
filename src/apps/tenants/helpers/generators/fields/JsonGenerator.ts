@@ -1,12 +1,9 @@
-import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
-import { GenericRecord } from "~/types";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
+import type { GenericRecord } from "~/types.js";
 import { faker } from "@faker-js/faker";
-import { registry } from "../registry";
-import {
-    MaximumLengthValidator,
-    MinimumLengthValidator
-} from "~/apps/tenants/helpers/generators/validators";
-import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
+import { registry } from "../registry.js";
+import { MaximumLengthValidator, MinimumLengthValidator } from "../validators/index.js";
+import type { IGeneratorGenerateParams } from "../types.js";
 
 const create = (): GenericRecord => {
     return {

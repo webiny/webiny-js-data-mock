@@ -1,8 +1,8 @@
-import { ApiCmsGroup, IBaseApplication, IGroupApplication } from "~/types";
-import { logger } from "~/logger";
-import { createGetCmsContentResult } from "./cms/createGetCmsContentResult";
-import { createBlog, createCars } from "./cms";
-import { CmsGroup } from "./cms/types";
+import type { ApiCmsGroup, IBaseApplication, IGroupApplication } from "~/types.js";
+import { logger } from "~/logger.js";
+import { createGetCmsContentResult } from "./cms/createGetCmsContentResult.js";
+import { createBlog, createCars } from "./cms/index.js";
+import type { CmsGroup } from "./cms/types.js";
 
 export class GroupApplication implements IGroupApplication {
     private readonly app: IBaseApplication;

@@ -1,13 +1,13 @@
 import { faker } from "@faker-js/faker";
-import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator";
-import { registry } from "../registry";
+import { BaseGenerator, BaseMultiGenerator } from "./BaseGenerator.js";
+import { registry } from "../registry.js";
 import {
     MaximumLengthValidator,
     MinimumLengthValidator,
     PatternValidator
-} from "~/apps/tenants/helpers/generators/validators";
-import { IGeneratorGenerateParams } from "~/apps/tenants/helpers/generators/types";
-import { logger } from "~/logger";
+} from "../validators/index.js";
+import type { IGeneratorGenerateParams } from "../types.js";
+import { logger } from "~/logger.js";
 
 class TextGenerator extends BaseGenerator<string> {
     public type = "text";

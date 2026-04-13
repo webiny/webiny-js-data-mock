@@ -5,9 +5,9 @@
     "paths": {
       "~/*": ["./src/*"]
     },
-    "baseUrl": "./",
+    "rootDir": "./src",
     "target": "esnext",
-    "module": "commonjs",
+    "module": "nodenext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": false,
@@ -21,9 +21,5 @@
     "noPropertyAccessFromIndexSignature": false,
     "suppressExcessPropertyErrors": false,
     "suppressImplicitAnyIndexErrors": false
-  },
-  "ts-node": {
-    // Do not forget to `npm i -D tsconfig-paths`
-    "require": ["tsconfig-paths/register"]
   }
 }

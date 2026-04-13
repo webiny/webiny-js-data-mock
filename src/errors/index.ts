@@ -1,2 +1,2 @@
-export * from "./GraphQLError";
-export * from "./NotFoundError";
+export * from "./GraphQLError.js";
+export * from "./NotFoundError.js";
