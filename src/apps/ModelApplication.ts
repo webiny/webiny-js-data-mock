@@ -143,7 +143,17 @@ export class ModelApplication implements IModelApplication {
                 }
             `,
             path: "/cms/manage",
-            getResult: createGetCmsContentResult()
+            getResult: createGetCmsContentResult<ApiCmsModel[] | null>(data => {
+                if (!Array.isArray(data)) {
+                    return null;
+                }
+                return data.filter(model => {
+                    if (!model.tags?.length) {
+                        return true;
+                    }
+                    return model.tags.includes("$hidden:true") === false;
+                });
+            })
         });
     }
 

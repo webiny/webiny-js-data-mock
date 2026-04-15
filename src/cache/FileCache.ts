@@ -121,8 +121,8 @@ class FileCache implements ICache {
         const cacheKey = createCacheKey(input);
         try {
             fsExtra.unlinkSync(this.createPath(cacheKey));
-        } catch (ex) {
-            logger.error(ex);
+        } catch {
+            //
         }
     }
 
@@ -153,7 +153,11 @@ class FileCache implements ICache {
             if (!this.isExpired(stats)) {
                 continue;
             }
-            fsExtra.unlinkSync(target);
+            try {
+                fsExtra.unlinkSync(target);
+            } catch {
+                //
+            }
         }
     }
 
