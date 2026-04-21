@@ -173,10 +173,11 @@ export class EntryPerTenantApplication implements IApplication {
                 });
                 if (result.errors.length) {
                     logger.error("Errors occurred while creating entries.");
-                    this.app.cache.clear();
+                    // this.app.cache.clear();
                     for (const error of result.errors) {
                         logger.error(error);
                     }
+                    this.app.cache.set(createCacheKey("variables"), variables);
                     throw new Error("Errors occurred while creating entries.");
                 }
             }

@@ -22,7 +22,10 @@ class CacheKey implements ICacheKey {
     }
 }
 
-export const createCacheKey = (key: ICacheKeyInput) => {
+export const createCacheKey = (key: ICacheKeyInput): ICacheKey => {
+    if (key instanceof CacheKey) {
+        return key;
+    }
     return CacheKey.create(key);
 };
 
