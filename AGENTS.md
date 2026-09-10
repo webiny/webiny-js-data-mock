@@ -111,7 +111,7 @@ src/
 | `project_tenants` | project_id FK, tenant_id, name | Discovered tenants per project |
 | `project_groups` | project_id FK, slug, name, remote_id | CMS content model groups |
 | `project_models` | project_id FK, model_id, singular_api_name, plural_api_name, group_slug, plugin, fields (JSON) | CMS models + field definitions + API names + plugin flag from Webiny |
-| `jobs` | project_id FK, type, status, config (JSON), logs, progress, progress_label, parent_job_id | Background job execution (seed, pull-tenants, pull-models, cleanup, import) |
+| `jobs` | project_id FK (nullable), type, status, config (JSON), logs, progress, progress_label, parent_job_id | Background job execution (seed, pull-tenants, pull-models, cleanup, import, pull-picsum). project_id is nullable for global jobs (e.g. picsum pull). |
 | `seed_jobs` | project_id FK, status, config (JSON), result (JSON) | Legacy seeding job tracking |
 | `seed_templates` | project_id FK, name, config (JSON) | Saved seed configurations |
 | `seed_entries` | job_id FK (nullable), project_id FK, tenant, model_id, entry_data (JSON), request_data (JSON), response_data (raw), status | Per-entry audit log with full request/response |
@@ -135,9 +135,9 @@ src/
 
 ---
 
-## API Routes (34)
+## API Routes (36)
 
-All long-running operations (seed, pull-tenants, pull-models, import, cleanup) return a `Job` object with HTTP 202 — work runs in the background. Progress is pushed via WebSocket.
+All long-running operations (seed, pull-tenants, pull-models, import, cleanup, pull-picsum) return a `Job` object with HTTP 202 — work runs in the background. Progress is pushed via WebSocket. All list endpoints support server-side pagination (`page`, `limit`), ordering (`sortField`, `sortDir`), and endpoint-specific filtering via query params.
 
 ### Projects
 | Method | Path | Purpose |
@@ -191,7 +191,7 @@ All long-running operations (seed, pull-tenants, pull-models, import, cleanup) r
 | DELETE | `/api/projects/:projectId/files/:fileId` | Delete file reference |
 | POST | `/api/projects/:projectId/files/pull` | Pull files from a project's file manager |
 | POST | `/api/projects/:projectId/files/upload-global` | Upload all unlinked global pool images to a project's file manager |
-| POST | `/api/files/picsum/pull` | Pull placeholder images from picsum.photos into the local image pool |
+| POST | `/api/files/picsum/pull` | Pull placeholder images from picsum.photos (background job, returns Job) |
 | GET | `/api/files/local` | List local files in `.webiny/images/` with per-project upload status |
 | POST | `/api/files/local/upload` | Save a dropped file to `.webiny/images/` |
 | DELETE | `/api/files/local/:fileName` | Delete a file from `.webiny/images/` |
@@ -200,8 +200,9 @@ All long-running operations (seed, pull-tenants, pull-models, import, cleanup) r
 ### Jobs
 | Method | Path | Purpose |
 |---|---|---|
+| GET | `/api/jobs` | List all jobs globally (not project-scoped) |
 | POST | `/api/projects/:projectId/jobs` | Enqueue a new job (type + config) |
-| GET | `/api/projects/:projectId/jobs` | List jobs for a project |
+| GET | `/api/projects/:projectId/jobs` | List jobs for a project (paginated, filterable by type/status) |
 | GET | `/api/projects/:projectId/jobs/:jobId` | Get a single job |
 | POST | `/api/projects/:projectId/jobs/:jobId/cancel` | Cancel a running or pending job |
 
@@ -235,17 +236,18 @@ The project detail route uses a `/*` wildcard — `subPath` determines the activ
 | `files` | Files tab (merged global + project files, drag-drop, multi-select upload) |
 | `entries` | Audit Log tab (seed entries) |
 | `history` | Seed History tab |
-| `templates` | Templates tab |
-| `jobs` | Background Jobs |
-| `activity` | Activity Log (operation history — pulls, uploads) |
+| `templates` | Templates tab (hidden from sidebar) |
+| `jobs` | Background Jobs (paginated, filterable by type/status) |
+| `activity` | Activity Log (paginated, filterable by type/status) |
 | `pull-tenants` | Pull Tenants (log table + run button) |
 | `pull-models` | Pull Models (log table + run button) |
+| `pull-images` | Pull Images from FM (log table + run button) |
 | `seed` | Seed Config (embedded, group accordion) |
 | `import` | Import Entries |
 
 URL is the source of truth for tab selection — no presenter state for active tab.
 
-Sidebar sections: **Data** (7 tabs), **Pull** (2 tabs), **Actions** (Seed Data, Import, Cleanup, Edit Project).
+Sidebar sections: **Data** (7 tabs, Templates hidden), **Pull** (3 tabs), **Actions** (Seed Data, Import, Cleanup, Edit Project).
 
 ---
 
@@ -419,7 +421,7 @@ export const ProjectsFeature = createFeature({
 
 ## Testing
 
-- **326 tests** across 31 files (vitest)
+- **356 tests** across 32 files (vitest)
 - **Coverage**: v8 provider, ~53% statements, ~37% branches, ~56% functions. Thresholds enforced via `vitest.config.ts`.
 - **Coverage excludes**: abstractions, feature.ts, index.ts, types, schemas, UI, routing — only business logic is measured.
 - **`createTestContainer()`** — fully-wired DI container for tests. In-memory SQLite (`:memory:`), real generators, real cache. Mock only HttpClient.
